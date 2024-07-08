@@ -4,7 +4,9 @@ import {StyleSheet, Text, View} from 'react-native';
 const Home = () => {
   return (
     <View style={styles.container}>
-      <Text>home</Text>
+      <Text style={styles.boldText}>Bold Text</Text>
+      <Text style={styles.regularText}>Regular Text</Text>
+      <Text style={styles.mediumText}>Medium Text</Text>
     </View>
   );
 };
@@ -16,6 +18,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    backgroundColor: '#fff',
+  },
+  boldText: {
+    fontSize: 20,
+    fontFamily: 'Pretendard-SemiBold',
+  },
+  regularText: {
+    fontSize: 20,
+    fontFamily: 'Pretendard-Regular',
+  },
+  mediumText: {
+    fontSize: 20,
+    fontFamily: 'Pretendard-Medium',
   },
 });
