@@ -1,15 +1,16 @@
-import {RouteProp} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
+import {type RouteProp} from '@react-navigation/native';
+import {type NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {type BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 
 /* BottomTab Type 정의 */
 // BottomTabParamList => BottomTab Screen이 받을 Parameters들을 정의
-export type BottomTabParamList = {
+export interface BottomTabParamList {
+  [key: string]: object | undefined; // 인덱스 시그니처 추가
   home: undefined;
   add: undefined;
   bookmark: undefined;
   mypage: undefined;
-};
+}
 
 // BottomTab Screen 대한 Route Object의 Type을 정의
 export type HomeRouteProp = RouteProp<BottomTabParamList, 'home'>;
@@ -19,10 +20,11 @@ export type MyPageRouteProp = RouteProp<BottomTabParamList, 'mypage'>;
 
 /* Stack Type 정의 */
 // RootStackParamList => Stack Screen이 받을 Parameter들을 정의
-export type RootStackParamList = {
+export interface RootStackParamList {
+  [key: string]: object | undefined; // 인덱스 시그니처 추가
   Main: undefined;
   // ex> DetailPhoto: {image: {path: string; creationDate: string}};
-};
+}
 
 // Stack Screen에 대한 Route Object의 Type을 정의
 // ex> export type DetailPhotoRouteProp = RouteProp<RootStackParamList, 'DetailPhoto'>;

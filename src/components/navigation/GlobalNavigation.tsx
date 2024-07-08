@@ -1,7 +1,7 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {type RootStackParamList} from '@/types/navigation';
 import BottomTabNavigation from './BottomTabNavigation';
-import {RootStackParamList} from '@/types/navigation';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -10,7 +10,7 @@ const GlobalNavigation = () => {
     <Stack.Navigator>
       <Stack.Screen
         name="Main"
-        children={BottomTabNavigation}
+        component={BottomTabNavigation}
         options={{headerShown: false}}
       />
     </Stack.Navigator>
