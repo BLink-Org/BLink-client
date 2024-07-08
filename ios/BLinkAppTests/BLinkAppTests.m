@@ -7,11 +7,11 @@
 #define TIMEOUT_SECONDS 600
 #define TEXT_TO_LOOK_FOR @"Welcome to React"
 
-@interface BLinkTests : XCTestCase
+@interface BLinkAppTests : XCTestCase
 
 @end
 
-@implementation BLinkTests
+@implementation BLinkAppTests
 
 - (BOOL)findSubviewInView:(UIView *)view matching:(BOOL (^)(UIView *view))test
 {
