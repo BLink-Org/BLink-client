@@ -4,7 +4,7 @@ import HomeScreen from '@/screens/Home';
 import AddScreen from '@/screens/Add';
 import BookmarkScreen from '@/screens/Bookmark';
 import MyPageScreen from '@/screens/Mypage';
-import {BottomTabParamList} from '@/types/navigation';
+import {type BottomTabParamList} from '@/types/navigation';
 import SampleIcon from '@/assets/bottom-tab/sample.svg';
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
