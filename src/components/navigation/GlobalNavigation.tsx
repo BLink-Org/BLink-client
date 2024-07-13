@@ -23,7 +23,7 @@ const GlobalNavigation = () => {
       <Stack.Screen
         name="WebViewTest"
         component={WebViewTest}
-        options={{headerShown: false}}
+        options={{headerShown: false, animation: 'slide_from_bottom'}}
       />
     </Stack.Navigator>
   );
