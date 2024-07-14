@@ -5,12 +5,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.view.Gravity;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -23,6 +18,8 @@ public class ShareActivity extends Activity {
 
     private EditText sharedContentEditText;
     private LinearLayout foldersLayout;
+    private EditText layoutAddFolder;
+    private List<String> folders = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,24 +72,18 @@ public class ShareActivity extends Activity {
         dialog.setContentView(R.layout.dialog_share);
 
         // Set dialog width to match parent
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialog.getWindow().setGravity(Gravity.BOTTOM);
-
-        // Window window = dialog.getWindow();
-        // WindowManager.LayoutParams wlp = window.getAttributes();
-        // wlp.gravity = Gravity.BOTTOM;
-        // window.setAttributes(wlp);
 
         sharedContentEditText = dialog.findViewById(R.id.shared_content);
         sharedContentEditText.setText(content);
         foldersLayout = dialog.findViewById(R.id.folders_layout);
+        layoutAddFolder = dialog.findViewById(R.layout.add_folder);
 
         Button createFolderButton = dialog.findViewById(R.id.create_folder_button);
         Button submitButton = dialog.findViewById(R.id.submit_button);
 
         createFolderButton.setOnClickListener(v -> {
-            // Handle folder creation
+            showAddFolderModal(dialog);
         });
 
         submitButton.setOnClickListener(v -> {
@@ -104,16 +95,41 @@ public class ShareActivity extends Activity {
         dialog.setCancelable(false);
         dialog.show();
 
-        fetchFolders();
-    }
-
-    private void fetchFolders() {
-        // Mock data fetching
-        List<String> folders = List.of("기본 폴더", "JavaScript", "TypeScript");
+        // 초기 폴더 추가
+        folders.add("기본 폴더");
+        folders.add("JavaScript");
         populateFolders(folders);
     }
 
+    private void showAddFolderModal(Dialog parentDialog) {
+        Dialog addFolderDialog = new Dialog(this);
+        addFolderDialog.setContentView(R.layout.add_folder);
+
+        addFolderDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        EditText newFolderEditText = addFolderDialog.findViewById(R.id.new_folder_name);
+        Button addButton = addFolderDialog.findViewById(R.id.add_folder_button);
+
+        addButton.setOnClickListener(v -> {
+            String newFolderName = newFolderEditText.getText().toString();
+            folders.add(newFolderName);
+            populateFolders(folders);
+
+            // Close add folder dialog
+            addFolderDialog.dismiss();
+
+            // Show the parent dialog again
+            parentDialog.show();
+        });
+
+        addFolderDialog.setCancelable(true); // Allow cancelling by touching outside
+        addFolderDialog.show();
+    }
+
     private void populateFolders(List<String> folders) {
+        foldersLayout.removeAllViews(); // 기존 폴더 버튼들을 모두 제거
+
+        // 새로운 폴더 목록을 추가
         for (String folder : folders) {
             Button folderButton = (Button) getLayoutInflater().inflate(R.layout.folder_button, null);
             folderButton.setText(folder);
