@@ -1,6 +1,6 @@
 import {type SvgProps} from 'react-native-svg';
-import Theme1 from '@/assets/background/theme1.svg';
-import Theme2 from '@/assets/background/theme2.svg';
+import Theme1 from '@/assets/icons/theme/theme1.svg';
+import Theme2 from '@/assets/icons/theme/theme2.svg';
 
 interface Theme {
   MAIN_COLOR: string;
@@ -38,7 +38,7 @@ const themes: Record<number, Theme> = {
     MAIN_COLOR: '#f1c40f',
     SUB_COLOR: '#f39c12',
     TEXT_COLOR: '#000000',
-    BACKGROUND_IMAGE: Theme2, 
+    BACKGROUND_IMAGE: Theme2,
     // 링크컨테이너 이미지 ...
     // 하단바 아이콘 이미지 ..
   },

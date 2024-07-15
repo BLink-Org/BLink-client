@@ -12,7 +12,7 @@ import {
   LinkIcon,
   MypageIcon,
   SearchIcon,
-} from '@/assets/bottom-tab';
+} from '@/assets/icons/bottom-tab';
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
