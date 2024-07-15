@@ -29,7 +29,7 @@ interface Theme {
   ERROR: string;
 }
 
-const themes: Record<number, Theme> = {
+const THEMES: Record<number, Theme> = {
   1: {
     BACKGROUND_IMAGE: Theme1BackgroundImage,
     BIG_CARD_IMAGE: Theme1BigCardImage,
@@ -116,4 +116,4 @@ const themes: Record<number, Theme> = {
   },
 };
 
-export {themes, type Theme};
+export {THEMES, type Theme};
