@@ -1,9 +1,14 @@
 import React from 'react';
+import {useTranslation} from 'react-i18next';
 import {StyleSheet, Text, View} from 'react-native';
 
 const Home = () => {
+  const {t} = useTranslation();
   return (
     <View style={styles.container}>
+      <Text style={styles.boldText}>{t('안녕')}</Text>
+      <Text style={styles.boldText}>{t('위치')}</Text>
+      <Text style={styles.boldText}>{t('마이페이지')}</Text>
       <Text style={styles.boldText}>Bold Text</Text>
       <Text style={styles.regularText}>Regular Text</Text>
       <Text style={styles.mediumText}>Medium Text</Text>
