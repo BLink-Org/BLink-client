@@ -4,31 +4,43 @@ import HomeScreen from '@/screens/Home';
 import AddScreen from '@/screens/Add';
 import BookmarkScreen from '@/screens/Bookmark';
 import MyPageScreen from '@/screens/Mypage';
+import SearchScreen from '@/screens/Search';
 import {type BottomTabParamList} from '@/types/navigation';
-import SampleIcon from '@/assets/bottom-tab/sample.svg';
+import {
+  HomeIcon,
+  BookmarkIcon,
+  LinkIcon,
+  MypageIcon,
+  SearchIcon,
+} from '@/assets/bottom-tab';
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
-const TabBarIcon = ({color}: {color: string}) => (
-  <SampleIcon width={20} height={20} fill={color} />
+
+const HomeBarIcon = ({color}: {color: string}) => <HomeIcon fill={color} />;
+const BookmarkBarIcon = ({color}: {color: string}) => (
+  <BookmarkIcon fill={color} />
 );
+const AddBarIcon = ({color}: {color: string}) => <LinkIcon fill={color} />;
+const SearchBarIcon = ({color}: {color: string}) => <SearchIcon fill={color} />;
+const MyPageBarIcon = ({color}: {color: string}) => <MypageIcon fill={color} />;
 
 const BottomTabNavigation = () => {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      screenOptions={{
+        tabBarShowLabel: false,
+        tabBarActiveTintColor: 'black',
+        tabBarInactiveTintColor: 'gray',
+        tabBarStyle: {
+          borderTopWidth: 0,
+        },
+      }}>
       <Tab.Screen
         name="home"
         component={HomeScreen}
         options={{
           headerShown: false,
-          tabBarIcon: TabBarIcon,
-        }}
-      />
-      <Tab.Screen
-        name="add"
-        component={AddScreen}
-        options={{
-          headerShown: false,
-          tabBarIcon: TabBarIcon,
+          tabBarIcon: HomeBarIcon,
         }}
       />
       <Tab.Screen
@@ -36,15 +48,32 @@ const BottomTabNavigation = () => {
         component={BookmarkScreen}
         options={{
           headerShown: false,
-          tabBarIcon: TabBarIcon,
+          tabBarIcon: BookmarkBarIcon,
         }}
       />
+      <Tab.Screen
+        name="add"
+        component={AddScreen}
+        options={{
+          headerShown: false,
+          tabBarIcon: AddBarIcon,
+        }}
+      />
+      <Tab.Screen
+        name="search"
+        component={SearchScreen}
+        options={{
+          headerShown: false,
+          tabBarIcon: SearchBarIcon,
+        }}
+      />
+
       <Tab.Screen
         name="mypage"
         component={MyPageScreen}
         options={{
           headerShown: false,
-          tabBarIcon: TabBarIcon,
+          tabBarIcon: MyPageBarIcon,
         }}
       />
     </Tab.Navigator>
