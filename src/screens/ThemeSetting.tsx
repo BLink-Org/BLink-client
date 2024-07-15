@@ -26,8 +26,8 @@ const ThemeSetting = () => {
         <Button title="Theme 2" onPress={() => handleSetTheme(2)} />
         <Button title="Theme 3" onPress={() => handleSetTheme(3)} />
         <Button title="Theme 4" onPress={() => handleSetTheme(4)} />
-        <Text style={[styles.text, {color: theme.TEXT_COLOR}]}>
-          현재 테마 메인 색: {theme.MAIN_COLOR}
+        <Text style={[styles.text, {color: theme.TEXT500}]}>
+          현재 테마 메인 색: {theme.MAIN100}
         </Text>
       </View>
       <Button title="뒤로가기" onPress={handleGoBack} />

@@ -1,46 +1,118 @@
 import {type SvgProps} from 'react-native-svg';
-import Theme1 from '@/assets/icons/theme/theme1.svg';
-import Theme2 from '@/assets/icons/theme/theme2.svg';
+import {
+  Theme1BackgroundImage,
+  Theme1BigCardImage,
+  Theme1SmallCardImage,
+  Temp1BackgroundImage,
+  Temp2BackgroundImage,
+} from '@/assets/icons/theme';
 
 interface Theme {
-  MAIN_COLOR: string;
-  SUB_COLOR: string;
-  TEXT_COLOR: string;
   BACKGROUND_IMAGE: React.FC<SvgProps>;
+  BIG_CARD_IMAGE: React.FC<SvgProps>;
+  SMALL_CARD_IMAGE: React.FC<SvgProps>;
+  TEXT100: string;
+  TEXT200: string;
+  TEXT300: string;
+  TEXT400: string;
+  TEXT500: string;
+  TEXT600: string;
+  TEXT700: string;
+  TEXT800: string;
+  TEXT900: string;
+  MAIN100: string;
+  MAIN200: string;
+  MAIN300: string;
+  MAIN400: string;
+  MAIN500: string;
+  SUB: string;
+  ERROR: string;
 }
 
 const themes: Record<number, Theme> = {
   1: {
-    MAIN_COLOR: '#3498db',
-    SUB_COLOR: '#2980b9',
-    TEXT_COLOR: '#ffffff',
-    BACKGROUND_IMAGE: Theme1,
-    // 링크컨테이너 이미지 ...
-    // 하단바 아이콘 이미지 ..
+    BACKGROUND_IMAGE: Theme1BackgroundImage,
+    BIG_CARD_IMAGE: Theme1BigCardImage,
+    SMALL_CARD_IMAGE: Theme1SmallCardImage,
+    TEXT100: '#F7F9FB',
+    TEXT200: '#ECF1F5',
+    TEXT300: '#C1C9D3',
+    TEXT400: '#A8B0BA',
+    TEXT500: '#6B7684',
+    TEXT600: '#4E6968',
+    TEXT700: '#333D4B',
+    TEXT800: '#161B21',
+    TEXT900: '#000000',
+    MAIN100: '#EEF3FF',
+    MAIN200: '#D8E3FF',
+    MAIN300: '#8AABFF',
+    MAIN400: '#6D96FF',
+    MAIN500: '#4A7DFF',
+    SUB: '#FF7970',
+    ERROR: '#FF554A',
   },
   2: {
-    MAIN_COLOR: '#e74c3c',
-    SUB_COLOR: '#c0392b',
-    TEXT_COLOR: '#faf',
-    BACKGROUND_IMAGE: Theme2,
-    // 링크컨테이너 이미지 ...
-    // 하단바 아이콘 이미지 ..
+    BACKGROUND_IMAGE: Temp1BackgroundImage,
+    BIG_CARD_IMAGE: Theme1BigCardImage,
+    SMALL_CARD_IMAGE: Theme1SmallCardImage,
+    TEXT100: '#123123',
+    TEXT200: '#432123',
+    TEXT300: '#f12d12',
+    TEXT400: '#512d12',
+    TEXT500: '#612d12',
+    TEXT600: '#712d12',
+    TEXT700: '#812d12',
+    TEXT800: '#912d12',
+    TEXT900: '#a12d12',
+    MAIN100: '#293813',
+    MAIN200: '#393813',
+    MAIN300: '#493813',
+    MAIN400: '#593813',
+    MAIN500: '#693813',
+    SUB: '#FF7970',
+    ERROR: '#FF554A',
   },
   3: {
-    MAIN_COLOR: '#2ecc71',
-    SUB_COLOR: '#27ae60',
-    TEXT_COLOR: '#f1f',
-    BACKGROUND_IMAGE: Theme1,
-    // 링크컨테이너 이미지 ...
-    // 하단바 아이콘 이미지 ..
+    BACKGROUND_IMAGE: Temp2BackgroundImage,
+    BIG_CARD_IMAGE: Theme1BigCardImage,
+    SMALL_CARD_IMAGE: Theme1SmallCardImage,
+    TEXT100: '#F7F9FB',
+    TEXT200: '#ECF1F5',
+    TEXT300: '#C1C9D3',
+    TEXT400: '#A8B0BA',
+    TEXT500: '#6B7684',
+    TEXT600: '#4E6968',
+    TEXT700: '#333D4B',
+    TEXT800: '#161B21',
+    TEXT900: '#000000',
+    MAIN100: '#EEF3FF',
+    MAIN200: '#D8E3FF',
+    MAIN300: '#8AABFF',
+    MAIN400: '#6D96FF',
+    MAIN500: '#4A7DFF',
+    SUB: '#FF7970',
+    ERROR: '#FF554A',
   },
   4: {
-    MAIN_COLOR: '#f1c40f',
-    SUB_COLOR: '#f39c12',
-    TEXT_COLOR: '#000000',
-    BACKGROUND_IMAGE: Theme2,
-    // 링크컨테이너 이미지 ...
-    // 하단바 아이콘 이미지 ..
+    BACKGROUND_IMAGE: Theme1BackgroundImage,
+    BIG_CARD_IMAGE: Theme1BigCardImage,
+    SMALL_CARD_IMAGE: Theme1SmallCardImage,
+    TEXT100: '#123123',
+    TEXT200: '#432123',
+    TEXT300: '#f12d12',
+    TEXT400: '#512d12',
+    TEXT500: '#612d12',
+    TEXT600: '#712d12',
+    TEXT700: '#812d12',
+    TEXT800: '#912d12',
+    TEXT900: '#a12d12',
+    MAIN100: '#293813',
+    MAIN200: '#393813',
+    MAIN300: '#493813',
+    MAIN400: '#593813',
+    MAIN500: '#693813',
+    SUB: '#FF7970',
+    ERROR: '#FF554A',
   },
 };
 
