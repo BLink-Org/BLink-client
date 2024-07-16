@@ -6,8 +6,9 @@ import {FONTS} from '@/constants';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import ScreenHeader from '@/components/common/ScreenHeader';
 import {useThemeStore} from '@/store/useThemeStore';
-import {LargeCardIcon} from '@/assets/icons/home';
+import {LargeCardIcon, SmallCardIcon} from '@/assets/icons/home';
 import LargeCard from '@/components/home/LargeCard';
+import SmallCard from '@/components/home/SmallCard'; // SmallCard 컴포넌트 import
 import DropdownFilter from '@/components/home/DropDownFilter';
 import dummyFileData from '@/constants/dummy-data/dummy-file-list.json';
 import useSortedData from '@/hooks/useSortedData';
@@ -35,6 +36,12 @@ const Home = () => {
     console.log(selected);
   };
 
+  // 카드 사이즈 조절
+  const [isLargeCard, setIsLargeCard] = useState(true);
+  const toggleCardSize = () => {
+    setIsLargeCard(prevState => !prevState);
+  };
+
   const ListHeaderComponent = () => {
     return (
       <>
@@ -51,8 +58,14 @@ const Home = () => {
               selectedOption={selectedSortingOption}
               onSelect={handleSelection}
             />
-            <TouchableOpacity style={styles.sizeIconContainer}>
-              <LargeCardIcon stroke={theme.TEXT700} />
+            <TouchableOpacity
+              style={styles.sizeIconContainer}
+              onPress={toggleCardSize}>
+              {isLargeCard ? (
+                <LargeCardIcon stroke={theme.TEXT700} />
+              ) : (
+                <SmallCardIcon stroke={theme.TEXT700} />
+              )}
             </TouchableOpacity>
           </View>
         </View>
@@ -68,7 +81,11 @@ const Home = () => {
         data={sortedData}
         renderItem={({item, index}) => (
           <View>
-            <LargeCard content={item} />
+            {isLargeCard ? (
+              <LargeCard content={item} />
+            ) : (
+              <SmallCard content={item} />
+            )}
             {index !== sortedData.length - 1 && (
               <View
                 style={[styles.separator, {backgroundColor: theme.TEXT200}]}

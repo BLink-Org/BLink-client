@@ -8,6 +8,7 @@ interface FileData {
   description: string;
   saveDay: string;
   hostname: string;
+  folder: string;
 }
 
 const useSortedData = (

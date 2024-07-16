@@ -14,6 +14,7 @@ import {
   BookmarkUnselectedIcon,
 } from '@/assets/icons/common';
 import {FONTS} from '@/constants';
+import {ThreeDotIcon} from '@/assets/icons/home';
 
 const screenWidth = Dimensions.get('screen').width - 36;
 const aspectRatio = 339 / 140; // 카드 비율
@@ -25,6 +26,7 @@ interface CardContent {
   description: string;
   saveDay: string;
   hostname: string;
+  folder: string;
 }
 
 interface LargeCardProps {
@@ -59,7 +61,10 @@ const LargeCard = ({content}: LargeCardProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.cardImageContainer}>
-        {imageLoading && <LoadingScreen />}
+        {content.imageUrl && imageLoading && <LoadingScreen />}
+        <TouchableOpacity style={styles.dotPosition}>
+          <ThreeDotIcon />
+        </TouchableOpacity>
         {content.imageUrl ? (
           <Image
             source={{uri: content.imageUrl}}
@@ -71,13 +76,13 @@ const LargeCard = ({content}: LargeCardProps) => {
           <CardImage width={screenWidth} height={cardHeight} />
         )}
       </View>
-      <View style={styles.titleTop} />
+      <View style={styles.folderTop} />
       <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT600}]}>
-        {content.title}
+        {content.folder}
       </Text>
-      <View style={styles.descriptionTop} />
+      <View style={styles.titleTop} />
       <Text style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900}]}>
-        {content.description}
+        {content.title}
       </Text>
       <View style={styles.footerTop} />
       <View style={styles.footer}>
@@ -111,6 +116,12 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     position: 'relative',
   },
+  dotPosition: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    zIndex: 1,
+  },
   image: {
     width: '100%',
     height: '100%',
@@ -129,10 +140,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 12,
   },
-  titleTop: {
+  folderTop: {
     marginTop: 12,
   },
-  descriptionTop: {
+  titleTop: {
     marginTop: 4,
   },
   footerTop: {
