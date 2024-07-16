@@ -11,11 +11,7 @@ interface DropdownProps {
   onSelect: (option: string) => void;
 }
 
-const DropdownFilter: React.FC<DropdownProps> = ({
-  options,
-  selectedOption,
-  onSelect,
-}) => {
+const DropdownFilter = ({options, selectedOption, onSelect}: DropdownProps) => {
   const {theme} = useThemeStore();
   const [isOpen, setIsOpen] = useState(false);
   const buttonRef = useRef<TouchableOpacity>(null);

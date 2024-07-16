@@ -1,22 +1,13 @@
 import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-
-// 타입 정의
-interface FileData {
-  imageUrl: string | null;
-  title: string;
-  description: string;
-  saveDay: string;
-  hostname: string;
-  folder: string;
-}
+import {type IFileList} from '@/types/home';
 
 const useSortedData = (
-  data: FileData[],
+  data: IFileList[],
   selectedSortingOption: string,
-): FileData[] => {
+): IFileList[] => {
   const {t} = useTranslation();
-  const [sortedData, setSortedData] = useState<FileData[]>(data);
+  const [sortedData, setSortedData] = useState<IFileList[]>(data);
 
   useEffect(() => {
     const sortData = () => {

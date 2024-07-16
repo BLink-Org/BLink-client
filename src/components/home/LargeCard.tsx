@@ -15,22 +15,14 @@ import {
 } from '@/assets/icons/common';
 import {FONTS} from '@/constants';
 import {ThreeDotIcon} from '@/assets/icons/home';
+import {type IFileList} from '@/types/home';
 
 const screenWidth = Dimensions.get('screen').width - 36;
 const aspectRatio = 339 / 140; // 카드 비율
 const cardHeight = screenWidth / aspectRatio;
 
-interface CardContent {
-  imageUrl: string | null;
-  title: string;
-  description: string;
-  saveDay: string;
-  hostname: string;
-  folder: string;
-}
-
 interface LargeCardProps {
-  content: CardContent;
+  content: IFileList;
 }
 
 const LargeCard = ({content}: LargeCardProps) => {
@@ -81,7 +73,10 @@ const LargeCard = ({content}: LargeCardProps) => {
         {content.folder}
       </Text>
       <View style={styles.titleTop} />
-      <Text style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900}]}>
+      <Text
+        style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900}]}
+        numberOfLines={1}
+        ellipsizeMode="tail">
         {content.title}
       </Text>
       <View style={styles.footerTop} />

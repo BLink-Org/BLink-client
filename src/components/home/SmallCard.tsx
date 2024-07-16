@@ -15,20 +15,12 @@ import {
 } from '@/assets/icons/common';
 import {FONTS} from '@/constants';
 import {ThreeDotIcon} from '@/assets/icons/home';
+import {type IFileList} from '@/types/home';
 
 const screenWidth = Dimensions.get('screen').width - 36;
 
-interface CardContent {
-  imageUrl: string | null;
-  title: string;
-  description: string;
-  saveDay: string;
-  hostname: string;
-  folder: string;
-}
-
 interface LargeCardProps {
-  content: CardContent;
+  content: IFileList;
 }
 
 const SmallCard = ({content}: LargeCardProps) => {
@@ -68,11 +60,17 @@ const SmallCard = ({content}: LargeCardProps) => {
       </View>
       <View style={styles.mainContainer}>
         <View style={styles.textContainer}>
-          <Text style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900}]}>
+          <Text
+            style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900}]}
+            numberOfLines={2}
+            ellipsizeMode="tail">
             {content.title}
           </Text>
           <View style={styles.descriptionTop} />
-          <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT500}]}>
+          <Text
+            style={[FONTS.BODY2_REGULAR, {color: theme.TEXT500}]}
+            numberOfLines={content.title.length > 30 ? 1 : 2}
+            ellipsizeMode="tail">
             {content.description}
           </Text>
         </View>

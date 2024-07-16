@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
   FlatList,
@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   View,
   SafeAreaView,
+  RefreshControl,
+  type ListRenderItem,
 } from 'react-native';
 import {FONTS} from '@/constants';
 import ThemeBackground from '@/components/common/ThemeBackground';
@@ -18,6 +20,7 @@ import SmallCard from '@/components/home/SmallCard';
 import DropdownFilter from '@/components/home/DropDownFilter';
 import dummyFileData from '@/constants/dummy-data/dummy-file-list.json';
 import useSortedData from '@/hooks/useSortedData';
+import {type IFileList} from '@/types/home';
 
 const Home = () => {
   const {t} = useTranslation();
@@ -33,14 +36,12 @@ const Home = () => {
   const [selectedSortingOption, setSelectedSortingOption] = useState(
     sortingOptions[0],
   );
+  const handleSelection = (selected: string) => {
+    setSelectedSortingOption(selected);
+  };
 
   // sort 커스텀 훅
   const sortedData = useSortedData(dummyFileData, selectedSortingOption);
-
-  const handleSelection = (selected: string) => {
-    setSelectedSortingOption(selected);
-    console.log(selected);
-  };
 
   // 카드 사이즈 조절
   const [isLargeCard, setIsLargeCard] = useState(true);
@@ -48,6 +49,19 @@ const Home = () => {
     setIsLargeCard(prevState => !prevState);
   };
 
+  // 새로고침 상태 관리
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    // 여기서 데이터를 새로 고침
+    // 추후 API 호출로 변경
+    // 예시로 1초 후 새로고침 완료
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  }, []);
+
+  // FlatList Header 영역
   const ListHeaderComponent = () => {
     return (
       <>
@@ -79,29 +93,38 @@ const Home = () => {
     );
   };
 
+  // FlatList 사용 최적화
+  const renderItem: ListRenderItem<IFileList> = useCallback(
+    ({item, index}) => (
+      <View>
+        {isLargeCard ? (
+          <LargeCard content={item} />
+        ) : (
+          <SmallCard content={item} />
+        )}
+        {index !== sortedData.length - 1 && (
+          <View style={[styles.separator, {backgroundColor: theme.TEXT200}]} />
+        )}
+      </View>
+    ),
+    [isLargeCard, sortedData, theme.TEXT200],
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <ThemeBackground />
       <ScreenHeader />
       <FlatList
         data={sortedData}
-        renderItem={({item, index}) => (
-          <View>
-            {isLargeCard ? (
-              <LargeCard content={item} />
-            ) : (
-              <SmallCard content={item} />
-            )}
-            {index !== sortedData.length - 1 && (
-              <View
-                style={[styles.separator, {backgroundColor: theme.TEXT200}]}
-              />
-            )}
-          </View>
-        )}
+        renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
         ListHeaderComponent={ListHeaderComponent}
         contentContainerStyle={styles.contentContainer}
+        initialNumToRender={10}
+        windowSize={10}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
     </SafeAreaView>
   );
