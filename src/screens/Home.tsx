@@ -1,14 +1,20 @@
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  SafeAreaView,
+} from 'react-native';
 import {FONTS} from '@/constants';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import ScreenHeader from '@/components/common/ScreenHeader';
 import {useThemeStore} from '@/store/useThemeStore';
 import {LargeCardIcon, SmallCardIcon} from '@/assets/icons/home';
 import LargeCard from '@/components/home/LargeCard';
-import SmallCard from '@/components/home/SmallCard'; // SmallCard 컴포넌트 import
+import SmallCard from '@/components/home/SmallCard';
 import DropdownFilter from '@/components/home/DropDownFilter';
 import dummyFileData from '@/constants/dummy-data/dummy-file-list.json';
 import useSortedData from '@/hooks/useSortedData';

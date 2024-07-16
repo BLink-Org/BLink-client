@@ -17,8 +17,6 @@ import {FONTS} from '@/constants';
 import {ThreeDotIcon} from '@/assets/icons/home';
 
 const screenWidth = Dimensions.get('screen').width - 36;
-const aspectRatio = 339 / 140; // 카드 비율
-const cardHeight = screenWidth / aspectRatio;
 
 interface CardContent {
   imageUrl: string | null;
@@ -33,10 +31,10 @@ interface LargeCardProps {
   content: CardContent;
 }
 
-const LargeCard = ({content}: LargeCardProps) => {
+const SmallCard = ({content}: LargeCardProps) => {
   const {theme} = useThemeStore();
   const CardImage = useMemo(() => {
-    return theme.BIG_CARD_IMAGE;
+    return theme.SMALL_CARD_IMAGE;
   }, [theme]);
 
   // 토글 상태 관리
@@ -60,31 +58,38 @@ const LargeCard = ({content}: LargeCardProps) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.cardImageContainer}>
-        {content.imageUrl && imageLoading && <LoadingScreen />}
-        <TouchableOpacity style={styles.dotPosition}>
+      <View style={styles.dotPosition}>
+        <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT600}]}>
+          {content.folder}
+        </Text>
+        <TouchableOpacity>
           <ThreeDotIcon />
         </TouchableOpacity>
-        {content.imageUrl ? (
-          <Image
-            source={{uri: content.imageUrl}}
-            style={styles.image}
-            onLoad={handleImageLoad}
-            onError={handleImageLoad}
-          />
-        ) : (
-          <CardImage width={screenWidth} height={cardHeight} />
-        )}
       </View>
-      <View style={styles.folderTop} />
-      <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT600}]}>
-        {content.folder}
-      </Text>
-      <View style={styles.titleTop} />
-      <Text style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900}]}>
-        {content.title}
-      </Text>
-      <View style={styles.footerTop} />
+      <View style={styles.mainContainer}>
+        <View style={styles.textContainer}>
+          <Text style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900}]}>
+            {content.title}
+          </Text>
+          <View style={styles.descriptionTop} />
+          <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT500}]}>
+            {content.description}
+          </Text>
+        </View>
+        <View style={styles.cardImageContainer}>
+          {content.imageUrl && imageLoading && <LoadingScreen />}
+          {content.imageUrl ? (
+            <Image
+              source={{uri: content.imageUrl}}
+              style={styles.image}
+              onLoad={handleImageLoad}
+              onError={handleImageLoad}
+            />
+          ) : (
+            <CardImage width={76} height={76} />
+          )}
+        </View>
+      </View>
       <View style={styles.footer}>
         <View style={styles.footerFront}>
           <Text style={[FONTS.CAPTION_REGULAR, {color: theme.TEXT500}]}>
@@ -102,25 +107,34 @@ const LargeCard = ({content}: LargeCardProps) => {
   );
 };
 
-export default LargeCard;
+export default SmallCard;
 
 const styles = StyleSheet.create({
   container: {
     width: screenWidth,
     paddingVertical: 16,
-  },
-  cardImageContainer: {
-    width: screenWidth,
-    height: cardHeight,
-    borderRadius: 8,
-    overflow: 'hidden',
-    position: 'relative',
+    gap: 8,
   },
   dotPosition: {
-    position: 'absolute',
-    top: 12,
-    right: 12,
-    zIndex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  mainContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 24,
+  },
+  textContainer: {
+    flexShrink: 1,
+  },
+  descriptionTop: {
+    height: 8,
+  },
+  cardImageContainer: {
+    width: 76,
+    height: 76,
+    borderRadius: 8,
+    overflow: 'hidden',
   },
   image: {
     width: '100%',
@@ -138,14 +152,5 @@ const styles = StyleSheet.create({
   footerFront: {
     flexDirection: 'row',
     gap: 12,
-  },
-  folderTop: {
-    marginTop: 12,
-  },
-  titleTop: {
-    marginTop: 4,
-  },
-  footerTop: {
-    marginTop: 8,
   },
 });
