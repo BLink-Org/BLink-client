@@ -1,0 +1,121 @@
+[
+  {
+    "imageUrl": "https://picsum.photos/231",
+    "title": "기술 혁신",
+    "description": "01. AI와 미래 기술",
+    "saveDay": "2024-01-10",
+    "hostname": "techcrunch.com"
+  },
+  {
+    "imageUrl": null,
+    "title": "마케팅 전략",
+    "description": "02. 데이터 중심의 마케팅",
+    "saveDay": "2024-02-20",
+    "hostname": "forbes.com"
+  },
+  {
+    "imageUrl": null,
+    "title": "경제 동향",
+    "description": "03. 글로벌 경제 분석",
+    "saveDay": "2024-03-15",
+    "hostname": "economist.com"
+  },
+  {
+    "imageUrl": "https://picsum.photos/213",
+    "title": "건강과 웰빙",
+    "description": "04. 건강을 위한 습관",
+    "saveDay": "2024-04-25",
+    "hostname": "healthline.com"
+  },
+  {
+    "imageUrl": null,
+    "title": "비즈니스 성장",
+    "description": "05. 스타트업 성공 사례",
+    "saveDay": "2024-05-30",
+    "hostname": "businessinsider.com"
+  },
+  {
+    "imageUrl": null,
+    "title": "환경 보호",
+    "description": "06. 지속 가능한 발전",
+    "saveDay": "2024-06-05",
+    "hostname": "nationalgeographic.com"
+  },
+  {
+    "imageUrl": "https://picsum.photos/342",
+    "title": "교육 혁신",
+    "description": "07. 온라인 교육의 미래",
+    "saveDay": "2024-07-18",
+    "hostname": "edutopia.org"
+  },
+  {
+    "imageUrl": null,
+    "title": "사회 변화",
+    "description": "08. 사회적 기업의 역할",
+    "saveDay": "2024-08-22",
+    "hostname": "huffpost.com"
+  },
+  {
+    "imageUrl": null,
+    "title": "문화 예술",
+    "description": "09. 예술과 창의성",
+    "saveDay": "2024-09-10",
+    "hostname": "artsy.net"
+  },
+  {
+    "imageUrl": "https://picsum.photos/414",
+    "title": "여행 가이드",
+    "description": "10. 최고의 여행지",
+    "saveDay": "2024-10-05",
+    "hostname": "lonelyplanet.com"
+  },
+  {
+    "imageUrl": null,
+    "title": "음악과 미디어",
+    "description": "11. 음악 산업의 변화",
+    "saveDay": "2024-11-15",
+    "hostname": "rollingstone.com"
+  },
+  {
+    "imageUrl": null,
+    "title": "패션 트렌드",
+    "description": "12. 최신 패션 동향",
+    "saveDay": "2024-12-01",
+    "hostname": "vogue.com"
+  },
+  {
+    "imageUrl": "https://picsum.photos/2123",
+    "title": "과학 탐구",
+    "description": "13. 최신 과학 발견",
+    "saveDay": "2024-12-20",
+    "hostname": "scientificamerican.com"
+  },
+  {
+    "imageUrl": null,
+    "title": "테크 리뷰",
+    "description": "14. 최신 기술 리뷰",
+    "saveDay": "2025-01-10",
+    "hostname": "wired.com"
+  },
+  {
+    "imageUrl": null,
+    "title": "건축 디자인",
+    "description": "15. 혁신적인 건축물",
+    "saveDay": "2025-02-25",
+    "hostname": "archdaily.com"
+  },
+  {
+    "imageUrl": "https://picsum.photos/2123",
+    "title": "요리 레시피",
+    "description": "16. 건강한 요리법",
+    "saveDay": "2025-03-12",
+    "hostname": "bonappetit.com"
+  },
+  {
+    "imageUrl": null,
+    "title": "스포츠 분석",
+    "description": "17. 스포츠 경기 예측",
+    "saveDay": "2025-04-18",
+    "hostname": "espn.com"
+  }
+]
