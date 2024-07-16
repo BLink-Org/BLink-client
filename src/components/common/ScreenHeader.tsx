@@ -20,6 +20,7 @@ export default ScreenHeader;
 const styles = StyleSheet.create({
   container: {
     height: 60,
+    paddingHorizontal: 18,
     justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'row',

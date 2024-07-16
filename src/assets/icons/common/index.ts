@@ -1,3 +1,5 @@
 import LogoImage from './logo.svg';
+import BookmarkUnselectedIcon from './bookmark-unselected.svg';
+import BookmarkSelectedIcon from './bookmark-selected.svg';
 
-export {LogoImage};
+export {LogoImage, BookmarkUnselectedIcon, BookmarkSelectedIcon};
