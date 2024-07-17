@@ -1,6 +1,9 @@
 import UIKit
 
 class CustomShareViewController: UIViewController {
+
+    var folderButtons: [UIButton] = []
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -10,6 +13,7 @@ class CustomShareViewController: UIViewController {
         self.view.addSubview(textField)
         self.view.addSubview(folderLabel)
         self.view.addSubview(folderButton)
+        setupFolderButtons()
         setupViews()
         fetchSharedURL()
     }
@@ -49,7 +53,7 @@ class CustomShareViewController: UIViewController {
         button.setTitleColor(.blue, for: .normal)
         button.contentHorizontalAlignment = .trailing
         button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-        // button.addTarget(self, action: #selector(addNewFolder), for: .touchUpInside)
+        button.addTarget(self, action: #selector(addNewFolder(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -63,6 +67,56 @@ class CustomShareViewController: UIViewController {
 
         return textField
     }()
+
+    private func setupFolderButtons() {
+        let button1 = createFolderButton(title: "기본 폴더")
+        let button2 = createFolderButton(title: "JavaScript")
+
+        folderButtons = [button1, button2]
+        folderButtons.forEach { self.view.addSubview($0) }
+
+        updateFolderButtonLayout()
+    }
+
+    private func createFolderButton(title: String) -> UIButton {
+        let button = UIButton(type: .system)
+        button.setTitle(title, for: .normal)
+        button.setTitleColor(.blue, for: .normal)
+        button.contentHorizontalAlignment = .trailing
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }
+
+    private func updateFolderButtonLayout() {
+        for (index, button) in folderButtons.enumerated() {
+            button.topAnchor.constraint(equalTo: folderLabel.bottomAnchor, constant: CGFloat(index * 40 + 20)).isActive = true
+            button.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        }
+    }
+
+    @objc private func addNewFolder(_ sender: UIButton) {
+        let alertController = UIAlertController(title: "새로운 폴더 추가", message: "폴더 이름을 입력하세요", preferredStyle: .alert)
+        alertController.addTextField { textField in
+            textField.placeholder = "폴더 이름"
+        }
+        let addAction = UIAlertAction(title: "추가", style: .default) { [weak self] _ in
+            guard let folderName = alertController.textFields?.first?.text else { return }
+            self?.createAndAddFolderButton(title: folderName)
+        }
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        alertController.addAction(addAction)
+        alertController.addAction(cancelAction)
+        present(alertController, animated: true, completion: nil)
+    }
+
+    private func createAndAddFolderButton(title: String) {
+        let newButton = createFolderButton(title: title)
+        folderButtons.append(newButton)
+        view.addSubview(newButton)
+
+        updateFolderButtonLayout()
+    }
 
     private func setupViews() {
         NSLayoutConstraint.activate([
