@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   RefreshControl,
   type ListRenderItem,
+  Animated,
 } from 'react-native';
 import {FONTS} from '@/constants';
 import ThemeBackground from '@/components/common/ThemeBackground';
@@ -21,10 +22,13 @@ import DropdownFilter from '@/components/home/DropDownFilter';
 import dummyFileData from '@/constants/dummy-data/dummy-file-list.json';
 import useSortedData from '@/hooks/useSortedData';
 import {type IFileList} from '@/types/home';
+import useStickyAnimation from '@/hooks/useStickyAnimation';
 
 const Home = () => {
   const {t} = useTranslation();
   const {theme} = useThemeStore();
+
+  const {translateY, opacity, handleScroll} = useStickyAnimation();
 
   const sortingOptions = [
     t('최근 저장순'),
@@ -113,19 +117,36 @@ const Home = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ThemeBackground />
-      <ScreenHeader />
-      <FlatList
-        data={sortedData}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()}
-        ListHeaderComponent={ListHeaderComponent}
-        contentContainerStyle={styles.contentContainer}
-        initialNumToRender={10}
-        windowSize={10}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      />
+      <View>
+        <Animated.View
+          style={[
+            styles.header,
+            {
+              transform: [{translateY}],
+              opacity,
+            },
+          ]}>
+          <ScreenHeader />
+        </Animated.View>
+
+        <FlatList
+          data={sortedData}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => index.toString()}
+          ListHeaderComponent={ListHeaderComponent}
+          contentContainerStyle={styles.contentContainer}
+          initialNumToRender={10}
+          windowSize={10}
+          onScroll={handleScroll}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              progressViewOffset={60}
+            />
+          }
+        />
+      </View>
     </SafeAreaView>
   );
 };
@@ -136,7 +157,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1,
+    backgroundColor: 'white',
+  },
   contentContainer: {
+    paddingTop: 60,
     paddingHorizontal: 18,
   },
   titleContainer: {
