@@ -6,6 +6,12 @@ class CustomShareViewController: UIViewController {
 
         self.view.backgroundColor = .white
         setupNavBar()
+        self.view.addSubview(titleLabel)
+        self.view.addSubview(textField)
+        self.view.addSubview(folderLabel)
+        self.view.addSubview(folderButton)
+        setupViews()
+        fetchSharedURL()
     }
 
     private func setupNavBar() {
@@ -19,7 +25,81 @@ class CustomShareViewController: UIViewController {
         self.navigationItem.setRightBarButton(itemDone, animated: false)
     }
 
-    // 3: Define the actions for the navigation items
+    private lazy var titleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "링크"
+        label.font = UIFont.boldSystemFont(ofSize: 18)
+        label.textColor = .black
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    private lazy var folderLabel: UILabel = {
+        let label = UILabel()
+        label.text = "폴더"
+        label.font = UIFont.boldSystemFont(ofSize: 18)
+        label.textColor = .black
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    private lazy var folderButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("+ 새로운 폴더", for: .normal)
+        button.setTitleColor(.blue, for: .normal)
+        button.contentHorizontalAlignment = .trailing
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        // button.addTarget(self, action: #selector(addNewFolder), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+
+    private lazy var textField: UITextField = {
+        let textField = UITextField()
+        textField.text = "링크 저장"
+        textField.textColor = .black
+        textField.backgroundColor = .white
+        textField.translatesAutoresizingMaskIntoConstraints = false
+
+        return textField
+    }()
+
+    private func setupViews() {
+        NSLayoutConstraint.activate([
+            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+
+            textField.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
+            textField.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 20),
+            textField.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -20),
+            textField.heightAnchor.constraint(equalToConstant: 44),
+
+            folderLabel.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 20),
+            folderLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+
+            folderButton.topAnchor.constraint(equalTo: textField.bottomAnchor, constant: 20),
+            folderButton.leadingAnchor.constraint(equalTo: folderLabel.trailingAnchor, constant: 8),
+            folderButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+        ])
+    }
+
+    private func fetchSharedURL() {
+        guard let inputItems = extensionContext?.inputItems as? [NSExtensionItem], !inputItems.isEmpty,
+            let item = inputItems.first,
+            let itemProvider = item.attachments?.first,
+            itemProvider.hasItemConformingToTypeIdentifier("public.url") else {
+                return
+            }
+
+        itemProvider.loadItem(forTypeIdentifier: "public.url", options: nil) { [weak self] (url, error) in
+            guard let self = self, let url = url as? URL else { return }
+            
+            DispatchQueue.main.async {
+                self.textField.text = url.absoluteString
+            }
+        }
+    }
+
     @objc private func cancelAction () {
         let error = NSError(domain: "some.bundle.identifier", code: 0, userInfo: [NSLocalizedDescriptionKey: "An error description"])
         extensionContext?.cancelRequest(withError: error)
