@@ -73,27 +73,46 @@ class CustomShareViewController: UIViewController {
         let button2 = createFolderButton(title: "JavaScript")
 
         folderButtons = [button1, button2]
-        folderButtons.forEach { self.view.addSubview($0) }
+        folderButtons.forEach { button in
+            button.addTarget(self, action: #selector(folderButtonTapped(_:)), for: .touchUpInside)
+            button.adjustsImageWhenHighlighted = false
+            self.view.addSubview(button)
+        }
 
         updateFolderButtonLayout()
     }
 
     private func createFolderButton(title: String) -> UIButton {
-        let button = UIButton(type: .system)
+        let button = UIButton(type: .custom)
         button.setTitle(title, for: .normal)
-        button.setTitleColor(.blue, for: .normal)
-        button.contentHorizontalAlignment = .trailing
+        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.white, for: .selected)
+        button.contentHorizontalAlignment = .center
+        button.backgroundColor = UIColor(red: 247/255, green: 249/255, blue: 251/255, alpha: 1.0) // 초기 배경색 설정
+        button.layer.cornerRadius = 5
         button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        button.addTarget(self, action: #selector(folderButtonTapped(_:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }
 
     private func updateFolderButtonLayout() {
-        for (index, button) in folderButtons.enumerated() {
-            button.topAnchor.constraint(equalTo: folderLabel.bottomAnchor, constant: CGFloat(index * 40 + 20)).isActive = true
-            button.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+    var previousButton: UIButton?
+
+    for button in folderButtons {
+        button.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        button.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20).isActive = true
+        button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20).isActive = true
+
+        if let previousButton = previousButton {
+            button.topAnchor.constraint(equalTo: previousButton.bottomAnchor, constant: 15).isActive = true
+        } else {
+            button.topAnchor.constraint(equalTo: folderLabel.bottomAnchor, constant: 15).isActive = true
         }
+        previousButton = button
     }
+}
+
 
     @objc private func addNewFolder(_ sender: UIButton) {
         let alertController = UIAlertController(title: "새로운 폴더 추가", message: "폴더 이름을 입력하세요", preferredStyle: .alert)
@@ -116,6 +135,16 @@ class CustomShareViewController: UIViewController {
         view.addSubview(newButton)
 
         updateFolderButtonLayout()
+    }
+
+    @objc private func folderButtonTapped(_ sender: UIButton) {
+        sender.isSelected.toggle() // 선택 상태를 토글
+
+        if sender.isSelected {
+            sender.backgroundColor = UIColor(red: 109/255, green: 150/255, blue: 255/255, alpha: 1.0) // 선택된 배경색
+        } else {
+            sender.backgroundColor = UIColor(red: 247/255, green: 249/255, blue: 251/255, alpha: 1.0) // 기본 배경색
+        }
     }
 
     private func setupViews() {
