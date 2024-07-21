@@ -1,6 +1,6 @@
 import {create} from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {themes, type Theme} from '@/constants/theme';
+import {THEMES, type Theme} from '@/constants/theme';
 
 interface ThemeStore {
   theme: Theme;
@@ -10,19 +10,19 @@ interface ThemeStore {
 }
 
 export const useThemeStore = create<ThemeStore>(set => ({
-  theme: themes[1], // 기본 테마는 1번
+  theme: THEMES[1], // 기본 테마는 1번
   setTheme: (themeNumber: number) => {
-    set({theme: themes[themeNumber]});
+    set({theme: THEMES[themeNumber]});
   },
   asyncSetTheme: async (themeNumber: number) => {
     await AsyncStorage.setItem('theme', themeNumber.toString());
-    set({theme: themes[themeNumber]});
+    set({theme: THEMES[themeNumber]});
   },
   restoreTheme: () => {
     void (async () => {
       const savedTheme = await AsyncStorage.getItem('theme');
       if (savedTheme !== null) {
-        set({theme: themes[parseInt(savedTheme, 10)]});
+        set({theme: THEMES[parseInt(savedTheme, 10)]});
       }
     })();
   },

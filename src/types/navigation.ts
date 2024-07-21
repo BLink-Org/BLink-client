@@ -23,6 +23,8 @@ export type MyPageRouteProp = RouteProp<BottomTabParamList, 'mypage'>;
 export interface RootStackParamList {
   [key: string]: object | undefined; // 인덱스 시그니처 추가
   Main: undefined;
+  ThemeSetting: undefined;
+  WebViewTest: undefined;
   // ex> DetailPhoto: {image: {path: string; creationDate: string}};
 }
 
