@@ -3,11 +3,15 @@ import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {LogoImage} from '@/assets/icons/common';
 import {SidebarIcon} from '@/assets/icons/home';
 
-const ScreenHeader = () => {
+interface ScreenHeaderProps {
+  toggleSideBar: () => void;
+}
+
+const ScreenHeader = ({toggleSideBar}: ScreenHeaderProps) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity>
-        <SidebarIcon />
+        <SidebarIcon onPress={toggleSideBar} />
       </TouchableOpacity>
       <LogoImage />
       <View style={styles.rightSpace} />

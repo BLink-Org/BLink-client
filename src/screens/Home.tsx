@@ -23,12 +23,19 @@ import dummyFileData from '@/constants/dummy-data/dummy-file-list.json';
 import useSortedData from '@/hooks/useSortedData';
 import {type IFileList} from '@/types/home';
 import useStickyAnimation from '@/hooks/useStickyAnimation';
+import FolderSideBar from '@/components/modal/FolderSideBar';
 
 const Home = () => {
   const {t} = useTranslation();
   const {theme} = useThemeStore();
 
   const {translateY, opacity, handleScroll} = useStickyAnimation();
+
+  // 폴더 사이드바 토글
+  const [isSideBarVisible, setIsSideBarVisible] = useState(false);
+  const toggleSideBar = () => {
+    setIsSideBarVisible(!isSideBarVisible);
+  };
 
   const sortingOptions = [
     t('최근 저장순'),
@@ -118,6 +125,10 @@ const Home = () => {
     <SafeAreaView style={styles.container}>
       <ThemeBackground />
       <View>
+        <FolderSideBar
+          isSideBarVisible={isSideBarVisible}
+          toggleSideBar={toggleSideBar}
+        />
         <Animated.View
           style={[
             styles.header,
@@ -126,7 +137,7 @@ const Home = () => {
               opacity,
             },
           ]}>
-          <ScreenHeader />
+          <ScreenHeader toggleSideBar={toggleSideBar} />
         </Animated.View>
 
         <FlatList
