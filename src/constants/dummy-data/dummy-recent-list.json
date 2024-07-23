@@ -1,0 +1,42 @@
+[
+  {
+    "imageUrl": "https://picsum.photos/231",
+    "title": "AI와 미래 기술 혁신 타이틀이 매우 긴 경우 AI와 미래 기술 혁신 타이틀이 매우 긴 경우 AI와 미래 기술 혁신 타이틀이 매우 긴 경우 AI와 미래 기술 혁신 타이틀이 매우 긴 경우 ",
+    "description": "인공지능과 미래 기술! 본문이 긴경우 본문이 긴경우 본문이 긴경우 본문이 긴경우",
+    "saveDay": "2026-01-10",
+    "hostname": "techcrunch.com",
+    "folder": "기술"
+  },
+  {
+    "imageUrl": null,
+    "title": "데이터 중심의 마케팅 전략",
+    "description": "효과적인 마케팅을 위해 데이터를 어떻게 활용할 수 있을까? 본문이 긴경우 본문이 긴경우 본문이 긴경우 본문이 긴경우",
+    "saveDay": "2026-01-09",
+    "hostname": "forbes.com",
+    "folder": "마케팅"
+  },
+  {
+    "imageUrl": null,
+    "title": "글로벌 경제 분석",
+    "description": "세계 경제의 현재 상태와 미래 전망에 대해 전문가들이 제공하는 통찰력 있는 분석입니다.",
+    "saveDay": "2024-03-15",
+    "hostname": "economist.com",
+    "folder": "경제"
+  },
+  {
+    "imageUrl": "https://picsum.photos/213",
+    "title": "건강을 위한 일상 습관",
+    "description": "건강한 삶을 위한 일상적인 습관과 실천 방법을 소개하는 유익한 기사입니다.",
+    "saveDay": "2024-04-25",
+    "hostname": "healthline.com",
+    "folder": "건강"
+  },
+  {
+    "imageUrl": null,
+    "title": "스타트업 성공 사례",
+    "description": "성공적인 스타트업의 사례를 통해 비즈니스 성장을 위한 전략을 제시합니다.",
+    "saveDay": "2024-05-30",
+    "hostname": "businessinsider.com",
+    "folder": "비즈니스"
+  }
+]
