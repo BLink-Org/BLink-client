@@ -1,38 +1,30 @@
 import React, {useState, useRef} from 'react';
 import {useNavigation} from '@react-navigation/native';
-import {
-  Button,
-  View,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  Share,
-} from 'react-native';
+import {View, StyleSheet, Text, TouchableOpacity, Share} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {WebView} from 'react-native-webview';
 import TestModal from '@/components/modal/TestModal';
+import {
+  ArrowBackIcon,
+  RefreshIcon,
+  SaveIcon,
+  ShareIcon,
+  BookmarkSelectedIcon,
+  ContentBackIcon,
+  ContentFrontIcon,
+  // BookmarkUnselectedIcon,
+} from '@/assets/icons/webview';
+import {FONTS} from '@/constants';
+import {extractHostname} from '@/utils/url-utils';
 import type {WebViewNavigation} from 'react-native-webview';
 
 const webViews: string[] = [
-  'https://www.naver.com',
+  'https://www.naver.com/',
   'https://www.google.com',
   'https://www.youtube.com',
   'https://www.gmail.com',
-  'https://www.wikipedia.org',
+  'https://www.instagram.com',
 ];
-
-// 추후 util 폴더로..!
-const extractHostname = (url: string) => {
-  let hostname;
-  if (url.includes('//')) {
-    hostname = url.split('/')[2];
-  } else {
-    hostname = url.split('/')[0];
-  }
-  hostname = hostname.split(':')[0];
-  hostname = hostname.split('?')[0];
-  return hostname;
-};
 
 const WebViewList = () => {
   const navigation = useNavigation();
@@ -69,6 +61,10 @@ const WebViewList = () => {
   const openModal = () => {
     setModalVisible(true);
   };
+  const saveBookmark = () => {
+    // 북마크 저장
+    console.log('북마크 저장');
+  };
 
   const shareUrl = () => {
     Share.share({
@@ -83,14 +79,15 @@ const WebViewList = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.navigationContainer}>
         <TouchableOpacity onPress={goBackPage}>
-          <Text style={styles.navButton}>Back</Text>
+          <ArrowBackIcon />
         </TouchableOpacity>
         <View style={styles.urlTextHolder}>
-          <Text style={styles.urlText}>{extractHostname(currentUrl)}</Text>
-          {/* <Text style={styles.urlText}>{currentUrl}</Text> */}
+          <Text style={[FONTS.BODY2_REGULAR, {color: '#333D4B'}]}>
+            {extractHostname(currentUrl)}
+          </Text>
         </View>
         <TouchableOpacity onPress={reloadPage}>
-          <Text style={styles.navButton}>Refresh</Text>
+          <RefreshIcon />
         </TouchableOpacity>
       </View>
       <WebView
@@ -100,14 +97,33 @@ const WebViewList = () => {
         onNavigationStateChange={handleNavigationStateChange}
       />
       <View style={styles.buttonContainer}>
-        <Button title="공유" onPress={shareUrl} />
-        <Button title="저장" onPress={openModal} />
-        <Button title="<" onPress={goBack} disabled={currentIndex === 0} />
-        <Button
-          title=">"
-          onPress={goForward}
-          disabled={currentIndex === webViews.length - 1}
-        />
+        <TouchableOpacity onPress={shareUrl}>
+          <ShareIcon />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={openModal}>
+          <SaveIcon />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={saveBookmark}>
+          <BookmarkSelectedIcon />
+        </TouchableOpacity>
+        <View style={styles.backForwardButton}>
+          <TouchableOpacity onPress={goBack} disabled={currentIndex === 0}>
+            {currentIndex === 0 ? (
+              <ContentBackIcon fill="lightgray" />
+            ) : (
+              <ContentBackIcon fill="black" />
+            )}
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={goForward}
+            disabled={currentIndex === webViews.length - 1}>
+            {currentIndex === webViews.length - 1 ? (
+              <ContentFrontIcon fill="lightgray" />
+            ) : (
+              <ContentFrontIcon fill="black" />
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* 임시 저장모달  */}
@@ -123,12 +139,14 @@ const WebViewList = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white',
   },
   webView: {
     flex: 1,
   },
   buttonContainer: {
-    height: 40,
+    height: 50,
+    paddingHorizontal: 12,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
@@ -136,24 +154,26 @@ const styles = StyleSheet.create({
   navigationContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 10,
+    paddingTop: 16,
+    paddingBottom: 8,
+    paddingHorizontal: 18,
+    gap: 12,
     alignItems: 'center',
   },
-  urlText: {
-    flex: 1,
-    textAlign: 'center',
-    color: 'black',
-  },
-  navButton: {
-    color: 'blue',
-  },
+
   urlTextHolder: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: 'black',
-    borderRadius: 2,
-    paddingHorizontal: 10,
-    marginHorizontal: 10,
+    height: 37,
+    justifyContent: 'center',
+    backgroundColor: '#ECF1F5',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+  },
+  backForwardButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    gap: 8,
   },
 });
 
