@@ -1,12 +1,19 @@
-import {useRef} from 'react';
+import {useEffect, useRef} from 'react';
 import {
   Animated,
   type NativeScrollEvent,
   type NativeSyntheticEvent,
 } from 'react-native';
 
-const useStickyAnimation = () => {
+// 스크롤을 활성화/비활성화하는 prop 추가
+const useStickyAnimation = (refreshing: boolean) => {
   const scrollY = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (refreshing) {
+      scrollY.setValue(0);
+    }
+  }, [refreshing]);
 
   const clampedScrollY = Animated.diffClamp(scrollY, 0, 60);
   const translateY = clampedScrollY.interpolate({
@@ -15,14 +22,11 @@ const useStickyAnimation = () => {
     extrapolate: 'clamp',
   });
 
-  const opacity = clampedScrollY.interpolate({
-    inputRange: [0, 30],
-    outputRange: [1, 0],
-    extrapolate: 'clamp',
-  });
-
-  // bounce 방지
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (refreshing) {
+      return;
+    }
+
     const currentScrollY = event.nativeEvent.contentOffset.y;
     const contentHeight = event.nativeEvent.contentSize.height;
     const viewHeight = event.nativeEvent.layoutMeasurement.height;
@@ -31,7 +35,7 @@ const useStickyAnimation = () => {
     }
   };
 
-  return {translateY, opacity, handleScroll};
+  return {translateY, handleScroll};
 };
 
 export default useStickyAnimation;
