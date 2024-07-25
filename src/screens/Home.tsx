@@ -29,8 +29,6 @@ const Home = () => {
   const {t} = useTranslation();
   const {theme} = useThemeStore();
 
-  const {translateY, opacity, handleScroll} = useStickyAnimation();
-
   // 폴더 사이드바 토글
   const [isSideBarVisible, setIsSideBarVisible] = useState(false);
   const toggleSideBar = () => {
@@ -71,6 +69,9 @@ const Home = () => {
       setRefreshing(false);
     }, 1000);
   }, []);
+
+  // sticky header 애니메이션
+  const {translateY, handleScroll} = useStickyAnimation(refreshing);
 
   // FlatList Header 영역
   const ListHeaderComponent = () => {
@@ -124,7 +125,7 @@ const Home = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ThemeBackground />
-      <View>
+      <View style={styles.mainContainer}>
         <FolderSideBar
           isSideBarVisible={isSideBarVisible}
           toggleSideBar={toggleSideBar}
@@ -134,7 +135,6 @@ const Home = () => {
             styles.header,
             {
               transform: [{translateY}],
-              opacity,
             },
           ]}>
           <ScreenHeader toggleSideBar={toggleSideBar} />
@@ -167,6 +167,10 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  mainContainer: {
+    flex: 1,
+    overflow: 'hidden',
   },
   header: {
     position: 'absolute',

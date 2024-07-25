@@ -1,10 +1,20 @@
-import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import Modal from 'react-native-modal';
-import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
+import React, {useEffect, useRef, useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Modal as RNModal,
+  Animated,
+  Dimensions,
+  TouchableWithoutFeedback,
+  FlatList,
+} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {BackIcon, ForwardIcon} from '@/assets/icons/folder';
+import FolderButton, {type FolderButtonProps} from '../folder/FolderButton';
 
 interface FolderSideBarProps {
   isSideBarVisible: boolean;
@@ -18,18 +28,60 @@ const FolderSideBar = ({
   const {theme} = useThemeStore();
   const insets = useSafeAreaInsets();
 
+  const [visible, setVisible] = useState(isSideBarVisible);
+  const animation = useRef(
+    new Animated.Value(-Dimensions.get('window').width),
+  ).current;
+
+  useEffect(() => {
+    if (isSideBarVisible) {
+      setVisible(true);
+      Animated.timing(animation, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(animation, {
+        toValue: -Dimensions.get('window').width,
+        duration: 300,
+        useNativeDriver: true,
+      }).start(() => setVisible(false));
+    }
+  }, [isSideBarVisible]);
+
+  // TODO: delete mock data
+  interface FolderButtonData extends FolderButtonProps {
+    id: string;
+  }
+  const mockData: FolderButtonData[] = [
+    {id: '1', variants: 'pressed', name: '아티클', number: 17},
+    {id: '2', variants: 'activated', name: 'Netflix', number: 17},
+    {id: '3', variants: 'default', name: '기술 정보', number: 17},
+    {id: '4', variants: 'default', name: 'CMC', number: 17},
+    {id: '5', variants: 'default', name: '과학이야기', number: 17},
+  ];
+
   return (
-    <Modal
-      isVisible={isSideBarVisible}
-      onBackdropPress={toggleSideBar}
-      onSwipeComplete={toggleSideBar}
-      swipeDirection="left"
-      animationIn="slideInLeft"
-      animationOut="slideOutLeft"
-      backdropColor="transparent"
-      backdropOpacity={0}
-      style={styles.modal}>
-      <SafeAreaView style={[styles.modalContent, {paddingTop: insets.top}]}>
+    <RNModal
+      visible={visible}
+      onRequestClose={toggleSideBar}
+      transparent
+      animationType="none"
+      hardwareAccelerated
+      presentationStyle="overFullScreen"
+      style={styles.modalContent}>
+      <TouchableWithoutFeedback onPress={toggleSideBar}>
+        <View style={styles.overlay} />
+      </TouchableWithoutFeedback>
+      <Animated.View
+        style={[
+          styles.modalContent,
+          {
+            transform: [{translateX: animation}],
+            paddingTop: insets.top,
+          },
+        ]}>
         <TouchableOpacity onPress={toggleSideBar} style={styles.closeButton}>
           <BackIcon width={26} height={26} fill={theme.TEXT900} />
         </TouchableOpacity>
@@ -47,16 +99,29 @@ const FolderSideBar = ({
             <ForwardIcon />
           </TouchableOpacity>
         </View>
-      </SafeAreaView>
-    </Modal>
+        <View style={styles.folderList}>
+          <FlatList
+            data={mockData}
+            renderItem={({item}) => (
+              <FolderButton
+                variants={item.variants}
+                name={item.name}
+                number={item.number}
+              />
+            )}
+            keyExtractor={item => item.id}
+            ItemSeparatorComponent={() => <View style={styles.separator} />}
+            showsVerticalScrollIndicator={false}
+          />
+        </View>
+      </Animated.View>
+    </RNModal>
   );
 };
 
 const styles = StyleSheet.create({
-  modal: {
-    justifyContent: 'flex-start',
-    margin: 0,
-    flex: 1,
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
   },
   modalContent: {
     backgroundColor: 'white',
@@ -88,6 +153,13 @@ const styles = StyleSheet.create({
     width: 70,
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  folderList: {
+    height: 516,
+    paddingVertical: 20,
+  },
+  separator: {
+    height: 8,
   },
   closeButton: {
     height: 58,
