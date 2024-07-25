@@ -35,9 +35,11 @@ const WebViewList = () => {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [canGoBack, setCanGoBack] = useState<boolean>(false);
   const [canGoForward, setCanGoForward] = useState<boolean>(false);
+  const [webViewKey, setWebViewKey] = useState<number>(0);
 
   const handleNavigationStateChange = (navState: WebViewNavigation) => {
     setCurrentUrl(navState.url);
+    console.log('navState', navState);
     setCanGoBack(navState.canGoBack);
     setCanGoForward(navState.canGoForward);
   };
@@ -62,16 +64,14 @@ const WebViewList = () => {
   const goBack = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
-      setCanGoBack(false);
-      setCanGoForward(false);
+      setWebViewKey(prevKey => prevKey + 1);
     }
   };
 
   const goForward = () => {
     if (currentIndex < webViews.length - 1) {
       setCurrentIndex(currentIndex + 1);
-      setCanGoBack(false);
-      setCanGoForward(false);
+      setWebViewKey(prevKey => prevKey + 1);
     }
   };
 
@@ -110,6 +110,7 @@ const WebViewList = () => {
       </View>
       <WebView
         ref={webViewRef}
+        key={webViewKey}
         source={{uri: webViews[currentIndex]}}
         style={styles.webView}
         onNavigationStateChange={handleNavigationStateChange}
@@ -184,8 +185,7 @@ const styles = StyleSheet.create({
   navigationContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingTop: 16,
-    paddingBottom: 8,
+    paddingVertical: 8,
     paddingHorizontal: 18,
     gap: 12,
     alignItems: 'center',
