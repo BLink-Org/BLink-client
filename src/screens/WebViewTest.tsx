@@ -12,14 +12,14 @@ import {
   BookmarkSelectedIcon,
   ContentBackIcon,
   ContentFrontIcon,
-  // BookmarkUnselectedIcon,
 } from '@/assets/icons/webview';
 import {FONTS} from '@/constants';
 import {extractHostname} from '@/utils/url-utils';
+import NavigationButton from '@/components/webview/NavigationButton';
 import type {WebViewNavigation} from 'react-native-webview';
 
 const webViews: string[] = [
-  'https://www.naver.com/',
+  'https://www.naver.com',
   'https://www.google.com',
   'https://www.youtube.com',
   'https://www.gmail.com',
@@ -33,34 +33,52 @@ const WebViewList = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [currentUrl, setCurrentUrl] = useState<string>(webViews[currentIndex]);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [canGoBack, setCanGoBack] = useState<boolean>(false);
+  const [canGoForward, setCanGoForward] = useState<boolean>(false);
+
+  const handleNavigationStateChange = (navState: WebViewNavigation) => {
+    setCurrentUrl(navState.url);
+    setCanGoBack(navState.canGoBack);
+    setCanGoForward(navState.canGoForward);
+  };
 
   const goBackPage = () => {
     navigation.goBack();
   };
 
-  const goBack = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-    }
+  // 하나의 웹 뷰 내에서 뒤로가기, 앞으로가기, 새로고침
+  const directBack = () => {
+    webViewRef.current?.goBack();
   };
 
-  const goForward = () => {
-    if (currentIndex < webViews.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    }
+  const directFront = () => {
+    webViewRef.current?.goForward();
   };
 
   const reloadPage = () => {
     webViewRef.current?.reload();
   };
 
-  const handleNavigationStateChange = (navState: WebViewNavigation) => {
-    setCurrentUrl(navState.url);
+  const goBack = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+      setCanGoBack(false);
+      setCanGoForward(false);
+    }
+  };
+
+  const goForward = () => {
+    if (currentIndex < webViews.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+      setCanGoBack(false);
+      setCanGoForward(false);
+    }
   };
 
   const openModal = () => {
     setModalVisible(true);
   };
+
   const saveBookmark = () => {
     // 북마크 저장
     console.log('북마크 저장');
@@ -96,32 +114,43 @@ const WebViewList = () => {
         style={styles.webView}
         onNavigationStateChange={handleNavigationStateChange}
       />
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={shareUrl}>
-          <ShareIcon />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={openModal}>
-          <SaveIcon />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={saveBookmark}>
-          <BookmarkSelectedIcon />
-        </TouchableOpacity>
+      <View>
         <View style={styles.backForwardButton}>
-          <TouchableOpacity onPress={goBack} disabled={currentIndex === 0}>
-            {currentIndex === 0 ? (
-              <ContentBackIcon fill="lightgray" />
-            ) : (
+          <NavigationButton
+            onPress={() => goBack()}
+            disabled={currentIndex === 0}
+            label="이전"
+          />
+          <NavigationButton
+            onPress={() => goForward()}
+            disabled={currentIndex === webViews.length - 1}
+            label="다음"
+          />
+        </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity onPress={directBack} disabled={!canGoBack}>
+            {canGoBack ? (
               <ContentBackIcon fill="black" />
+            ) : (
+              <ContentBackIcon fill="lightgray" />
             )}
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={goForward}
-            disabled={currentIndex === webViews.length - 1}>
-            {currentIndex === webViews.length - 1 ? (
-              <ContentFrontIcon fill="lightgray" />
-            ) : (
+          <TouchableOpacity onPress={directFront} disabled={!canGoForward}>
+            {canGoForward ? (
               <ContentFrontIcon fill="black" />
+            ) : (
+              <ContentFrontIcon fill="lightgray" />
             )}
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={shareUrl}>
+            <ShareIcon />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={openModal}>
+            <SaveIcon />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={saveBookmark}>
+            <BookmarkSelectedIcon />
           </TouchableOpacity>
         </View>
       </View>
@@ -145,8 +174,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   buttonContainer: {
-    height: 50,
-    paddingHorizontal: 12,
+    paddingTop: 8,
+    paddingBottom: 4,
+    paddingHorizontal: 4,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
@@ -160,7 +190,6 @@ const styles = StyleSheet.create({
     gap: 12,
     alignItems: 'center',
   },
-
   urlTextHolder: {
     flex: 1,
     height: 37,
@@ -170,10 +199,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   backForwardButton: {
+    paddingVertical: 8,
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'flex-end',
+    paddingRight: 18,
     alignItems: 'center',
-    gap: 8,
+    gap: 16,
   },
 });
 
