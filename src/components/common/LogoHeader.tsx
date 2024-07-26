@@ -3,7 +3,7 @@ import {StyleSheet, View} from 'react-native';
 import {LogoImage} from '@/assets/icons/common';
 
 // 추후 common Header에 통합하기
-const BookmarkHeader = () => {
+const LogoHeader = () => {
   return (
     <View style={styles.container}>
       <LogoImage />
@@ -11,7 +11,7 @@ const BookmarkHeader = () => {
   );
 };
 
-export default BookmarkHeader;
+export default LogoHeader;
 
 const styles = StyleSheet.create({
   container: {

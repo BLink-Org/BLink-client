@@ -22,7 +22,7 @@ import dummyFileData from '@/constants/dummy-data/dummy-file-list.json';
 import useSortedData from '@/hooks/useSortedData';
 import {type IFileList} from '@/types/home';
 import useStickyAnimation from '@/hooks/useStickyAnimation';
-import BookmarkHeader from '@/components/bookmark/BookmarkHeader';
+import LogoHeader from '@/components/common/LogoHeader';
 
 const Bookmark = () => {
   const {t} = useTranslation();
@@ -126,7 +126,7 @@ const Bookmark = () => {
               transform: [{translateY}],
             },
           ]}>
-          <BookmarkHeader />
+          <LogoHeader />
         </Animated.View>
 
         <FlatList
