@@ -30,6 +30,7 @@ export interface RootStackParamList {
   AccountManage: {email: string};
   Setting: undefined;
   Trash: undefined;
+  WebViewInfo: {info: {url: string; title: string}};
   // ex> DetailPhoto: {image: {path: string; creationDate: string}};
 }
 

@@ -8,6 +8,7 @@ import AccountDelete from '@/screens/AccountDelete';
 import AccountManage from '@/screens/AccountManage';
 import Setting from '@/screens/Setting';
 import Trash from '@/screens/Trash';
+import WebViewInfo from '@/screens/WebViewInfo';
 import BottomTabNavigation from './BottomTabNavigation';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -20,6 +21,11 @@ const GlobalNavigation = () => {
       <Stack.Screen
         name="WebViewTest"
         component={WebViewTest}
+        options={{animation: 'slide_from_bottom'}}
+      />
+      <Stack.Screen
+        name="WebViewInfo"
+        component={WebViewInfo}
         options={{animation: 'slide_from_bottom'}}
       />
       <Stack.Screen name="Support" component={Support} />
