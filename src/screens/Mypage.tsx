@@ -2,7 +2,6 @@ import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {
   View,
-  Button,
   StyleSheet,
   Text,
   SafeAreaView,
@@ -34,8 +33,13 @@ import NavigationInfo from '@/components/mypage/NavigationInfo';
 // };
 
 const MyPage = () => {
-  // const navigation = useNavigation<RootStackNavigationProp>();
+  const navigation = useNavigation<RootStackNavigationProp>();
   const {theme} = useThemeStore();
+
+  // 테마 설정 클릭 시
+  const handleThemeSetting = () => {
+    navigation.navigate('ThemeSetting');
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -60,20 +64,20 @@ const MyPage = () => {
         </View>
         <View style={[styles.divider, {borderBottomColor: theme.TEXT200}]} />
         <View style={styles.navigationContainer}>
-          <TouchableOpacity>
-            <NavigationInfo title="테마 설정" />
+          <TouchableOpacity onPress={handleThemeSetting}>
+            <NavigationInfo title="테마 설정" themeColor={theme.TEXT800} />
           </TouchableOpacity>
           <TouchableOpacity>
-            <NavigationInfo title="환경 설정" />
+            <NavigationInfo title="환경 설정" themeColor={theme.TEXT800} />
           </TouchableOpacity>
           <TouchableOpacity>
-            <NavigationInfo title="휴지통" />
+            <NavigationInfo title="휴지통" themeColor={theme.TEXT800} />
           </TouchableOpacity>
           <TouchableOpacity>
-            <NavigationInfo title="지원" />
+            <NavigationInfo title="지원" themeColor={theme.TEXT800} />
           </TouchableOpacity>
           <TouchableOpacity>
-            <NavigationInfo title="로그 아웃" />
+            <NavigationInfo title="로그 아웃" themeColor={theme.TEXT800} />
           </TouchableOpacity>
         </View>
       </View>
