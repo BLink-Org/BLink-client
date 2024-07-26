@@ -64,6 +64,7 @@ const DropdownFilter = ({options, selectedOption, onSelect}: DropdownProps) => {
               onPress={() => handleSelect(option)}
               style={[
                 styles.item,
+                {borderBottomColor: theme.TEXT200},
                 {borderBottomWidth: index === options.length - 1 ? 0 : 1},
               ]}>
               <Text style={[FONTS.BODY2_MEDIUM, {color: theme.TEXT700}]}>
@@ -93,16 +94,15 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 12,
+      height: 10,
     },
-    shadowOpacity: 0.2,
-    shadowRadius: 16,
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
   },
   item: {
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
   },
 });
 
