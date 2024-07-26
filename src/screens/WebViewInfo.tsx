@@ -41,7 +41,7 @@ export default WebViewInfo;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    // backgroundColor: 'white',
   },
   flexContainer: {
     flex: 1,

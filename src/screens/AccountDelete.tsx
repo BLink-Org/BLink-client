@@ -1,10 +1,10 @@
 import {useState} from 'react';
 import {
-  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  SafeAreaView,
 } from 'react-native';
 import BackHeader from '@/components/common/BackHeader';
 import ThemeBackground from '@/components/common/ThemeBackground';
@@ -12,7 +12,7 @@ import {useThemeStore} from '@/store/useThemeStore';
 import {FONTS} from '@/constants';
 import StaticInfo from '@/components/mypage/StaticInfo';
 import {CheckBoxIcon, WarningIcon} from '@/assets/icons/mypage';
-import BottomCustomButton from '@/components/common/BottomCustomButton';
+import CustomBottomButton from '@/components/common/CustomBottomButton';
 
 const AccountDelete = () => {
   const {theme} = useThemeStore();
@@ -54,13 +54,13 @@ const AccountDelete = () => {
             원래의 계정 정보로{'\n'}B.Link를 계속 이용하실 수 있어요.
           </Text>
         </View>
-        <View style={styles.bottomContainer}>
-          <BottomCustomButton
+        <SafeAreaView style={styles.bottomContainer}>
+          <CustomBottomButton
             title="계정 삭제 철회하기"
             onPress={handleCancelDeleteAccount}
             isDisabled={false}
           />
-        </View>
+        </SafeAreaView>
       </SafeAreaView>
     );
   }
@@ -99,13 +99,13 @@ const AccountDelete = () => {
           계정 삭제 유의사항을 숙지했습니다.
         </Text>
       </View>
-      <View style={styles.bottomContainer}>
-        <BottomCustomButton
+      <SafeAreaView style={styles.bottomContainer}>
+        <CustomBottomButton
           title="계정 삭제 신청"
           onPress={handleDeleteAccount}
           isDisabled={!isChecked}
         />
-      </View>
+      </SafeAreaView>
     </SafeAreaView>
   );
 };

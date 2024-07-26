@@ -9,7 +9,7 @@ interface BottomCustomButtonProps {
   isDisabled?: boolean;
 }
 
-const BottomCustomButton = ({
+const CustomBottomButton = ({
   title,
   onPress,
   isDisabled,
@@ -38,7 +38,7 @@ const BottomCustomButton = ({
   );
 };
 
-export default BottomCustomButton;
+export default CustomBottomButton;
 
 const styles = StyleSheet.create({
   container: {
@@ -46,6 +46,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
+    marginRight: 1,
   },
   buttonContent: {
     width: '100%',
