@@ -1,8 +1,11 @@
 import {Text, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
+import {useModalStore} from '@/store/useModalStore';
+import AlertModal from '@/components/modal/AlertModal';
 
 interface ThemeCardProps {
+  id: number;
   name: string;
   price: string;
   mainColor: string;
@@ -11,6 +14,7 @@ interface ThemeCardProps {
 }
 
 const ThemeCard = ({
+  id,
   name,
   price,
   mainColor,
@@ -18,9 +22,20 @@ const ThemeCard = ({
   selected,
 }: ThemeCardProps) => {
   const {theme} = useThemeStore();
+  const {showModal, closeModal} = useModalStore();
+  const modalId = `themeConfirm-${id}`;
+
+  const handleSelect = () => {
+    showModal(modalId);
+  };
+
+  const handleConfirmSelect = () => {
+    onSelect();
+    closeModal(modalId);
+  };
 
   return (
-    <TouchableOpacity onPress={onSelect} style={styles.mainContainer}>
+    <TouchableOpacity onPress={handleSelect} style={styles.mainContainer}>
       <View
         style={[
           styles.card,
@@ -55,6 +70,16 @@ const ThemeCard = ({
           )}
         </View>
       </View>
+
+      {/* alertModal 처리 */}
+      <AlertModal
+        modalId={modalId}
+        headerText="선택한 테마를 적용하시겠어요?"
+        bodyText="테마는 즉시 적용돼요"
+        leftText="취소"
+        rightText="적용"
+        rightOnPress={handleConfirmSelect}
+      />
     </TouchableOpacity>
   );
 };

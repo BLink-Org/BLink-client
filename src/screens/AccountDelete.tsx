@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -13,9 +13,12 @@ import {FONTS} from '@/constants';
 import StaticInfo from '@/components/mypage/StaticInfo';
 import {CheckBoxIcon, WarningIcon} from '@/assets/icons/mypage';
 import CustomBottomButton from '@/components/common/CustomBottomButton';
+import AlertModal from '@/components/modal/AlertModal';
+import {useModalStore} from '@/store/useModalStore';
 
 const AccountDelete = () => {
   const {theme} = useThemeStore();
+  const {showModal, closeModal} = useModalStore();
   const [isChecked, setIsChecked] = useState<boolean>(false);
 
   // 계정 삭제 상태인지 아닌지 boolean 값으로 확인
@@ -26,17 +29,19 @@ const AccountDelete = () => {
     setIsChecked(!isChecked);
   };
 
-  // 계정 삭제 신청
   const handleDeleteAccount = () => {
-    console.log('계정 삭제 신청');
+    showModal('deleteConfirm');
   };
 
-  // 계정 삭제 철회하기
+  const handleConfirmDelete = () => {
+    console.log('계정 삭제 신청 처리');
+    closeModal('deleteConfirm');
+  };
+
   const handleCancelDeleteAccount = () => {
     console.log('계정 삭제 철회하기');
   };
 
-  // 계정 삭제 상태중 일 시 화면
   if (isDeletedState) {
     return (
       <SafeAreaView style={styles.container}>
@@ -106,6 +111,16 @@ const AccountDelete = () => {
           isDisabled={!isChecked}
         />
       </SafeAreaView>
+
+      {/* alertModal 처리 */}
+      <AlertModal
+        modalId="deleteConfirm"
+        headerText="계정 삭제 신청"
+        bodyText="계정 삭제를 신청하시겠습니까?"
+        leftText="취소"
+        rightText="삭제"
+        rightOnPress={handleConfirmDelete}
+      />
     </SafeAreaView>
   );
 };

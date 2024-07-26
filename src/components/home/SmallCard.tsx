@@ -1,4 +1,4 @@
-import React, {useState, useMemo} from 'react';
+import React, {useState, useMemo, useRef} from 'react';
 import {
   Dimensions,
   StyleSheet,
@@ -16,20 +16,81 @@ import {
 import {FONTS} from '@/constants';
 import {ThreeDotIcon} from '@/assets/icons/home';
 import {type IFileList} from '@/types/home';
+import {DeleteIcon, PencilIcon} from '@/assets/icons/mypage';
+import DropDownModal from '@/components/modal/DropDownModal';
+import {useModalStore} from '@/store/useModalStore';
+import AlertModal from '@/components/modal/AlertModal';
 
 const screenWidth = Dimensions.get('screen').width - 36;
 
 interface LargeCardProps {
   content: IFileList;
+  isTrash?: boolean;
 }
 
-const SmallCard = ({content}: LargeCardProps) => {
+const SmallCard = ({content, isTrash}: LargeCardProps) => {
   const {theme} = useThemeStore();
+  const {showModal, closeModal} = useModalStore();
+
   const CardImage = useMemo(() => {
     return theme.SMALL_CARD_IMAGE;
   }, [theme]);
 
-  // 토글 상태 관리
+  // 드롭다운 모달 관리
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const closeDropdown = () => setIsDropdownOpen(false);
+
+  const [anchorPosition, setAnchorPosition] = useState({x: 0, y: 0});
+  const buttonRef = useRef<TouchableOpacity>(null);
+
+  const toggleDropdown = () => {
+    buttonRef.current?.measure((x, y, width, height, pageX, pageY) => {
+      setIsDropdownOpen(true);
+      setAnchorPosition({x: pageX, y: pageY + height});
+    });
+  };
+
+  const handleSelect = (label: string) => {
+    const modalId = `trashOption-${label}`;
+    showModal(modalId);
+  };
+
+  const handleConfirmSelect = (label: string) => {
+    const modalId = `trashOption-${label}`;
+    if (label === '영구삭제') {
+      // 영구 삭제 api 연동
+      console.log('영구 삭제');
+    }
+    if (label === '복원') {
+      // 복원 api 연동
+      console.log('복원');
+    }
+    closeModal(modalId);
+  };
+
+  const trashOptions = useMemo(
+    () => [
+      {
+        label: '복원',
+        icon: <PencilIcon />,
+        onSelect: () => {
+          closeDropdown();
+          handleSelect('복원');
+        },
+      },
+      {
+        label: '영구삭제',
+        icon: <DeleteIcon />,
+        onSelect: () => {
+          closeDropdown();
+          handleSelect('영구삭제');
+        },
+      },
+    ],
+    [closeDropdown, handleSelect],
+  );
+
+  // 북마크 토글 상태 관리
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
   const toggleBookmark = () => {
     setIsBookmarked(!isBookmarked);
@@ -54,10 +115,19 @@ const SmallCard = ({content}: LargeCardProps) => {
         <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT600}]}>
           {content.folder}
         </Text>
-        <TouchableOpacity>
+        <TouchableOpacity ref={buttonRef} onPress={toggleDropdown}>
           <ThreeDotIcon />
         </TouchableOpacity>
+        {isDropdownOpen && isTrash && (
+          <DropDownModal
+            isVisible={isDropdownOpen}
+            options={trashOptions}
+            onClose={closeDropdown}
+            anchorPosition={anchorPosition}
+          />
+        )}
       </View>
+
       <View style={styles.mainContainer}>
         <View style={styles.textContainer}>
           <Text
@@ -101,6 +171,24 @@ const SmallCard = ({content}: LargeCardProps) => {
           {isBookmarked ? <BookmarkSelectedIcon /> : <BookmarkUnselectedIcon />}
         </TouchableOpacity>
       </View>
+
+      {/* alertModal 처리 */}
+      <AlertModal
+        modalId={`trashOption-복원`}
+        headerText={`링크를 복원하시겠어요?`}
+        bodyText={'마지막에 저장되어있던 위치로 돌아가요'}
+        leftText="취소"
+        rightText="복원"
+        rightOnPress={() => handleConfirmSelect(`복원`)}
+      />
+      <AlertModal
+        modalId={`trashOption-영구삭제`}
+        headerText={`영구 삭제 하시겠어요? `}
+        bodyText={`휴지통에서 삭제된 링크는 복원할 수 없어요`}
+        leftText="취소"
+        rightText="삭제"
+        rightOnPress={() => handleConfirmSelect(`영구삭제`)}
+      />
     </View>
   );
 };

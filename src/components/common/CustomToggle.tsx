@@ -1,12 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {
-  Animated,
-  StyleSheet,
-  Easing,
-  TouchableOpacity,
-  View,
-  TouchableHighlight,
-} from 'react-native';
+import {Animated, StyleSheet, Easing, TouchableHighlight} from 'react-native';
 import {useThemeStore} from '@/store/useThemeStore';
 
 interface CustomToggleProps {

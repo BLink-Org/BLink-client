@@ -94,7 +94,7 @@ const Trash = () => {
   const renderItem: ListRenderItem<IFileList> = useCallback(
     ({item, index}) => (
       <View>
-        <SmallCard content={item} />
+        <SmallCard content={item} isTrash={true} />
         {index !== sortedData.length - 1 && (
           <View style={[styles.separator, {backgroundColor: theme.TEXT200}]} />
         )}

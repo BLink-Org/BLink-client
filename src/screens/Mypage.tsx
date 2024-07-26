@@ -15,10 +15,13 @@ import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import StaticInfo from '@/components/mypage/StaticInfo';
 import NavigationInfo from '@/components/mypage/NavigationInfo';
+import {useModalStore} from '@/store/useModalStore';
+import AlertModal from '@/components/modal/AlertModal';
 
 const MyPage = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
   const {theme} = useThemeStore();
+  const {showModal, closeModal} = useModalStore();
 
   // 임시 이메일 데이터
   const tempEmail = 'aksentemp5240@gmail.com';
@@ -40,10 +43,14 @@ const MyPage = () => {
     navigation.navigate('Support');
   };
 
-  // 로그아웃 로직
-  const handleLogout = () => {
-    // 추후 추가 예정
+  const logoutModalOpen = () => {
+    showModal('logoutConfirm');
+  };
+
+  // 로그아웃 시 로직
+  const handleConfirmLogout = () => {
     console.log('로그아웃');
+    closeModal('logoutConfirm');
   };
 
   return (
@@ -91,17 +98,28 @@ const MyPage = () => {
               onPress={handleSupport}
             />
             <NavigationInfo
-              title="로그 아웃"
+              title="로그아웃"
               themeColor={theme.TEXT800}
-              onPress={handleLogout}
+              onPress={logoutModalOpen}
             />
             <TouchableOpacity
-              onPress={() => navigation.navigate('WebViewTest')}>
-              <Text>웹뷰테스트</Text>
+              onPress={() => navigation.navigate('WebViewTest')}
+              style={{paddingVertical: 30}}>
+              <Text>test</Text>
             </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
+
+      {/* alertModal 처리 */}
+      <AlertModal
+        modalId="logoutConfirm"
+        headerText="로그아웃"
+        bodyText="로그아웃 하시겠습니까?"
+        leftText="취소"
+        rightText="확인"
+        rightOnPress={handleConfirmLogout}
+      />
     </SafeAreaView>
   );
 };

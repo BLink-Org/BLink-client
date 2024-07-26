@@ -62,6 +62,7 @@ const ThemeSetting = () => {
         contentContainerStyle={styles.contentContainerStyle}
         renderItem={({item}) => (
           <ThemeCard
+            id={item.id}
             name={item.name}
             price={item.price}
             mainColor={item.color}
