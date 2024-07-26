@@ -36,9 +36,21 @@ const MyPage = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
   const {theme} = useThemeStore();
 
-  // 테마 설정 클릭 시
+  // Navigation Handler
+  const handleAccountManage = () => {
+    navigation.navigate('AccountManage');
+  };
   const handleThemeSetting = () => {
     navigation.navigate('ThemeSetting');
+  };
+  const handleSetting = () => {
+    navigation.navigate('Setting');
+  };
+  const handleTrash = () => {
+    navigation.navigate('Trash');
+  };
+  const handleSupport = () => {
+    navigation.navigate('Support');
   };
 
   return (
@@ -53,7 +65,7 @@ const MyPage = () => {
           <Text style={[FONTS.BODY2_MEDIUM, {color: theme.MAIN500}]}>
             이메일@gmail.com
           </Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleAccountManage}>
             <Text style={[FONTS.BODY2_MEDIUM, {color: theme.TEXT500}]}>
               계정 관리
             </Text>
@@ -67,17 +79,20 @@ const MyPage = () => {
           <TouchableOpacity onPress={handleThemeSetting}>
             <NavigationInfo title="테마 설정" themeColor={theme.TEXT800} />
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleSetting}>
             <NavigationInfo title="환경 설정" themeColor={theme.TEXT800} />
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleTrash}>
             <NavigationInfo title="휴지통" themeColor={theme.TEXT800} />
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleSupport}>
             <NavigationInfo title="지원" themeColor={theme.TEXT800} />
           </TouchableOpacity>
           <TouchableOpacity>
             <NavigationInfo title="로그 아웃" themeColor={theme.TEXT800} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('WebViewTest')}>
+            <Text>웹뷰테스트</Text>
           </TouchableOpacity>
         </View>
       </View>
