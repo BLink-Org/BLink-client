@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from 'react';
+import {useCallback} from 'react';
 import {
   FlatList,
   SafeAreaView,
