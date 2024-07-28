@@ -17,7 +17,7 @@ interface TextInputGroupProps {
   setTextInput: (v: string | undefined) => void;
   placeholder: string;
   errorMessage: string;
-  isByteCountVisible: boolean;
+  isByteCountVisible?: boolean;
 }
 
 const TextInputGroup = ({
@@ -26,7 +26,7 @@ const TextInputGroup = ({
   setTextInput,
   placeholder,
   errorMessage,
-  isByteCountVisible,
+  isByteCountVisible = false,
 }: TextInputGroupProps) => {
   const {theme} = useThemeStore();
   const byteLength = calculateByteLength(textInput);
@@ -92,8 +92,10 @@ const styles = StyleSheet.create({
   },
   inputFieldBottom: {
     display: 'flex',
+    height: 21,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignContent: 'center',
   },
 });
 

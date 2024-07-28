@@ -35,6 +35,9 @@ const Home = () => {
     setIsSideBarVisible(!isSideBarVisible);
   };
 
+  // 홈 화면 제목 - 선택한 폴더명
+  const [selectedFolderName, setSelectedFolderName] = useState<string>('전체');
+
   const sortingOptions = [
     t('최근 저장순'),
     t('과거 저장순'),
@@ -78,7 +81,9 @@ const Home = () => {
     return (
       <>
         <View style={styles.titleContainer}>
-          <Text style={[FONTS.TITLE, {color: theme.TEXT900}]}>전체</Text>
+          <Text style={[FONTS.TITLE, {color: theme.TEXT900}]}>
+            {selectedFolderName}
+          </Text>
         </View>
         <View style={styles.filterContainer}>
           <Text style={[FONTS.BODY2_MEDIUM, {color: theme.MAIN500}]}>
@@ -127,8 +132,12 @@ const Home = () => {
       <ThemeBackground />
       <View style={styles.mainContainer}>
         <FolderSideBar
-          isSideBarVisible={isSideBarVisible}
-          toggleSideBar={toggleSideBar}
+          {...{
+            isSideBarVisible,
+            toggleSideBar,
+            selectedFolderName,
+            setSelectedFolderName,
+          }}
         />
         <Animated.View
           style={[

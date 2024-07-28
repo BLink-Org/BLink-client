@@ -10,3 +10,9 @@ export function extractHostname(url: string): string {
     return '';
   }
 }
+
+export function isValidUrl(url: string): boolean {
+  const regex =
+    /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]{1,63}\.[a-zA-Z]{2,}(\/[^\s]*)?$/;
+  return regex.test(url);
+}

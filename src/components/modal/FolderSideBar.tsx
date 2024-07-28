@@ -15,7 +15,8 @@ import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {BackIcon, ForwardIcon} from '@/assets/icons/modal';
 import {AddIcon} from '@/assets/icons/common';
-import FolderButton, {type FolderButtonProps} from '../folder/FolderButton';
+import dummyFolderListRaw from '@/constants/dummy-data/dummy-folder-list.json';
+import FolderButton from '../folder/FolderButton';
 import BottomSheet from './BottomSheet';
 import FolderContent from '../folder/FolderContent';
 import Toast from '../common/Toast';
@@ -23,11 +24,15 @@ import Toast from '../common/Toast';
 interface FolderSideBarProps {
   isSideBarVisible: boolean;
   toggleSideBar: () => void;
+  selectedFolderName: string;
+  setSelectedFolderName: (v: string) => void;
 }
 
 const FolderSideBar = ({
   isSideBarVisible,
   toggleSideBar,
+  selectedFolderName,
+  setSelectedFolderName,
 }: FolderSideBarProps) => {
   const {theme} = useThemeStore();
   const insets = useSafeAreaInsets();
@@ -59,19 +64,6 @@ const FolderSideBar = ({
     }
   }, [isSideBarVisible]);
 
-  // TODO: delete mock data
-  interface FolderButtonData extends FolderButtonProps {
-    id: string;
-  }
-  const mockData: FolderButtonData[] = [
-    {id: '1', variants: 'pressed', name: '아티클', number: 17},
-    {id: '2', variants: 'activated', name: 'Netflix', number: 17},
-    {id: '3', variants: 'default', name: '기술 정보', number: 17},
-    {id: '4', variants: 'default', name: 'CMC', number: 17},
-    {id: '5', variants: 'default', name: '과학이야기', number: 17},
-    {id: '6', variants: 'default', number: 17},
-  ];
-
   return (
     <>
       <RNModal
@@ -87,7 +79,6 @@ const FolderSideBar = ({
           modalTitle="폴더 생성"
           {...{isBottomSheetVisible, toggleBottomSheet}}>
           <FolderContent
-            folderList={[]}
             toggleBottomSheet={() => {
               toggleBottomSheet();
               setIsToastVisible(true);
@@ -115,7 +106,12 @@ const FolderSideBar = ({
             <Text style={[FONTS.BODY2_MEDIUM, {color: theme.MAIN500}]}>
               123 Links
             </Text>
-            <TouchableOpacity style={styles.totalButton}>
+            <TouchableOpacity
+              style={styles.totalButton}
+              onPress={() => {
+                setSelectedFolderName('전체');
+                toggleSideBar();
+              }}>
               <Text style={[FONTS.BODY2_MEDIUM, {color: theme.TEXT700}]}>
                 전체보기
               </Text>
@@ -124,16 +120,27 @@ const FolderSideBar = ({
           </View>
           <View style={styles.folderList}>
             <FlatList
-              data={mockData}
+              data={dummyFolderListRaw}
               renderItem={({item, index}) => (
                 <>
-                  {mockData.length - 1 === index && (
+                  {dummyFolderListRaw.length - 1 === index && (
                     <View style={styles.stroke}></View>
                   )}
                   <FolderButton
-                    variants={item.variants}
+                    // TODO: delete 'as type' after connecting API
+                    variants={
+                      item.name === selectedFolderName
+                        ? 'pressed'
+                        : (item.variants as 'pressed' | 'activated' | 'default')
+                    }
                     name={item.name}
                     number={item.number}
+                    onPress={() => {
+                      setSelectedFolderName(
+                        item.name ? `${item.name}` : '폴더 없이 저장',
+                      );
+                      toggleSideBar();
+                    }}
                   />
                 </>
               )}

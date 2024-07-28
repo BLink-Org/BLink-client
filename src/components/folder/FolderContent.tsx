@@ -6,20 +6,20 @@ import CustomBottomButton from '../common/CustomBottomButton';
 
 interface FolderSideBarProps {
   defaultText?: string;
-  folderList: string[];
   toggleBottomSheet: () => void;
 }
 
 // 폴더 생성 및 수정 case
 const FolderContent = ({
   defaultText,
-  folderList,
   toggleBottomSheet,
 }: FolderSideBarProps) => {
   const [textInput, setTextInput] = useState<string | undefined>(defaultText);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isByteCountVisible, setIsByteCountVisible] = useState<boolean>(true);
   const [isReadyToSave, setIsReadyToSave] = useState<boolean>(!!defaultText);
+  // TODO: api call
+  const folderList: string[] = [];
 
   useEffect(() => {
     if (calculateByteLength(textInput) > 30) {

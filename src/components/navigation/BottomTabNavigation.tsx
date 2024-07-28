@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {TouchableOpacity} from 'react-native';
 import HomeScreen from '@/screens/Home';
 import AddScreen from '@/screens/Add';
 import BookmarkScreen from '@/screens/Bookmark';
@@ -13,6 +14,8 @@ import {
   MypageIcon,
   SearchIcon,
 } from '@/assets/icons/bottom-tab';
+import BottomSheet from '../modal/BottomSheet';
+import LinkContent from '../link/LinkContent';
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -25,58 +28,72 @@ const SearchBarIcon = ({color}: {color: string}) => <SearchIcon fill={color} />;
 const MyPageBarIcon = ({color}: {color: string}) => <MypageIcon fill={color} />;
 
 const BottomTabNavigation = () => {
+  const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+  const toggleBottomSheet = () => {
+    setIsBottomSheetVisible(!isBottomSheetVisible);
+  };
   return (
-    <Tab.Navigator
-      screenOptions={{
-        tabBarShowLabel: false,
-        tabBarActiveTintColor: 'black',
-        tabBarInactiveTintColor: 'gray',
-        tabBarStyle: {
-          borderTopWidth: 0,
-        },
-      }}>
-      <Tab.Screen
-        name="home"
-        component={HomeScreen}
-        options={{
-          headerShown: false,
-          tabBarIcon: HomeBarIcon,
-        }}
-      />
-      <Tab.Screen
-        name="bookmark"
-        component={BookmarkScreen}
-        options={{
-          headerShown: false,
-          tabBarIcon: BookmarkBarIcon,
-        }}
-      />
-      <Tab.Screen
-        name="add"
-        component={AddScreen}
-        options={{
-          headerShown: false,
-          tabBarIcon: AddBarIcon,
-        }}
-      />
-      <Tab.Screen
-        name="search"
-        component={SearchScreen}
-        options={{
-          headerShown: false,
-          tabBarIcon: SearchBarIcon,
-        }}
-      />
+    <>
+      <BottomSheet
+        modalTitle="링크 저장"
+        {...{isBottomSheetVisible, toggleBottomSheet}}>
+        <LinkContent {...{toggleBottomSheet}} />
+      </BottomSheet>
+      <Tab.Navigator
+        screenOptions={{
+          tabBarShowLabel: false,
+          tabBarActiveTintColor: 'black',
+          tabBarInactiveTintColor: 'gray',
+          tabBarStyle: {
+            borderTopWidth: 0,
+          },
+        }}>
+        <Tab.Screen
+          name="home"
+          component={HomeScreen}
+          options={{
+            headerShown: false,
+            tabBarIcon: HomeBarIcon,
+          }}
+        />
+        <Tab.Screen
+          name="bookmark"
+          component={BookmarkScreen}
+          options={{
+            headerShown: false,
+            tabBarIcon: BookmarkBarIcon,
+          }}
+        />
+        <Tab.Screen
+          name="add"
+          component={AddScreen}
+          options={{
+            headerShown: false,
+            tabBarIcon: AddBarIcon,
+            tabBarButton: props => (
+              <TouchableOpacity {...props} onPress={toggleBottomSheet} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="search"
+          component={SearchScreen}
+          options={{
+            headerShown: false,
+            tabBarIcon: SearchBarIcon,
+          }}
+        />
 
-      <Tab.Screen
-        name="mypage"
-        component={MyPageScreen}
-        options={{
-          headerShown: false,
-          tabBarIcon: MyPageBarIcon,
-        }}
-      />
-    </Tab.Navigator>
+        <Tab.Screen
+          name="mypage"
+          component={MyPageScreen}
+          options={{
+            headerShown: false,
+            tabBarIcon: MyPageBarIcon,
+          }}
+        />
+      </Tab.Navigator>
+    </>
   );
 };
 

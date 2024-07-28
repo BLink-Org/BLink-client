@@ -3,14 +3,14 @@ import {EditIcon} from '@/assets/icons/modal';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 
-// TODO: delete export keyword (mockData)
-export interface FolderButtonProps {
+interface FolderButtonProps {
   variants: 'pressed' | 'activated' | 'default';
   name?: string;
   number?: number;
+  onPress: () => void;
 }
 
-const FolderButton = ({variants, name, number}: FolderButtonProps) => {
+const FolderButton = ({variants, name, number, onPress}: FolderButtonProps) => {
   const {theme} = useThemeStore();
 
   const variantStyles = (() => {
@@ -42,7 +42,8 @@ const FolderButton = ({variants, name, number}: FolderButtonProps) => {
         styles.container,
         variantStyles,
         {borderStyle: name ? 'solid' : 'dashed'},
-      ]}>
+      ]}
+      onPress={onPress}>
       <View style={styles.infocontainer}>
         <Text style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900}]}>
           {name ?? '폴더 없이 저장'}
