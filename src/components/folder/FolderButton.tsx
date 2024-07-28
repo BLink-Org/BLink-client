@@ -1,11 +1,5 @@
-import {
-  StyleSheet,
-  Text,
-  TouchableHighlight,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {EditIcon} from '@/assets/icons/folder';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {EditIcon} from '@/assets/icons/modal';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 
@@ -36,24 +30,31 @@ const FolderButton = ({variants, name, number}: FolderButtonProps) => {
       default:
         return {
           borderWidth: 1,
-          backgroundColor: theme.TEXT100,
+          backgroundColor: name ? theme.TEXT100 : '#ffffff',
           borderColor: theme.TEXT200,
         };
     }
   })();
 
   return (
-    <TouchableOpacity style={[styles.container, variantStyles]}>
+    <TouchableOpacity
+      style={[
+        styles.container,
+        variantStyles,
+        {borderStyle: name ? 'solid' : 'dashed'},
+      ]}>
       <View style={styles.infocontainer}>
-        <Text style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900}]}>{name}</Text>
+        <Text style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900}]}>
+          {name ?? '폴더 없이 저장'}
+        </Text>
         {number && (
           <View style={styles.detailContainer}>
             <Text style={[FONTS.BODY2_MEDIUM, {color: theme.TEXT700}]}>
               {number}
             </Text>
-            <TouchableHighlight>
+            <TouchableOpacity>
               <EditIcon />
-            </TouchableHighlight>
+            </TouchableOpacity>
           </View>
         )}
       </View>

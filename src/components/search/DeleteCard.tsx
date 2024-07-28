@@ -1,15 +1,13 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {type IFileList} from '@/types/home';
-import {DeleteIcon} from '@/assets/icons/search';
+import {DeleteIcon} from '@/assets/icons/common';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 
 interface LargeCardProps {
   content: IFileList;
 }
-
-
 
 const DeleteCard = ({content}: LargeCardProps) => {
   const {theme} = useThemeStore();
