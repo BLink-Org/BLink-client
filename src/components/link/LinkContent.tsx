@@ -1,14 +1,17 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, StyleSheet, Text, View} from 'react-native';
+import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import dummyFolderListRaw from '@/constants/dummy-data/dummy-link-list.json';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {isValidUrl} from '@/utils/url-utils';
 import {type FolderList} from '@/types/folder';
 import {hasPressedFolder} from '@/utils/folder-utils';
+import {AddIcon} from '@/assets/icons/common';
 import TextInputGroup from '../common/TextInputGroup';
 import CustomBottomButton from '../common/CustomBottomButton';
 import FolderButton from '../folder/FolderButton';
+import BottomSheet from '../modal/BottomSheet';
+import FolderContent from '../folder/FolderContent';
 
 interface FolderSideBarProps {
   defaultURL?: string;
@@ -24,6 +27,11 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
     dummyFolderListRaw as FolderList[],
   );
   const [isReadyToSave, setIsReadyToSave] = useState<boolean>(!!defaultURL);
+  const [isFolderBottomSheetVisible, setIsFolderBottomSheetVisible] =
+    useState(false);
+  const toggleFolderBottomSheet = () => {
+    setIsFolderBottomSheetVisible(!isFolderBottomSheetVisible);
+  };
   const {theme} = useThemeStore();
 
   useEffect(() => {
@@ -51,19 +59,39 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
 
   return (
     <>
+      <BottomSheet
+        modalTitle="폴더 생성"
+        isBottomSheetVisible={isFolderBottomSheetVisible}
+        toggleBottomSheet={toggleFolderBottomSheet}>
+        <FolderContent
+          toggleBottomSheet={() => {
+            toggleFolderBottomSheet();
+          }}
+        />
+      </BottomSheet>
       <View style={styles.contentContainer}>
         <TextInputGroup
           inputTitle="링크"
           placeholder="www.example.co.kr"
           {...{textInput, setTextInput, errorMessage}}
         />
-        <Text
-          style={[
-            FONTS.BODY1_SEMIBOLD,
-            {color: theme.MAIN500, marginTop: 32, marginBottom: 4},
-          ]}>
-          폴더
-        </Text>
+        <View style={styles.folderTitle}>
+          <Text
+            style={[
+              FONTS.BODY1_SEMIBOLD,
+              {color: theme.MAIN500, marginRight: 4},
+            ]}>
+            폴더
+          </Text>
+          <TouchableOpacity
+            style={styles.addContainer}
+            onPress={toggleFolderBottomSheet}>
+            <AddIcon />
+            <Text style={[FONTS.BODY1_SEMIBOLD, {color: theme.TEXT700}]}>
+              생성
+            </Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.folderList}>
           <FlatList
             data={folderList}
@@ -96,6 +124,21 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     paddingHorizontal: 18,
+  },
+  folderTitle: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginTop: 32,
+    marginBottom: 4,
+    alignItems: 'center',
+  },
+  addContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 4,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    alignItems: 'center',
   },
   folderList: {
     height: 400,
