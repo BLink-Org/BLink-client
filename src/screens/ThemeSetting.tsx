@@ -1,36 +1,79 @@
-import {Button, StyleSheet, Text, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {FlatList, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {useNavigation} from '@react-navigation/native';
 import {useThemeStore} from '@/store/useThemeStore';
 import ThemeBackground from '@/components/common/ThemeBackground';
+import BackHeader from '@/components/common/BackHeader';
+import {FONTS} from '@/constants';
+import ThemeCard from '@/components/mypage/ThemeCard';
+
+const themes = [
+  {id: 1, name: '기본', price: 'Free', color: '#4285F4'},
+  {
+    id: 2,
+    name: '다크모드',
+    price: 'Free',
+    color: '#000000',
+  },
+  {
+    id: 3,
+    name: '무드오렌지',
+    price: '3,000원',
+    color: '#FF5722',
+  },
+  {
+    id: 4,
+    name: '사이니스타',
+    price: '3,000원',
+    color: '#7E57C2',
+  },
+];
 
 const ThemeSetting = () => {
-  const {theme, setTheme, asyncSetTheme} = useThemeStore();
-  const navigation = useNavigation();
+  const {theme, setTheme, asyncSetTheme, getSavedTheme} = useThemeStore();
+  const [selectedThemeId, setSelectedThemeId] = useState<number>(1);
 
-  // 뒤로가기 버튼 클릭
-  const handleGoBack = () => {
-    navigation.goBack();
-  };
+  useEffect(() => {
+    const fetchTheme = async () => {
+      const savedThemeId = await getSavedTheme();
+      if (savedThemeId === null) return;
+      setSelectedThemeId(savedThemeId);
+    };
+    fetchTheme();
+  }, [getSavedTheme]);
 
-  const handleSetTheme = (themeNumber: number) => {
-    setTheme(themeNumber);
-    void asyncSetTheme(themeNumber);
+  const handleSetTheme = (themeId: number) => {
+    setSelectedThemeId(themeId);
+    setTheme(themeId);
+    void asyncSetTheme(themeId);
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <ThemeBackground />
-      <View style={styles.content}>
-        <Button title="Theme 1" onPress={() => handleSetTheme(1)} />
-        <Button title="Theme 2" onPress={() => handleSetTheme(2)} />
-        <Button title="Theme 3" onPress={() => handleSetTheme(3)} />
-        <Button title="Theme 4" onPress={() => handleSetTheme(4)} />
-        <Text style={[styles.text, {color: theme.TEXT500}]}>
-          현재 테마 메인 색: {theme.MAIN100}
+      <BackHeader title="테마 설정" themeColor={theme.TEXT900} />
+      <View style={styles.contentContainer}>
+        <Text style={[FONTS.BODY2_MEDIUM, {color: theme.MAIN500}]}>
+          4 templates
         </Text>
       </View>
-      <Button title="뒤로가기" onPress={handleGoBack} />
+      <FlatList
+        data={themes}
+        contentContainerStyle={styles.contentContainerStyle}
+        renderItem={({item}) => (
+          <ThemeCard
+            id={item.id}
+            name={item.name}
+            price={item.price}
+            mainColor={item.color}
+            onSelect={() => handleSetTheme(item.id)}
+            selected={item.id === selectedThemeId}
+          />
+        )}
+        keyExtractor={item => item.id.toString()}
+        numColumns={2}
+        scrollEnabled={false}
+      />
     </SafeAreaView>
   );
 };
@@ -41,14 +84,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  text: {
-    fontSize: 18,
-    marginTop: 20,
+  contentContainer: {
+    paddingHorizontal: 18,
   },
-
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  contentContainerStyle: {
+    paddingHorizontal: 12,
+    paddingVertical: 16,
+    gap: 20,
   },
 });
