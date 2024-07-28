@@ -17,7 +17,8 @@ import {BackIcon, ForwardIcon} from '@/assets/icons/modal';
 import {AddIcon} from '@/assets/icons/common';
 import FolderButton, {type FolderButtonProps} from '../folder/FolderButton';
 import BottomSheet from './BottomSheet';
-import FolderContent from './FolderContent';
+import FolderContent from '../folder/FolderContent';
+import Toast from '../common/Toast';
 
 interface FolderSideBarProps {
   isSideBarVisible: boolean;
@@ -34,6 +35,7 @@ const FolderSideBar = ({
   const toggleBottomSheet = () => {
     setIsBottomSheetVisible(!isBottomSheetVisible);
   };
+  const [isToastVisible, setIsToastVisible] = useState(false);
 
   const [visible, setVisible] = useState(isSideBarVisible);
   const animation = useRef(
@@ -71,79 +73,88 @@ const FolderSideBar = ({
   ];
 
   return (
-    <RNModal
-      visible={visible}
-      onRequestClose={toggleSideBar}
-      transparent
-      animationType="none"
-      hardwareAccelerated
-      presentationStyle="overFullScreen"
-      style={styles.modalContent}>
-      <BottomSheet
-        modalTitle="폴더 생성"
-        {...{isBottomSheetVisible, toggleBottomSheet}}>
-        <FolderContent folderList={[]} {...{toggleBottomSheet}} />
-      </BottomSheet>
-      <TouchableWithoutFeedback onPress={toggleSideBar}>
-        <View style={styles.overlay} />
-      </TouchableWithoutFeedback>
-      <Animated.View
-        style={[
-          styles.modalContent,
-          {
-            transform: [{translateX: animation}],
-            paddingTop: insets.top,
-          },
-        ]}>
-        <TouchableOpacity onPress={toggleSideBar} style={styles.closeButton}>
-          <BackIcon width={26} height={26} fill={theme.TEXT900} />
-        </TouchableOpacity>
-        <View style={styles.titleContainer}>
-          <Text style={[FONTS.TITLE, {color: theme.TEXT900}]}>폴더</Text>
-        </View>
-        <View style={styles.detailContainer}>
-          <Text style={[FONTS.BODY2_MEDIUM, {color: theme.MAIN500}]}>
-            123 Links
-          </Text>
-          <TouchableOpacity style={styles.totalButton}>
-            <Text style={[FONTS.BODY2_MEDIUM, {color: theme.TEXT700}]}>
-              전체보기
-            </Text>
-            <ForwardIcon />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.folderList}>
-          <FlatList
-            data={mockData}
-            renderItem={({item, index}) => (
-              <>
-                {mockData.length - 1 === index && (
-                  <View style={styles.stroke}></View>
-                )}
-                <FolderButton
-                  variants={item.variants}
-                  name={item.name}
-                  number={item.number}
-                />
-              </>
-            )}
-            keyExtractor={item => item.id}
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
-            showsVerticalScrollIndicator={false}
+    <>
+      <RNModal
+        visible={visible}
+        onRequestClose={toggleSideBar}
+        transparent
+        animationType="none"
+        hardwareAccelerated
+        presentationStyle="overFullScreen"
+        style={styles.modalContent}>
+        {isToastVisible && <Toast text="생성되었습니다" marginBottom={92} />}
+        <BottomSheet
+          modalTitle="폴더 생성"
+          {...{isBottomSheetVisible, toggleBottomSheet}}>
+          <FolderContent
+            folderList={[]}
+            toggleBottomSheet={() => {
+              toggleBottomSheet();
+              setIsToastVisible(true);
+            }}
           />
-        </View>
-        <View style={styles.tabBar}>
-          <TouchableOpacity
-            style={styles.addFolderButton}
-            onPress={toggleBottomSheet}>
-            <AddIcon style={{marginRight: 8}} />
-            <Text style={[FONTS.BODY2_SEMIBOLD, {color: theme.TEXT700}]}>
-              폴더 생성
-            </Text>
+        </BottomSheet>
+        <TouchableWithoutFeedback onPress={toggleSideBar}>
+          <View style={styles.overlay} />
+        </TouchableWithoutFeedback>
+        <Animated.View
+          style={[
+            styles.modalContent,
+            {
+              transform: [{translateX: animation}],
+              paddingTop: insets.top,
+            },
+          ]}>
+          <TouchableOpacity onPress={toggleSideBar} style={styles.closeButton}>
+            <BackIcon width={26} height={26} fill={theme.TEXT900} />
           </TouchableOpacity>
-        </View>
-      </Animated.View>
-    </RNModal>
+          <View style={styles.titleContainer}>
+            <Text style={[FONTS.TITLE, {color: theme.TEXT900}]}>폴더</Text>
+          </View>
+          <View style={styles.detailContainer}>
+            <Text style={[FONTS.BODY2_MEDIUM, {color: theme.MAIN500}]}>
+              123 Links
+            </Text>
+            <TouchableOpacity style={styles.totalButton}>
+              <Text style={[FONTS.BODY2_MEDIUM, {color: theme.TEXT700}]}>
+                전체보기
+              </Text>
+              <ForwardIcon />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.folderList}>
+            <FlatList
+              data={mockData}
+              renderItem={({item, index}) => (
+                <>
+                  {mockData.length - 1 === index && (
+                    <View style={styles.stroke}></View>
+                  )}
+                  <FolderButton
+                    variants={item.variants}
+                    name={item.name}
+                    number={item.number}
+                  />
+                </>
+              )}
+              keyExtractor={item => item.id}
+              ItemSeparatorComponent={() => <View style={styles.separator} />}
+              showsVerticalScrollIndicator={false}
+            />
+          </View>
+          <View style={styles.tabBar}>
+            <TouchableOpacity
+              style={styles.addFolderButton}
+              onPress={toggleBottomSheet}>
+              <AddIcon style={{marginRight: 8}} />
+              <Text style={[FONTS.BODY2_SEMIBOLD, {color: theme.TEXT700}]}>
+                폴더 생성
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
+      </RNModal>
+    </>
   );
 };
 
