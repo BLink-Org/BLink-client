@@ -25,6 +25,12 @@ export interface RootStackParamList {
   Main: undefined;
   ThemeSetting: undefined;
   WebViewTest: undefined;
+  Support: undefined;
+  AccountDelete: undefined;
+  AccountManage: {email: string};
+  Setting: undefined;
+  Trash: undefined;
+  WebViewInfo: {info: {url: string; title: string}};
   // ex> DetailPhoto: {image: {path: string; creationDate: string}};
 }
 

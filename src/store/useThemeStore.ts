@@ -7,10 +7,11 @@ interface ThemeStore {
   setTheme: (themeNumber: number) => void;
   asyncSetTheme: (themeNumber: number) => Promise<void>;
   restoreTheme: () => void;
+  getSavedTheme: () => Promise<number | null>;
 }
 
 export const useThemeStore = create<ThemeStore>(set => ({
-  theme: THEMES[1], // 기본 테마는 1번
+  theme: THEMES[1], // 기본테마 -> 1번
   setTheme: (themeNumber: number) => {
     set({theme: THEMES[themeNumber]});
   },
@@ -25,5 +26,9 @@ export const useThemeStore = create<ThemeStore>(set => ({
         set({theme: THEMES[parseInt(savedTheme, 10)]});
       }
     })();
+  },
+  getSavedTheme: async () => {
+    const savedTheme = await AsyncStorage.getItem('theme');
+    return savedTheme ? parseInt(savedTheme, 10) : null;
   },
 }));
