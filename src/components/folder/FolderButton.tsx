@@ -1,17 +1,77 @@
+import {useMemo, useRef, useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {EditIcon} from '@/assets/icons/modal';
+import {DownIcon, EditIcon, UpIcon} from '@/assets/icons/modal';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
+import {DeleteIcon, PencilIcon} from '@/assets/icons/mypage';
+import DropDownModal from '../modal/DropDownModal';
 
 interface FolderButtonProps {
   variants: 'pressed' | 'activated' | 'default';
   name?: string;
   number?: number;
   onPress: () => void;
+  handleSelect?: (label: string) => void;
 }
 
-const FolderButton = ({variants, name, number, onPress}: FolderButtonProps) => {
+const FolderButton = ({
+  variants,
+  name,
+  number,
+  onPress,
+  handleSelect = () => {},
+}: FolderButtonProps) => {
   const {theme} = useThemeStore();
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const closeDropdown = () => setIsDropdownOpen(false);
+  const [anchorPosition, setAnchorPosition] = useState({x: 0, y: 0});
+  const buttonRef = useRef<TouchableOpacity>(null);
+
+  const toggleDropdown = () => {
+    buttonRef.current?.measure((x, y, width, height, pageX, pageY) => {
+      setIsDropdownOpen(true);
+      setAnchorPosition({x: pageX, y: pageY + height});
+    });
+  };
+
+  const folderOptions = useMemo(
+    () => [
+      {
+        label: '폴더명 수정',
+        icon: <PencilIcon />,
+        onSelect: () => {
+          closeDropdown();
+          handleSelect('폴더명 수정');
+        },
+      },
+      {
+        label: '위로 이동',
+        icon: <UpIcon />,
+        onSelect: () => {
+          closeDropdown();
+          handleSelect('위로 이동');
+        },
+      },
+      {
+        label: '아래로 이동',
+        icon: <DownIcon />,
+        onSelect: () => {
+          closeDropdown();
+          handleSelect('아래로 이동');
+        },
+      },
+      {
+        label: '삭제',
+        icon: <DeleteIcon />,
+        onSelect: () => {
+          closeDropdown();
+          handleSelect('영구삭제');
+        },
+      },
+    ],
+    [closeDropdown, handleSelect],
+  );
 
   const variantStyles = (() => {
     switch (variants) {
@@ -53,9 +113,17 @@ const FolderButton = ({variants, name, number, onPress}: FolderButtonProps) => {
             <Text style={[FONTS.BODY2_MEDIUM, {color: theme.TEXT700}]}>
               {number}
             </Text>
-            <TouchableOpacity>
+            <TouchableOpacity ref={buttonRef} onPress={toggleDropdown}>
               <EditIcon />
             </TouchableOpacity>
+            {isDropdownOpen && (
+              <DropDownModal
+                isVisible={isDropdownOpen}
+                options={folderOptions}
+                onClose={closeDropdown}
+                anchorPosition={anchorPosition}
+              />
+            )}
           </View>
         )}
       </View>

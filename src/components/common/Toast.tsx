@@ -1,36 +1,50 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef} from 'react';
 import {Animated, Dimensions, StyleSheet, Text} from 'react-native';
 import {FONTS} from '@/constants';
 
 interface ToastProps {
   text: string;
   marginBottom: number;
+  isToastVisible: boolean;
+  setIsToastVisible: (v: boolean) => void;
 }
 const screenWidth = Dimensions.get('window').width;
 const toastWidth = screenWidth - 36;
 
-const Toast = ({text, marginBottom}: ToastProps) => {
-  const [isVisible, setIsVisible] = useState(true);
+const Toast = ({
+  text,
+  marginBottom,
+  isToastVisible,
+  setIsToastVisible,
+}: ToastProps) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
-
-    const fadeOutTimer = setTimeout(() => {
+    if (isToastVisible) {
+      setIsToastVisible(true);
       Animated.timing(fadeAnim, {
-        toValue: 0,
+        toValue: 1,
         duration: 500,
         useNativeDriver: true,
-      }).start(() => setIsVisible(false));
-    }, 3000);
-    return () => clearTimeout(fadeOutTimer);
-  }, [fadeAnim]);
+      }).start();
 
-  if (!isVisible) {
+      const fadeOutTimer = setTimeout(() => {
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 500,
+          useNativeDriver: true,
+        }).start(() => {
+          setIsToastVisible(false);
+        });
+      }, 3000);
+
+      return () => clearTimeout(fadeOutTimer);
+    } else {
+      fadeAnim.setValue(0);
+    }
+  }, [isToastVisible, fadeAnim]);
+
+  if (!isToastVisible) {
     return null;
   }
   return (

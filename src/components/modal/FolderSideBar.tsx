@@ -37,10 +37,21 @@ const FolderSideBar = ({
   const {theme} = useThemeStore();
   const insets = useSafeAreaInsets();
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
-  const toggleBottomSheet = () => {
+  const toggleBottomSheet = (folderName: string | null = null) => {
+    setFolderToEdit(folderName);
     setIsBottomSheetVisible(!isBottomSheetVisible);
   };
   const [isToastVisible, setIsToastVisible] = useState(false);
+  const [folderToEdit, setFolderToEdit] = useState<string | null>(null);
+
+  const handleSelect = (label: string, folderName?: string) => {
+    switch (label) {
+      case '폴더명 수정':
+        toggleBottomSheet(folderName);
+        break;
+      default:
+    }
+  };
 
   const [visible, setVisible] = useState(isSideBarVisible);
   const animation = useRef(
@@ -60,7 +71,10 @@ const FolderSideBar = ({
         toValue: -Dimensions.get('window').width,
         duration: 300,
         useNativeDriver: true,
-      }).start(() => setVisible(false));
+      }).start(() => {
+        setVisible(false);
+        setIsToastVisible(false);
+      });
     }
   }, [isSideBarVisible]);
 
@@ -74,13 +88,20 @@ const FolderSideBar = ({
         hardwareAccelerated
         presentationStyle="overFullScreen"
         style={styles.modalContent}>
-        {isToastVisible && <Toast text="생성되었습니다" marginBottom={92} />}
+        {isToastVisible && (
+          <Toast
+            text={folderToEdit ? '수정되었습니다.' : '생성되었습니다'}
+            marginBottom={92}
+            {...{isToastVisible, setIsToastVisible}}
+          />
+        )}
         <BottomSheet
-          modalTitle="폴더 생성"
+          modalTitle={folderToEdit ? '폴더 수정' : '폴더 생성'}
           {...{isBottomSheetVisible, toggleBottomSheet}}>
           <FolderContent
+            defaultText={folderToEdit ?? undefined}
             toggleBottomSheet={() => {
-              toggleBottomSheet();
+              toggleBottomSheet(folderToEdit);
               setIsToastVisible(true);
             }}
           />
@@ -141,6 +162,7 @@ const FolderSideBar = ({
                       );
                       toggleSideBar();
                     }}
+                    handleSelect={label => handleSelect(label, item.name)}
                   />
                 </>
               )}
@@ -152,7 +174,9 @@ const FolderSideBar = ({
           <View style={styles.tabBar}>
             <TouchableOpacity
               style={styles.addFolderButton}
-              onPress={toggleBottomSheet}>
+              onPress={() => {
+                toggleBottomSheet();
+              }}>
               <AddIcon style={{marginRight: 8}} />
               <Text style={[FONTS.BODY2_SEMIBOLD, {color: theme.TEXT700}]}>
                 폴더 생성
