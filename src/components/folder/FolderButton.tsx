@@ -105,7 +105,7 @@ const FolderButton = ({
       ]}
       onPress={onPress}>
       <View style={styles.infocontainer}>
-        <Text style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900}]}>
+        <Text style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900, flex: 1}]}>
           {name ?? '폴더 없이 저장'}
         </Text>
         {number && (

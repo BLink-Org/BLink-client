@@ -1,4 +1,4 @@
-export const calculateByteLength = (str: string = '') => {
+export function calculateByteLength(str: string = '') {
   let byteLength = 0;
   for (let i = 0; i < str.length; i++) {
     const codePoint = str.codePointAt(i);
@@ -10,4 +10,4 @@ export const calculateByteLength = (str: string = '') => {
     }
   }
   return byteLength;
-};
+}

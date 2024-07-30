@@ -1,6 +1,6 @@
 import React from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useThemeStore} from '@/store/useThemeStore';
 import {FONTS} from '@/constants';
 
@@ -16,6 +16,9 @@ const CustomBottomButton = ({
   isDisabled,
 }: BottomCustomButtonProps) => {
   const {theme} = useThemeStore();
+  const {bottom} = useSafeAreaInsets();
+  const isHomeIndicatorPresent = Platform.OS === 'ios' && bottom > 0;
+
   return (
     <SafeAreaView
       edges={['bottom']}
@@ -25,9 +28,10 @@ const CustomBottomButton = ({
         disabled={isDisabled}
         style={[
           styles.container,
-          isDisabled
-            ? {backgroundColor: theme.TEXT300}
-            : {backgroundColor: theme.MAIN400},
+          {
+            backgroundColor: isDisabled ? theme.TEXT300 : theme.MAIN400,
+            paddingBottom: isHomeIndicatorPresent ? 36 : 14,
+          },
         ]}>
         <View style={styles.buttonContent}>
           <Text
@@ -47,8 +51,9 @@ export default CustomBottomButton;
 
 const styles = StyleSheet.create({
   container: {
+    position: 'absolute',
+    bottom: 0,
     paddingTop: 14,
-    paddingBottom: 36,
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',

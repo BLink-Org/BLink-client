@@ -91,7 +91,7 @@ const FolderSideBar = ({
         {isToastVisible && (
           <Toast
             text={folderToEdit ? '수정되었습니다.' : '생성되었습니다'}
-            marginBottom={92}
+            marginBottom={128}
             {...{isToastVisible, setIsToastVisible}}
           />
         )}
@@ -225,7 +225,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   folderList: {
-    height: 516,
+    flex: 1,
+    maxHeight: 517,
     paddingVertical: 20,
   },
   stroke: {
@@ -238,7 +239,6 @@ const styles = StyleSheet.create({
     height: 8,
   },
   tabBar: {
-    flex: 1,
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'flex-end',

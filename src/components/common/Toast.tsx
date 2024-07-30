@@ -69,7 +69,8 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 18,
     backgroundColor: '#333D4B',
-    zIndex: 99999999,
+    borderRadius: 4,
+    zIndex: 9999,
   },
 });
 

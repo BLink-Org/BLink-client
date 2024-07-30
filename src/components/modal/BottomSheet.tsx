@@ -8,6 +8,8 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
   Text,
+  StatusBar,
+  Platform,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {FONTS} from '@/constants';
@@ -28,11 +30,14 @@ const BottomSheet = ({
   toggleBottomSheet,
 }: BottomSheetProps) => {
   const {theme} = useThemeStore();
+
   const insets = useSafeAreaInsets();
+  const statusBarHeight =
+    Platform.OS === 'ios' ? insets.top : StatusBar.currentHeight ?? 0;
 
   const [visible, setVisible] = useState(isBottomSheetVisible);
   const animation = useRef(
-    new Animated.Value(Dimensions.get('window').height),
+    new Animated.Value(Dimensions.get('window').height - statusBarHeight),
   ).current;
 
   useEffect(() => {
@@ -45,7 +50,7 @@ const BottomSheet = ({
       }).start();
     } else {
       Animated.timing(animation, {
-        toValue: Dimensions.get('window').height,
+        toValue: Dimensions.get('window').height - statusBarHeight,
         duration: 300,
         useNativeDriver: true,
       }).start(() => setVisible(false));
@@ -58,8 +63,7 @@ const BottomSheet = ({
       onRequestClose={toggleBottomSheet}
       transparent
       animationType="none"
-      hardwareAccelerated
-      presentationStyle="overFullScreen">
+      hardwareAccelerated>
       <TouchableWithoutFeedback onPress={toggleBottomSheet}>
         <View style={styles.overlay} />
       </TouchableWithoutFeedback>
@@ -68,7 +72,7 @@ const BottomSheet = ({
           styles.modalContainer,
           {
             transform: [{translateY: animation}],
-            height: Dimensions.get('window').height - insets.top,
+            height: Dimensions.get('window').height - statusBarHeight,
           },
         ]}>
         <View style={styles.header}>

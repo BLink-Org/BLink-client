@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
   FlatList,
@@ -10,7 +10,9 @@ import {
   RefreshControl,
   type ListRenderItem,
   Animated,
+  Platform,
 } from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {FONTS} from '@/constants';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import ScreenHeader from '@/components/common/ScreenHeader';
@@ -24,10 +26,16 @@ import useSortedData from '@/hooks/useSortedData';
 import {type IFileList} from '@/types/home';
 import useStickyAnimation from '@/hooks/useStickyAnimation';
 import FolderSideBar from '@/components/modal/FolderSideBar';
+import {useBottomButtonSizeStore} from '@/store/useBottomButtonSizeStore';
 
 const Home = () => {
   const {t} = useTranslation();
   const {theme} = useThemeStore();
+
+  // 하단 버튼 크기 계산 -> 전역변수 관리
+  const {bottom} = useSafeAreaInsets();
+  const isHomeIndicatorPresent = Platform.OS === 'ios' && bottom > 0;
+  const {setButtonHeight} = useBottomButtonSizeStore();
 
   // 폴더 사이드바 토글
   const [isSideBarVisible, setIsSideBarVisible] = useState(false);
@@ -126,6 +134,11 @@ const Home = () => {
     ),
     [isLargeCard, sortedData, theme.TEXT200],
   );
+
+  useEffect(() => {
+    const calculatedHeight = isHomeIndicatorPresent ? 80 : 58;
+    setButtonHeight(calculatedHeight);
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>

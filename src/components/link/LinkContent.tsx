@@ -1,12 +1,20 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import dummyFolderListRaw from '@/constants/dummy-data/dummy-link-list.json';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {isValidUrl} from '@/utils/url-utils';
-import {type FolderList} from '@/types/folder';
+import {type FolderButtonProps} from '@/types/folder';
 import {hasPressedFolder} from '@/utils/folder-utils';
 import {AddIcon} from '@/assets/icons/common';
+import {useBottomButtonSizeStore} from '@/store/useBottomButtonSizeStore';
 import TextInputGroup from '../common/TextInputGroup';
 import CustomBottomButton from '../common/CustomBottomButton';
 import FolderButton from '../folder/FolderButton';
@@ -23,8 +31,8 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
   const [textInput, setTextInput] = useState<string | undefined>(defaultURL);
   const [errorMessage, setErrorMessage] = useState<string>('');
   // TODO: Need to connect API & fix interface
-  const [folderList, setFolderList] = useState<FolderList[]>(
-    dummyFolderListRaw as FolderList[],
+  const [folderList, setFolderList] = useState<FolderButtonProps[]>(
+    dummyFolderListRaw as FolderButtonProps[],
   );
   const [isReadyToSave, setIsReadyToSave] = useState<boolean>(!!defaultURL);
   const [isFolderBottomSheetVisible, setIsFolderBottomSheetVisible] =
@@ -33,6 +41,7 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
     setIsFolderBottomSheetVisible(!isFolderBottomSheetVisible);
   };
   const {theme} = useThemeStore();
+  const {buttonHeight} = useBottomButtonSizeStore();
 
   useEffect(() => {
     if (textInput && !isValidUrl(textInput)) {
@@ -69,7 +78,8 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
           }}
         />
       </BottomSheet>
-      <View style={styles.contentContainer}>
+      <SafeAreaView
+        style={[styles.contentContainer, {marginBottom: buttonHeight}]}>
         <TextInputGroup
           inputTitle="링크"
           placeholder="www.example.co.kr"
@@ -110,7 +120,7 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
             showsVerticalScrollIndicator={false}
           />
         </View>
-      </View>
+      </SafeAreaView>
       <CustomBottomButton
         title="저장"
         onPress={toggleBottomSheet}
@@ -141,8 +151,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   folderList: {
-    height: 400,
+    flex: 1,
+    maxHeight: 400,
     paddingVertical: 12,
+    marginBottom: 27,
   },
   stroke: {
     borderWidth: 1,

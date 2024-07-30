@@ -9,7 +9,7 @@ import {
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {RoundDeleteIcon} from '@/assets/icons/modal';
-import {calculateByteLength} from '@/utils/calculateByteLength';
+import {calculateByteLength} from '@/utils/link-utils';
 
 interface TextInputGroupProps {
   inputTitle: string;
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   input: {
-    height: 26,
+    height: 56,
     width: '100%',
   },
   inputFieldTop: {
@@ -87,7 +87,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 18,
     marginBottom: 8,
   },
   inputFieldBottom: {
