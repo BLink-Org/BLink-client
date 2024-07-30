@@ -44,29 +44,29 @@ const AccountDelete = () => {
 
   if (isDeletedState) {
     return (
-      <SafeAreaView style={styles.container}>
-        <ThemeBackground />
-        <BackHeader title="계정 삭제 신청" themeColor={theme.TEXT900} />
-        <View style={styles.contentContainer}>
-          <View style={styles.alertContainer}>
-            <WarningIcon />
-            <Text style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900}]}>
-              삭제 신청된 계정입니다.
+      <>
+        <SafeAreaView style={styles.container}>
+          <ThemeBackground />
+          <BackHeader title="계정 삭제 신청" themeColor={theme.TEXT900} />
+          <View style={styles.contentContainer}>
+            <View style={styles.alertContainer}>
+              <WarningIcon />
+              <Text style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900}]}>
+                삭제 신청된 계정입니다.
+              </Text>
+            </View>
+            <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT600}]}>
+              삭제 신청일 yyyy-mm-dd 기준 7일 이내{'\n'}삭제 신청을 취소하면
+              원래의 계정 정보로{'\n'}B.Link를 계속 이용하실 수 있어요.
             </Text>
           </View>
-          <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT600}]}>
-            삭제 신청일 yyyy-mm-dd 기준 7일 이내{'\n'}삭제 신청을 취소하면
-            원래의 계정 정보로{'\n'}B.Link를 계속 이용하실 수 있어요.
-          </Text>
-        </View>
-        <SafeAreaView style={styles.bottomContainer}>
-          <CustomBottomButton
-            title="계정 삭제 철회하기"
-            onPress={handleCancelDeleteAccount}
-            isDisabled={false}
-          />
         </SafeAreaView>
-      </SafeAreaView>
+        <CustomBottomButton
+          title="계정 삭제 철회하기"
+          onPress={handleCancelDeleteAccount}
+          isDisabled={false}
+        />
+      </>
     );
   }
 
@@ -147,9 +147,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-  },
-  bottomContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
   },
 });
