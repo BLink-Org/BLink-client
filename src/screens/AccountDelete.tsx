@@ -44,84 +44,84 @@ const AccountDelete = () => {
 
   if (isDeletedState) {
     return (
-      <SafeAreaView style={styles.container}>
-        <ThemeBackground />
-        <BackHeader title="계정 삭제 신청" themeColor={theme.TEXT900} />
-        <View style={styles.contentContainer}>
-          <View style={styles.alertContainer}>
-            <WarningIcon />
-            <Text style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900}]}>
-              삭제 신청된 계정입니다.
+      <>
+        <SafeAreaView style={styles.container}>
+          <ThemeBackground />
+          <BackHeader title="계정 삭제 신청" themeColor={theme.TEXT900} />
+          <View style={styles.contentContainer}>
+            <View style={styles.alertContainer}>
+              <WarningIcon />
+              <Text style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900}]}>
+                삭제 신청된 계정입니다.
+              </Text>
+            </View>
+            <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT600}]}>
+              삭제 신청일 yyyy-mm-dd 기준 7일 이내{'\n'}삭제 신청을 취소하면
+              원래의 계정 정보로{'\n'}B.Link를 계속 이용하실 수 있어요.
             </Text>
           </View>
-          <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT600}]}>
-            삭제 신청일 yyyy-mm-dd 기준 7일 이내{'\n'}삭제 신청을 취소하면
-            원래의 계정 정보로{'\n'}B.Link를 계속 이용하실 수 있어요.
-          </Text>
-        </View>
-        <SafeAreaView style={styles.bottomContainer}>
-          <CustomBottomButton
-            title="계정 삭제 철회하기"
-            onPress={handleCancelDeleteAccount}
-            isDisabled={false}
-          />
         </SafeAreaView>
-      </SafeAreaView>
+        <CustomBottomButton
+          title="계정 삭제 철회하기"
+          onPress={handleCancelDeleteAccount}
+          isDisabled={false}
+        />
+      </>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ThemeBackground />
-      <BackHeader title="계정 삭제 신청" themeColor={theme.TEXT900} />
-      <View style={styles.contentContainer}>
-        <Text style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900}]}>
-          저장 현황
-        </Text>
-        <StaticInfo linkCount={123} bookmarkCount={15} folderCount={3} />
-      </View>
-      <View style={styles.contentContainer}>
-        <Text style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900}]}>
-          계정 삭제 유의사항
-        </Text>
-        <View>
-          <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT600}]}>
-            - 계정을 삭제하면 이런 문제가 있다는 것을 ...
+    <>
+      <SafeAreaView style={styles.container}>
+        <ThemeBackground />
+        <BackHeader title="계정 삭제 신청" themeColor={theme.TEXT900} />
+        <View style={styles.contentContainer}>
+          <Text style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900}]}>
+            저장 현황
           </Text>
-          <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT600}]}>
-            - 계정을 삭제하면 이런 문제가 있다는 것을 ...
+          <StaticInfo linkCount={123} bookmarkCount={15} folderCount={3} />
+        </View>
+        <View style={styles.contentContainer}>
+          <Text style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900}]}>
+            계정 삭제 유의사항
           </Text>
-          <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT600}]}>
-            - 계정을 삭제하면 이런 문제가 있다는 것을 ...
+          <View>
+            <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT600}]}>
+              - 계정을 삭제하면 이런 문제가 있다는 것을 ...
+            </Text>
+            <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT600}]}>
+              - 계정을 삭제하면 이런 문제가 있다는 것을 ...
+            </Text>
+            <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT600}]}>
+              - 계정을 삭제하면 이런 문제가 있다는 것을 ...
+            </Text>
+          </View>
+        </View>
+        <View style={styles.checkContainer}>
+          <TouchableOpacity onPress={handleCheck}>
+            <CheckBoxIcon fill={isChecked ? theme.MAIN500 : theme.TEXT500} />
+          </TouchableOpacity>
+          <Text style={[FONTS.BODY2_MEDIUM, {color: theme.TEXT900}]}>
+            계정 삭제 유의사항을 숙지했습니다.
           </Text>
         </View>
-      </View>
-      <View style={styles.checkContainer}>
-        <TouchableOpacity onPress={handleCheck}>
-          <CheckBoxIcon fill={isChecked ? theme.MAIN500 : theme.TEXT500} />
-        </TouchableOpacity>
-        <Text style={[FONTS.BODY2_MEDIUM, {color: theme.TEXT900}]}>
-          계정 삭제 유의사항을 숙지했습니다.
-        </Text>
-      </View>
-      <SafeAreaView style={styles.bottomContainer}>
-        <CustomBottomButton
-          title="계정 삭제 신청"
-          onPress={handleDeleteAccount}
-          isDisabled={!isChecked}
+
+        {/* alertModal 처리 */}
+        <AlertModal
+          modalId="deleteConfirm"
+          headerText="계정 삭제 신청"
+          bodyText="계정 삭제를 신청하시겠습니까?"
+          leftText="취소"
+          rightText="삭제"
+          rightOnPress={handleConfirmDelete}
         />
       </SafeAreaView>
-
-      {/* alertModal 처리 */}
-      <AlertModal
-        modalId="deleteConfirm"
-        headerText="계정 삭제 신청"
-        bodyText="계정 삭제를 신청하시겠습니까?"
-        leftText="취소"
-        rightText="삭제"
-        rightOnPress={handleConfirmDelete}
+      <CustomBottomButton
+        title="계정 삭제 신청"
+        onPress={handleDeleteAccount}
+        isDisabled={!isChecked}
       />
-    </SafeAreaView>
+    </>
   );
 };
 
@@ -147,9 +147,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-  },
-  bottomContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
   },
 });

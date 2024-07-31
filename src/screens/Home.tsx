@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
   FlatList,
@@ -10,7 +10,9 @@ import {
   RefreshControl,
   type ListRenderItem,
   Animated,
+  Platform,
 } from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {FONTS} from '@/constants';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import ScreenHeader from '@/components/common/ScreenHeader';
@@ -23,10 +25,26 @@ import dummyFileData from '@/constants/dummy-data/dummy-file-list.json';
 import useSortedData from '@/hooks/useSortedData';
 import {type IFileList} from '@/types/home';
 import useStickyAnimation from '@/hooks/useStickyAnimation';
+import FolderSideBar from '@/components/modal/FolderSideBar';
+import {useBottomButtonSizeStore} from '@/store/useBottomButtonSizeStore';
 
 const Home = () => {
   const {t} = useTranslation();
   const {theme} = useThemeStore();
+
+  // 하단 버튼 크기 계산 -> 전역변수 관리
+  const {bottom} = useSafeAreaInsets();
+  const isHomeIndicatorPresent = Platform.OS === 'ios' && bottom > 0;
+  const {setButtonHeight} = useBottomButtonSizeStore();
+
+  // 폴더 사이드바 토글
+  const [isSideBarVisible, setIsSideBarVisible] = useState(false);
+  const toggleSideBar = () => {
+    setIsSideBarVisible(!isSideBarVisible);
+  };
+
+  // 홈 화면 제목 - 선택한 폴더명
+  const [selectedFolderName, setSelectedFolderName] = useState<string>('전체');
 
   const sortingOptions = [
     t('최근 저장순'),
@@ -71,7 +89,9 @@ const Home = () => {
     return (
       <>
         <View style={styles.titleContainer}>
-          <Text style={[FONTS.TITLE, {color: theme.TEXT900}]}>전체</Text>
+          <Text style={[FONTS.TITLE, {color: theme.TEXT900}]}>
+            {selectedFolderName}
+          </Text>
         </View>
         <View style={styles.filterContainer}>
           <Text style={[FONTS.BODY2_MEDIUM, {color: theme.MAIN500}]}>
@@ -115,10 +135,23 @@ const Home = () => {
     [isLargeCard, sortedData, theme.TEXT200],
   );
 
+  useEffect(() => {
+    const calculatedHeight = isHomeIndicatorPresent ? 80 : 58;
+    setButtonHeight(calculatedHeight);
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <ThemeBackground />
       <View style={styles.mainContainer}>
+        <FolderSideBar
+          {...{
+            isSideBarVisible,
+            toggleSideBar,
+            selectedFolderName,
+            setSelectedFolderName,
+          }}
+        />
         <Animated.View
           style={[
             styles.header,
@@ -126,7 +159,7 @@ const Home = () => {
               transform: [{translateY}],
             },
           ]}>
-          <ScreenHeader />
+          <ScreenHeader toggleSideBar={toggleSideBar} />
         </Animated.View>
 
         <FlatList
