@@ -1,5 +1,4 @@
-import React from 'react';
-import {Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Platform, Pressable, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useThemeStore} from '@/store/useThemeStore';
 import {FONTS} from '@/constants';
@@ -23,7 +22,7 @@ const CustomBottomButton = ({
     <SafeAreaView
       edges={['bottom']}
       style={{backgroundColor: isDisabled ? theme.TEXT300 : theme.MAIN400}}>
-      <TouchableOpacity
+      <Pressable
         onPress={onPress}
         disabled={isDisabled}
         style={[
@@ -36,13 +35,13 @@ const CustomBottomButton = ({
         <View style={styles.buttonContent}>
           <Text
             style={[
-              FONTS.SUBTITLE,
+              styles.buttonText,
               isDisabled ? {color: theme.TEXT500} : {color: theme.BACKGROUND},
             ]}>
             {title}
           </Text>
         </View>
-      </TouchableOpacity>
+      </Pressable>
     </SafeAreaView>
   );
 };
@@ -62,5 +61,8 @@ const styles = StyleSheet.create({
   buttonContent: {
     width: '100%',
     alignItems: 'center',
+  },
+  buttonText: {
+    ...FONTS.SUBTITLE,
   },
 });

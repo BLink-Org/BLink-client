@@ -1,12 +1,6 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {TouchableOpacity} from 'react-native';
-import HomeScreen from '@/screens/Home';
-import AddScreen from '@/screens/Add';
-import BookmarkScreen from '@/screens/Bookmark';
-import MyPageScreen from '@/screens/Mypage';
-import SearchScreen from '@/screens/Search';
-import {type BottomTabParamList} from '@/types/navigation';
 import {
   HomeIcon,
   BookmarkIcon,
@@ -14,8 +8,14 @@ import {
   MypageIcon,
   SearchIcon,
 } from '@/assets/icons/bottom-tab';
-import BottomSheet from '../modal/BottomSheet';
-import LinkContent from '../link/LinkContent';
+import {type BottomTabParamList} from '@/types/navigation';
+import HomeScreen from '@/screens/tab-screens/Home';
+import AddScreen from '@/screens/tab-screens/Add';
+import BookmarkScreen from '@/screens/tab-screens/Bookmark';
+import SearchScreen from '@/screens/tab-screens/Search';
+import MyPageScreen from '@/screens/tab-screens/Mypage';
+import BottomSheet from '@/components/modal/BottomSheet';
+import LinkContent from '@/components/link/LinkContent';
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 

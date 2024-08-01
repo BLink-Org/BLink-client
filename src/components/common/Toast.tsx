@@ -1,6 +1,8 @@
-import {useEffect, useRef} from 'react';
+import {useEffect, useRef, useMemo} from 'react';
 import {Animated, Dimensions, StyleSheet, Text} from 'react-native';
 import {FONTS} from '@/constants';
+import {useThemeStore} from '@/store/useThemeStore';
+import {type ITheme} from '@/types';
 
 interface ToastProps {
   text: string;
@@ -17,6 +19,8 @@ const Toast = ({
   isToastVisible,
   setIsToastVisible,
 }: ToastProps) => {
+  const {theme} = useThemeStore();
+  const styles = useMemo(() => createStyles(theme), [theme]);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -42,7 +46,7 @@ const Toast = ({
     } else {
       fadeAnim.setValue(0);
     }
-  }, [isToastVisible, fadeAnim]);
+  }, [isToastVisible, fadeAnim, setIsToastVisible]);
 
   if (!isToastVisible) {
     return null;
@@ -57,21 +61,26 @@ const Toast = ({
           left: (screenWidth - toastWidth) / 2,
         },
       ]}>
-      <Text style={[FONTS.BODY1_MEDIUM, {color: 'white'}]}>{text}</Text>
+      <Text style={styles.text}>{text}</Text>
     </Animated.View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    width: toastWidth,
-    paddingVertical: 12,
-    paddingHorizontal: 18,
-    backgroundColor: '#333D4B',
-    borderRadius: 4,
-    zIndex: 9999,
-  },
-});
+const createStyles = (theme: ITheme) =>
+  StyleSheet.create({
+    container: {
+      backgroundColor: theme.TEXT700,
+      position: 'absolute',
+      width: toastWidth,
+      paddingVertical: 12,
+      paddingHorizontal: 18,
+      borderRadius: 4,
+      zIndex: 9999,
+    },
+    text: {
+      color: theme.BACKGROUND,
+      ...FONTS.BODY1_MEDIUM,
+    },
+  });
 
 export default Toast;

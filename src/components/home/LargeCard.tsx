@@ -1,4 +1,4 @@
-import React, {useState, useMemo} from 'react';
+import {useState, useMemo} from 'react';
 import {
   Dimensions,
   StyleSheet,
@@ -16,6 +16,7 @@ import {
 import {FONTS} from '@/constants';
 import {ThreeDotIcon} from '@/assets/icons/home';
 import {type IFileList} from '@/types/home';
+import {type ITheme} from '@/types';
 
 const screenWidth = Dimensions.get('screen').width - 36;
 const aspectRatio = 339 / 140; // 카드 비율
@@ -27,6 +28,8 @@ interface LargeCardProps {
 
 const LargeCard = ({content}: LargeCardProps) => {
   const {theme} = useThemeStore();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
   const CardImage = useMemo(() => {
     return theme.BIG_CARD_IMAGE;
   }, [theme]);
@@ -69,25 +72,16 @@ const LargeCard = ({content}: LargeCardProps) => {
         )}
       </View>
       <View style={styles.folderTop} />
-      <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT600}]}>
-        {content.folder}
-      </Text>
+      <Text style={styles.folderText}>{content.folder}</Text>
       <View style={styles.titleTop} />
-      <Text
-        style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900}]}
-        numberOfLines={1}
-        ellipsizeMode="tail">
+      <Text style={styles.titleText} numberOfLines={1} ellipsizeMode="tail">
         {content.title}
       </Text>
       <View style={styles.footerTop} />
       <View style={styles.footer}>
         <View style={styles.footerFront}>
-          <Text style={[FONTS.CAPTION_REGULAR, {color: theme.TEXT500}]}>
-            {content.saveDay}
-          </Text>
-          <Text style={[FONTS.CAPTION_REGULAR, {color: theme.TEXT500}]}>
-            {content.hostname}
-          </Text>
+          <Text style={styles.footerText}>{content.saveDay}</Text>
+          <Text style={styles.footerText}>{content.hostname}</Text>
         </View>
         <TouchableOpacity onPress={toggleBookmark}>
           {isBookmarked ? <BookmarkSelectedIcon /> : <BookmarkUnselectedIcon />}
@@ -99,48 +93,61 @@ const LargeCard = ({content}: LargeCardProps) => {
 
 export default LargeCard;
 
-const styles = StyleSheet.create({
-  container: {
-    width: screenWidth,
-    paddingVertical: 16,
-  },
-  cardImageContainer: {
-    width: screenWidth,
-    height: cardHeight,
-    borderRadius: 8,
-    overflow: 'hidden',
-    position: 'relative',
-  },
-  dotPosition: {
-    position: 'absolute',
-    top: 12,
-    right: 12,
-    zIndex: 1,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-  },
-  loadingContainer: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  footerFront: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  folderTop: {
-    marginTop: 12,
-  },
-  titleTop: {
-    marginTop: 4,
-  },
-  footerTop: {
-    marginTop: 8,
-  },
-});
+const createStyles = (theme: ITheme) =>
+  StyleSheet.create({
+    container: {
+      width: screenWidth,
+      paddingVertical: 16,
+    },
+    cardImageContainer: {
+      width: screenWidth,
+      height: cardHeight,
+      borderRadius: 8,
+      overflow: 'hidden',
+      position: 'relative',
+    },
+    dotPosition: {
+      position: 'absolute',
+      top: 12,
+      right: 12,
+      zIndex: 1,
+    },
+    image: {
+      width: '100%',
+      height: '100%',
+    },
+    loadingContainer: {
+      ...StyleSheet.absoluteFillObject,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    folderTop: {
+      marginTop: 12,
+    },
+    titleTop: {
+      marginTop: 4,
+    },
+    footerTop: {
+      marginTop: 8,
+    },
+    folderText: {
+      color: theme.TEXT600,
+      ...FONTS.BODY2_REGULAR,
+    },
+    titleText: {
+      color: theme.TEXT900,
+      ...FONTS.BODY1_MEDIUM,
+    },
+    footer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    footerFront: {
+      flexDirection: 'row',
+      gap: 12,
+    },
+    footerText: {
+      color: theme.TEXT500,
+      ...FONTS.CAPTION_REGULAR,
+    },
+  });

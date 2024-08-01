@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useMemo} from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -17,9 +17,11 @@ import {FONTS} from '@/constants';
 import RecentSearch from '@/components/search/ResentSearch';
 import dummyRecentData from '@/constants/dummy-data/dummy-recent-list.json';
 import useSearchData from '@/hooks/useSearchData';
+import {type ITheme} from '@/types';
 
 const Search = () => {
   const {theme} = useThemeStore();
+  const styles = useMemo(() => createStyles(theme), [theme]);
 
   // 최근 검색 기록 더미 데이터 -> 추후 api로 받아오기
   const recentSearches = dummyRecentData;
@@ -33,19 +35,15 @@ const Search = () => {
     ({item, index}) => (
       <View>
         <SmallCard content={item} />
-        {index !== filteredData.length - 1 && (
-          <View style={[styles.separator, {backgroundColor: theme.TEXT200}]} />
-        )}
+        {index !== filteredData.length - 1 && <View style={styles.separator} />}
       </View>
     ),
-    [filteredData, theme],
+    [filteredData],
   );
 
   const renderHeader = () => (
     <View style={styles.headerText}>
-      <Text style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900}]}>
-        {filteredData.length} Links
-      </Text>
+      <Text style={styles.headerTextContent}>{filteredData.length} Links</Text>
     </View>
   );
 
@@ -75,19 +73,25 @@ const Search = () => {
 
 export default Search;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  contentContainer: {
-    paddingHorizontal: 18,
-    paddingBottom: 80,
-  },
-  separator: {
-    height: 1,
-    marginHorizontal: -18,
-  },
-  headerText: {
-    marginVertical: 10,
-  },
-});
+const createStyles = (theme: ITheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    contentContainer: {
+      paddingHorizontal: 18,
+      paddingBottom: 80,
+    },
+    separator: {
+      height: 1,
+      marginHorizontal: -18,
+      backgroundColor: theme.TEXT200,
+    },
+    headerText: {
+      marginVertical: 10,
+    },
+    headerTextContent: {
+      ...FONTS.BODY1_MEDIUM,
+      color: theme.TEXT900,
+    },
+  });

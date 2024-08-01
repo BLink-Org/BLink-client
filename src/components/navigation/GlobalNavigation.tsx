@@ -1,14 +1,13 @@
-import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {type RootStackParamList} from '@/types/navigation';
-import ThemeSetting from '@/screens/ThemeSetting';
-import WebViewTest from '@/screens/WebViewTest';
-import Support from '@/screens/Support';
-import AccountDelete from '@/screens/AccountDelete';
-import AccountManage from '@/screens/AccountManage';
-import Setting from '@/screens/Setting';
-import Trash from '@/screens/Trash';
-import WebViewInfo from '@/screens/WebViewInfo';
+import ThemeSetting from '@/screens/stack-screens/ThemeSetting';
+import WebViewTest from '@/screens/stack-screens/WebViewTest';
+import Support from '@/screens/stack-screens/Support';
+import AccountDelete from '@/screens/stack-screens/AccountDelete';
+import AccountManage from '@/screens/stack-screens/AccountManage';
+import Setting from '@/screens/stack-screens/Setting';
+import Trash from '@/screens/stack-screens/Trash';
+import WebViewInfo from '@/screens/stack-screens/WebViewInfo';
 import BottomTabNavigation from './BottomTabNavigation';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();

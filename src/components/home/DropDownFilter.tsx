@@ -1,9 +1,10 @@
-import React, {useState, useRef} from 'react';
+import {useState, useRef, useMemo} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import Modal from 'react-native-modal';
 import {ArrowDownIcon} from '@/assets/icons/home';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
+import {type ITheme} from '@/types';
 
 interface DropdownProps {
   options: string[];
@@ -13,6 +14,8 @@ interface DropdownProps {
 
 const DropdownFilter = ({options, selectedOption, onSelect}: DropdownProps) => {
   const {theme} = useThemeStore();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
   const [isOpen, setIsOpen] = useState(false);
   const buttonRef = useRef<TouchableOpacity>(null);
   const [buttonY, setButtonY] = useState(0);
@@ -39,9 +42,7 @@ const DropdownFilter = ({options, selectedOption, onSelect}: DropdownProps) => {
         ref={buttonRef}
         onPress={toggleDropdown}
         style={styles.button}>
-        <Text style={[FONTS.BODY2_MEDIUM, {color: theme.TEXT700}]}>
-          {selectedOption}
-        </Text>
+        <Text style={styles.selectedOptionText}>{selectedOption}</Text>
         <ArrowDownIcon fill={theme.TEXT700} />
       </TouchableOpacity>
       <Modal
@@ -67,9 +68,7 @@ const DropdownFilter = ({options, selectedOption, onSelect}: DropdownProps) => {
                 {borderBottomColor: theme.TEXT200},
                 {borderBottomWidth: index === options.length - 1 ? 0 : 1},
               ]}>
-              <Text style={[FONTS.BODY2_MEDIUM, {color: theme.TEXT700}]}>
-                {option}
-              </Text>
+              <Text style={styles.optionText}>{option}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -78,32 +77,41 @@ const DropdownFilter = ({options, selectedOption, onSelect}: DropdownProps) => {
   );
 };
 
-const styles = StyleSheet.create({
-  button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  modalContainer: {
-    justifyContent: 'flex-start',
-    margin: 0,
-    width: 160,
-  },
-  dropdown: {
-    backgroundColor: 'white',
-    borderRadius: 5,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 10,
+const createStyles = (theme: ITheme) =>
+  StyleSheet.create({
+    button: {
+      flexDirection: 'row',
+      alignItems: 'center',
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-  },
-  item: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-  },
-});
+    selectedOptionText: {
+      ...FONTS.BODY2_MEDIUM,
+      color: theme.TEXT700,
+    },
+    modalContainer: {
+      justifyContent: 'flex-start',
+      margin: 0,
+      width: 160,
+    },
+    dropdown: {
+      backgroundColor: 'white',
+      borderRadius: 5,
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 10,
+      },
+      shadowOpacity: 0.1,
+      shadowRadius: 6,
+    },
+    item: {
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      borderBottomWidth: 1,
+    },
+    optionText: {
+      ...FONTS.BODY2_MEDIUM,
+      color: theme.TEXT700,
+    },
+  });
 
 export default DropdownFilter;

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useMemo} from 'react';
 import {
   StyleSheet,
   Text,
@@ -15,6 +15,7 @@ import {CheckBoxIcon, WarningIcon} from '@/assets/icons/mypage';
 import CustomBottomButton from '@/components/common/CustomBottomButton';
 import AlertModal from '@/components/modal/AlertModal';
 import {useModalStore} from '@/store/useModalStore';
+import {type ITheme} from '@/types';
 
 const AccountDelete = () => {
   const {theme} = useThemeStore();
@@ -42,6 +43,8 @@ const AccountDelete = () => {
     console.log('계정 삭제 철회하기');
   };
 
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
   if (isDeletedState) {
     return (
       <>
@@ -51,11 +54,9 @@ const AccountDelete = () => {
           <View style={styles.contentContainer}>
             <View style={styles.alertContainer}>
               <WarningIcon />
-              <Text style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900}]}>
-                삭제 신청된 계정입니다.
-              </Text>
+              <Text style={styles.alertText}>삭제 신청된 계정입니다.</Text>
             </View>
-            <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT600}]}>
+            <Text style={styles.infoText}>
               삭제 신청일 yyyy-mm-dd 기준 7일 이내{'\n'}삭제 신청을 취소하면
               원래의 계정 정보로{'\n'}B.Link를 계속 이용하실 수 있어요.
             </Text>
@@ -76,23 +77,19 @@ const AccountDelete = () => {
         <ThemeBackground />
         <BackHeader title="계정 삭제 신청" themeColor={theme.TEXT900} />
         <View style={styles.contentContainer}>
-          <Text style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900}]}>
-            저장 현황
-          </Text>
+          <Text style={styles.sectionTitle}>저장 현황</Text>
           <StaticInfo linkCount={123} bookmarkCount={15} folderCount={3} />
         </View>
         <View style={styles.contentContainer}>
-          <Text style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900}]}>
-            계정 삭제 유의사항
-          </Text>
+          <Text style={styles.sectionTitle}>계정 삭제 유의사항</Text>
           <View>
-            <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT600}]}>
+            <Text style={styles.infoText}>
               - 계정을 삭제하면 이런 문제가 있다는 것을 ...
             </Text>
-            <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT600}]}>
+            <Text style={styles.infoText}>
               - 계정을 삭제하면 이런 문제가 있다는 것을 ...
             </Text>
-            <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT600}]}>
+            <Text style={styles.infoText}>
               - 계정을 삭제하면 이런 문제가 있다는 것을 ...
             </Text>
           </View>
@@ -101,7 +98,7 @@ const AccountDelete = () => {
           <TouchableOpacity onPress={handleCheck}>
             <CheckBoxIcon fill={isChecked ? theme.MAIN500 : theme.TEXT500} />
           </TouchableOpacity>
-          <Text style={[FONTS.BODY2_MEDIUM, {color: theme.TEXT900}]}>
+          <Text style={styles.checkText}>
             계정 삭제 유의사항을 숙지했습니다.
           </Text>
         </View>
@@ -127,25 +124,42 @@ const AccountDelete = () => {
 
 export default AccountDelete;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  contentContainer: {
-    paddingVertical: 20,
-    paddingHorizontal: 18,
-    gap: 12,
-  },
-  alertContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  checkContainer: {
-    paddingHorizontal: 18,
-    paddingVertical: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-});
+const createStyles = (theme: ITheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    contentContainer: {
+      paddingVertical: 20,
+      paddingHorizontal: 18,
+      gap: 12,
+    },
+    alertContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    checkContainer: {
+      paddingHorizontal: 18,
+      paddingVertical: 20,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    alertText: {
+      color: theme.TEXT900,
+      ...FONTS.BODY1_MEDIUM,
+    },
+    infoText: {
+      color: theme.TEXT600,
+      ...FONTS.BODY2_REGULAR,
+    },
+    sectionTitle: {
+      color: theme.TEXT900,
+      ...FONTS.BODY1_MEDIUM,
+    },
+    checkText: {
+      color: theme.TEXT900,
+      ...FONTS.BODY2_MEDIUM,
+    },
+  });

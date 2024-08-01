@@ -1,8 +1,9 @@
-import React, {cloneElement, type ReactElement} from 'react';
+import {cloneElement, type ReactElement, useMemo} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import Modal from 'react-native-modal';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
+import {type ITheme} from '@/types';
 
 interface Option {
   label: string;
@@ -24,6 +25,8 @@ const DropDownModal = ({
   anchorPosition,
 }: DropDownModalProps) => {
   const {theme} = useThemeStore();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
   return (
     <Modal
       isVisible={isVisible}
@@ -75,32 +78,33 @@ const DropDownModal = ({
 
 export default DropDownModal;
 
-const styles = StyleSheet.create({
-  modal: {
-    margin: 0,
-    flex: 1,
-    justifyContent: 'flex-start',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    width: 160,
-  },
-  dropdown: {
-    backgroundColor: 'white',
-    borderRadius: 5,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 10,
+const createStyles = (theme: ITheme) =>
+  StyleSheet.create({
+    modal: {
+      margin: 0,
+      flex: 1,
+      justifyContent: 'flex-start',
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-  },
-  option: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-    gap: 8,
-  },
-});
+    modalContent: {
+      backgroundColor: theme.BACKGROUND,
+      borderRadius: 12,
+      width: 160,
+    },
+    dropdown: {
+      backgroundColor: theme.BACKGROUND,
+      borderRadius: 5,
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 10,
+      },
+      shadowOpacity: 0.1,
+      shadowRadius: 6,
+    },
+    option: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: 12,
+      gap: 8,
+    },
+  });

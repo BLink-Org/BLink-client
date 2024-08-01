@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from 'react';
+import React, {useState, useCallback, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
   FlatList,
@@ -23,10 +23,12 @@ import useSortedData from '@/hooks/useSortedData';
 import {type IFileList} from '@/types/home';
 import useStickyAnimation from '@/hooks/useStickyAnimation';
 import LogoHeader from '@/components/common/LogoHeader';
+import {type ITheme} from '@/types';
 
 const Bookmark = () => {
   const {t} = useTranslation();
   const {theme} = useThemeStore();
+  const styles = useMemo(() => createStyles(theme), [theme]);
 
   const sortingOptions = [
     t('최근 저장순'),
@@ -71,12 +73,10 @@ const Bookmark = () => {
     return (
       <>
         <View style={styles.titleContainer}>
-          <Text style={[FONTS.TITLE, {color: theme.TEXT900}]}>북마크</Text>
+          <Text style={styles.title}>북마크</Text>
         </View>
         <View style={styles.filterContainer}>
-          <Text style={[FONTS.BODY2_MEDIUM, {color: theme.MAIN500}]}>
-            123 Links
-          </Text>
+          <Text style={styles.linkCount}>123 Links</Text>
           <View style={styles.filterContainer}>
             <DropdownFilter
               options={sortingOptions}
@@ -107,12 +107,10 @@ const Bookmark = () => {
         ) : (
           <SmallCard content={item} />
         )}
-        {index !== sortedData.length - 1 && (
-          <View style={[styles.separator, {backgroundColor: theme.TEXT200}]} />
-        )}
+        {index !== sortedData.length - 1 && <View style={styles.separator} />}
       </View>
     ),
-    [isLargeCard, sortedData],
+    [isLargeCard, sortedData, styles.separator],
   );
 
   return (
@@ -153,41 +151,51 @@ const Bookmark = () => {
 
 export default Bookmark;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  mainContainer: {
-    flex: 1,
-    overflow: 'hidden',
-  },
-  header: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 1,
-    backgroundColor: 'white',
-  },
-  contentContainer: {
-    paddingTop: 60,
-    paddingHorizontal: 18,
-  },
-  titleContainer: {
-    height: 69,
-    justifyContent: 'center',
-  },
-  filterContainer: {
-    height: 24,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  sizeIconContainer: {
-    marginLeft: 12,
-  },
-  separator: {
-    height: 1,
-    marginHorizontal: -18,
-  },
-});
+const createStyles = (theme: ITheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    mainContainer: {
+      flex: 1,
+      overflow: 'hidden',
+    },
+    header: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 1,
+      backgroundColor: theme.BACKGROUND,
+    },
+    contentContainer: {
+      paddingTop: 60,
+      paddingHorizontal: 18,
+    },
+    titleContainer: {
+      height: 69,
+      justifyContent: 'center',
+    },
+    title: {
+      color: theme.TEXT900,
+      ...FONTS.TITLE,
+    },
+    filterContainer: {
+      height: 24,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    linkCount: {
+      color: theme.MAIN500,
+      ...FONTS.BODY2_MEDIUM,
+    },
+    sizeIconContainer: {
+      marginLeft: 12,
+    },
+    separator: {
+      height: 1,
+      marginHorizontal: -18,
+      backgroundColor: theme.TEXT200,
+    },
+  });

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {calculateByteLength} from '@/utils/link-utils';
 import TextInputGroup from '../common/TextInputGroup';

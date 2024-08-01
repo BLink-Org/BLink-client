@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useThemeStore} from '@/store/useThemeStore';
@@ -6,6 +6,7 @@ import ThemeBackground from '@/components/common/ThemeBackground';
 import BackHeader from '@/components/common/BackHeader';
 import {FONTS} from '@/constants';
 import ThemeCard from '@/components/mypage/ThemeCard';
+import {type ITheme} from '@/types';
 
 const themes = [
   {id: 1, name: '기본', price: 'Free', color: '#4285F4'},
@@ -31,6 +32,8 @@ const themes = [
 
 const ThemeSetting = () => {
   const {theme, setTheme, asyncSetTheme, getSavedTheme} = useThemeStore();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
   const [selectedThemeId, setSelectedThemeId] = useState<number>(1);
 
   useEffect(() => {
@@ -53,9 +56,7 @@ const ThemeSetting = () => {
       <ThemeBackground />
       <BackHeader title="테마 설정" themeColor={theme.TEXT900} />
       <View style={styles.contentContainer}>
-        <Text style={[FONTS.BODY2_MEDIUM, {color: theme.MAIN500}]}>
-          4 templates
-        </Text>
+        <Text style={styles.templateText}>4 templates</Text>
       </View>
       <FlatList
         data={themes}
@@ -80,16 +81,21 @@ const ThemeSetting = () => {
 
 export default ThemeSetting;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  contentContainer: {
-    paddingHorizontal: 18,
-  },
-  contentContainerStyle: {
-    paddingHorizontal: 12,
-    paddingVertical: 16,
-    gap: 20,
-  },
-});
+const createStyles = (theme: ITheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    contentContainer: {
+      paddingHorizontal: 18,
+    },
+    contentContainerStyle: {
+      paddingHorizontal: 12,
+      paddingVertical: 16,
+      gap: 20,
+    },
+    templateText: {
+      color: theme.MAIN500,
+      ...FONTS.BODY2_MEDIUM,
+    },
+  });

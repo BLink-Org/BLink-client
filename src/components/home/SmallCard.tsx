@@ -1,4 +1,4 @@
-import React, {useState, useMemo, useRef} from 'react';
+import {useState, useMemo, useRef} from 'react';
 import {
   Dimensions,
   StyleSheet,
@@ -20,6 +20,7 @@ import {DeleteIcon, PencilIcon} from '@/assets/icons/mypage';
 import DropDownModal from '@/components/modal/DropDownModal';
 import {useModalStore} from '@/store/useModalStore';
 import AlertModal from '@/components/modal/AlertModal';
+import {type ITheme} from '@/types';
 
 const screenWidth = Dimensions.get('screen').width - 36;
 
@@ -30,6 +31,7 @@ interface LargeCardProps {
 
 const SmallCard = ({content, isTrash}: LargeCardProps) => {
   const {theme} = useThemeStore();
+  const styles = useMemo(() => createStyles(theme), [theme]);
   const {showModal, closeModal} = useModalStore();
 
   const CardImage = useMemo(() => {
@@ -112,9 +114,7 @@ const SmallCard = ({content, isTrash}: LargeCardProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.dotPosition}>
-        <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT600}]}>
-          {content.folder}
-        </Text>
+        <Text style={styles.folderText}>{content.folder}</Text>
         <TouchableOpacity ref={buttonRef} onPress={toggleDropdown}>
           <ThreeDotIcon />
         </TouchableOpacity>
@@ -130,15 +130,12 @@ const SmallCard = ({content, isTrash}: LargeCardProps) => {
 
       <View style={styles.mainContainer}>
         <View style={styles.textContainer}>
-          <Text
-            style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900}]}
-            numberOfLines={2}
-            ellipsizeMode="tail">
+          <Text style={styles.titleText} numberOfLines={2} ellipsizeMode="tail">
             {content.title}
           </Text>
           <View style={styles.descriptionTop} />
           <Text
-            style={[FONTS.BODY2_REGULAR, {color: theme.TEXT500}]}
+            style={styles.descriptionText}
             numberOfLines={content.title.length > 30 ? 1 : 2}
             ellipsizeMode="tail">
             {content.description}
@@ -160,12 +157,8 @@ const SmallCard = ({content, isTrash}: LargeCardProps) => {
       </View>
       <View style={styles.footer}>
         <View style={styles.footerFront}>
-          <Text style={[FONTS.CAPTION_REGULAR, {color: theme.TEXT500}]}>
-            {content.saveDay}
-          </Text>
-          <Text style={[FONTS.CAPTION_REGULAR, {color: theme.TEXT500}]}>
-            {content.hostname}
-          </Text>
+          <Text style={styles.footerText}>{content.saveDay}</Text>
+          <Text style={styles.footerText}>{content.hostname}</Text>
         </View>
         <TouchableOpacity onPress={toggleBookmark}>
           {isBookmarked ? <BookmarkSelectedIcon /> : <BookmarkUnselectedIcon />}
@@ -195,48 +188,65 @@ const SmallCard = ({content, isTrash}: LargeCardProps) => {
 
 export default SmallCard;
 
-const styles = StyleSheet.create({
-  container: {
-    width: screenWidth,
-    paddingVertical: 16,
-    gap: 8,
-  },
-  dotPosition: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  mainContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 24,
-  },
-  textContainer: {
-    flexShrink: 1,
-  },
-  descriptionTop: {
-    height: 8,
-  },
-  cardImageContainer: {
-    width: 76,
-    height: 76,
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-  },
-  loadingContainer: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  footerFront: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-});
+const createStyles = (theme: ITheme) =>
+  StyleSheet.create({
+    container: {
+      width: screenWidth,
+      paddingVertical: 16,
+      gap: 8,
+    },
+    dotPosition: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    mainContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      gap: 24,
+    },
+    textContainer: {
+      flexShrink: 1,
+    },
+    descriptionTop: {
+      height: 8,
+    },
+    cardImageContainer: {
+      width: 76,
+      height: 76,
+      borderRadius: 8,
+      overflow: 'hidden',
+    },
+    image: {
+      width: '100%',
+      height: '100%',
+    },
+    loadingContainer: {
+      ...StyleSheet.absoluteFillObject,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    footer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    footerFront: {
+      flexDirection: 'row',
+      gap: 12,
+    },
+    folderText: {
+      color: theme.TEXT600,
+      ...FONTS.BODY2_REGULAR,
+    },
+    titleText: {
+      color: theme.TEXT900,
+      ...FONTS.BODY1_MEDIUM,
+    },
+    descriptionText: {
+      color: theme.TEXT500,
+      ...FONTS.BODY2_REGULAR,
+    },
+    footerText: {
+      color: theme.TEXT500,
+      ...FONTS.CAPTION_REGULAR,
+    },
+  });

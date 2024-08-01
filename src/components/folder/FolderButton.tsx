@@ -4,6 +4,7 @@ import {DownIcon, EditIcon, UpIcon} from '@/assets/icons/modal';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {DeleteIcon, PencilIcon} from '@/assets/icons/mypage';
+import {type ITheme} from '@/types';
 import DropDownModal from '../modal/DropDownModal';
 
 interface FolderButtonProps {
@@ -22,6 +23,7 @@ const FolderButton = ({
   handleSelect = () => {},
 }: FolderButtonProps) => {
   const {theme} = useThemeStore();
+  const styles = useMemo(() => createStyles(theme), [theme]);
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const closeDropdown = () => setIsDropdownOpen(false);
@@ -104,15 +106,11 @@ const FolderButton = ({
         {borderStyle: name ? 'solid' : 'dashed'},
       ]}
       onPress={onPress}>
-      <View style={styles.infocontainer}>
-        <Text style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT900, flex: 1}]}>
-          {name ?? '폴더 없이 저장'}
-        </Text>
+      <View style={styles.infoContainer}>
+        <Text style={styles.nameText}>{name ?? '폴더 없이 저장'}</Text>
         {number && (
           <View style={styles.detailContainer}>
-            <Text style={[FONTS.BODY2_MEDIUM, {color: theme.TEXT700}]}>
-              {number}
-            </Text>
+            <Text style={styles.numberText}>{number}</Text>
             <TouchableOpacity ref={buttonRef} onPress={toggleDropdown}>
               <EditIcon />
             </TouchableOpacity>
@@ -131,28 +129,38 @@ const FolderButton = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    height: 58,
-    borderWidth: 1,
-    borderRadius: 8,
-    borderColor: '#000',
-    justifyContent: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-  },
-  infocontainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  detailContainer: {
-    gap: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-});
+const createStyles = (theme: ITheme) =>
+  StyleSheet.create({
+    container: {
+      width: '100%',
+      height: 58,
+      borderWidth: 1,
+      borderColor: '#000',
+      borderRadius: 8,
+      justifyContent: 'center',
+      paddingVertical: 16,
+      paddingHorizontal: 20,
+    },
+    infoContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    detailContainer: {
+      gap: 16,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    nameText: {
+      flex: 1,
+      color: theme.TEXT900,
+      ...FONTS.BODY1_MEDIUM,
+    },
+    numberText: {
+      color: theme.TEXT700,
+      ...FONTS.BODY2_MEDIUM,
+    },
+  });
 
 export default FolderButton;
