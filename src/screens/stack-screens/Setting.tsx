@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useMemo, useState} from 'react';
 import {
   Linking,
   Platform,
@@ -11,11 +11,14 @@ import BackHeader from '@/components/common/BackHeader';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import {useThemeStore} from '@/store/useThemeStore';
 import NavigationInfo from '@/components/mypage/NavigationInfo';
-import {FONTS} from '@/constants';
 import CustomToggle from '@/components/common/CustomToggle';
+import {FONTS} from '@/constants';
+import {type ITheme} from '@/types';
 
 const Setting = () => {
   const {theme} = useThemeStore();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
   const [isToggled, setIsToggled] = useState<boolean>(false);
 
   // 알람 설정 클릭 시
@@ -45,7 +48,7 @@ const Setting = () => {
         />
 
         <View style={styles.bodyContainer}>
-          <Text style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT800}]}>알림</Text>
+          <Text style={styles.bodyText}>알림</Text>
           <CustomToggle isToggled={isToggled} onToggleChange={handleAlarm} />
         </View>
       </View>
@@ -55,17 +58,22 @@ const Setting = () => {
 
 export default Setting;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  contentContainer: {
-    paddingHorizontal: 18,
-  },
-  bodyContainer: {
-    paddingVertical: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-});
+const createStyles = (theme: ITheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    contentContainer: {
+      paddingHorizontal: 18,
+    },
+    bodyContainer: {
+      paddingVertical: 20,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    bodyText: {
+      ...FONTS.BODY1_MEDIUM,
+      color: theme.TEXT800,
+    },
+  });

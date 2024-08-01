@@ -1,3 +1,4 @@
+import {useMemo} from 'react';
 import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {
   type RouteProp,
@@ -13,13 +14,17 @@ import {
 } from '@/types/navigation';
 import {FONTS} from '@/constants';
 import NavigationInfo from '@/components/mypage/NavigationInfo';
+import {type ITheme} from '@/types';
 
 type AccountManageRouteProp = RouteProp<RootStackParamList, 'AccountManage'>;
 
 const AccountManage = () => {
+  const {theme} = useThemeStore();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
   const route = useRoute<AccountManageRouteProp>();
   const {email} = route.params;
-  const {theme} = useThemeStore();
+
   const navigation = useNavigation<RootStackNavigationProp>();
 
   // 계정 삭제 클릭 시
@@ -33,12 +38,8 @@ const AccountManage = () => {
       <BackHeader title="계정 관리" themeColor={theme.TEXT900} />
       <View style={styles.contentContainer}>
         <View style={styles.bodyContainer}>
-          <Text style={[FONTS.BODY1_MEDIUM, {color: theme.TEXT800}]}>
-            로그인 한 계정
-          </Text>
-          <Text style={[FONTS.BODY2_MEDIUM, {color: theme.MAIN500}]}>
-            {email}
-          </Text>
+          <Text style={styles.loginText}>로그인 한 계정</Text>
+          <Text style={styles.emailText}>{email}</Text>
         </View>
         <NavigationInfo
           title="계정 삭제 신청"
@@ -52,17 +53,26 @@ const AccountManage = () => {
 
 export default AccountManage;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  contentContainer: {
-    paddingHorizontal: 18,
-  },
-  bodyContainer: {
-    paddingVertical: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-});
+const createStyles = (theme: ITheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    contentContainer: {
+      paddingHorizontal: 18,
+    },
+    bodyContainer: {
+      paddingVertical: 20,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    loginText: {
+      color: theme.TEXT800,
+      ...FONTS.BODY1_MEDIUM,
+    },
+    emailText: {
+      color: theme.MAIN500,
+      ...FONTS.BODY2_MEDIUM,
+    },
+  });

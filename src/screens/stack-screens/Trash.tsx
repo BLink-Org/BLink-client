@@ -1,13 +1,13 @@
-import {useCallback, useState} from 'react';
+import {useCallback, useState, useMemo} from 'react';
 import {
   FlatList,
   type ListRenderItem,
   RefreshControl,
-  StyleSheet,
   Text,
   View,
   TouchableOpacity,
   Animated,
+  StyleSheet,
 } from 'react-native';
 import {useTranslation} from 'react-i18next';
 import {useNavigation} from '@react-navigation/native';
@@ -22,10 +22,13 @@ import {type IFileList} from '@/types/home';
 import {ArrowBackIcon} from '@/assets/icons/mypage';
 import SmallCard from '@/components/home/SmallCard';
 import useStickyAnimation from '@/hooks/useStickyAnimation';
+import {type ITheme} from '@/types';
 
 const Trash = () => {
-  const {theme} = useThemeStore();
   const {t} = useTranslation();
+  const {theme} = useThemeStore();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
   const navigation = useNavigation();
 
   const sortingOptions = [
@@ -41,43 +44,45 @@ const Trash = () => {
   const handleSelection = (selected: string) => {
     setSelectedSortingOption(selected);
   };
-  // sort 커스텀 훅
+
   const sortedData = useSortedData(dummyFileData, selectedSortingOption);
 
-  // 새로고침 상태 관리
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    // 여기서 데이터를 새로 고침
-    // 추후 API 호출로 변경
-    // 예시로 1초 후 새로고침 완료
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);
   }, []);
 
-  // sticky header 애니메이션
   const {translateY, handleScroll} = useStickyAnimation(refreshing);
 
   const handleGoBack = () => {
     navigation.goBack();
   };
 
-  // ListHeaderComponent
+  const renderItem: ListRenderItem<IFileList> = useCallback(
+    ({item, index}) => (
+      <View>
+        <SmallCard content={item} isTrash={true} />
+        {index !== sortedData.length - 1 && <View style={styles.separator} />}
+      </View>
+    ),
+    [sortedData, styles.separator],
+  );
+
   const ListHeaderComponent = () => {
     return (
       <View style={styles.titleContainer}>
         <View style={styles.headerText}>
-          <Text style={[FONTS.TITLE, {color: theme.TEXT900}]}>휴지통</Text>
+          <Text style={styles.title}>휴지통</Text>
         </View>
-        <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT600}]}>
+        <Text style={styles.subTitle}>
           휴지통의 링크는 7일 이후 영구적으로 삭제됩니다.
         </Text>
         <View style={styles.paddingContent} />
         <View style={styles.filterContainer}>
-          <Text style={[FONTS.BODY2_MEDIUM, {color: theme.MAIN500}]}>
-            123 Links
-          </Text>
+          <Text style={styles.linkCount}>123 Links</Text>
           <View style={styles.filterContainer}>
             <DropdownFilter
               options={sortingOptions}
@@ -89,19 +94,6 @@ const Trash = () => {
       </View>
     );
   };
-
-  // FlatList 사용 최적화
-  const renderItem: ListRenderItem<IFileList> = useCallback(
-    ({item, index}) => (
-      <View>
-        <SmallCard content={item} isTrash={true} />
-        {index !== sortedData.length - 1 && (
-          <View style={[styles.separator, {backgroundColor: theme.TEXT200}]} />
-        )}
-      </View>
-    ),
-    [sortedData],
-  );
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -143,47 +135,61 @@ const Trash = () => {
 
 export default Trash;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 1,
-    backgroundColor: 'white',
-  },
-  titleContainer: {
-    marginTop: 58,
-  },
-  mainContainer: {
-    flex: 1,
-    overflow: 'hidden',
-  },
-  contentContainer: {
-    paddingHorizontal: 18,
-  },
-  headerIcon: {
-    paddingHorizontal: 18,
-    height: 58,
-    justifyContent: 'center',
-  },
-  headerText: {
-    height: 69,
-    justifyContent: 'center',
-  },
-  paddingContent: {
-    marginTop: 32,
-  },
-  filterContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  separator: {
-    height: 1,
-    marginHorizontal: -18,
-  },
-});
+const createStyles = (theme: ITheme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    header: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 1,
+      backgroundColor: 'white',
+    },
+    titleContainer: {
+      marginTop: 58,
+    },
+    mainContainer: {
+      flex: 1,
+      overflow: 'hidden',
+    },
+    contentContainer: {
+      paddingHorizontal: 18,
+    },
+    headerIcon: {
+      paddingHorizontal: 18,
+      height: 58,
+      justifyContent: 'center',
+    },
+    headerText: {
+      height: 69,
+      justifyContent: 'center',
+    },
+    paddingContent: {
+      marginTop: 32,
+    },
+    filterContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    separator: {
+      height: 1,
+      marginHorizontal: -18,
+      backgroundColor: theme.TEXT200,
+    },
+    title: {
+      color: theme.TEXT900,
+      ...FONTS.TITLE,
+    },
+    subTitle: {
+      color: theme.TEXT600,
+      ...FONTS.BODY2_REGULAR,
+    },
+    linkCount: {
+      color: theme.MAIN500,
+      ...FONTS.BODY2_MEDIUM,
+    },
+  });

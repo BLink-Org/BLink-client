@@ -41,7 +41,7 @@ module.exports = {
     '@tanstack/query/exhaustive-deps': 'error', // @tanstack/query에서 의존성 배열이 완전한지 검사.
     '@tanstack/query/no-rest-destructuring': 'warn', // @tanstack/query에서 REST 매개변수 해체 사용 경고.
     '@tanstack/query/stable-query-client': 'error', // @tanstack/query에서 안정적인 쿼리 클라이언트 사용.
-    'react-native/no-unused-styles': 2,
+    // 'react-native/no-unused-styles': 2,
     'import/order': [
       'error',
       {
