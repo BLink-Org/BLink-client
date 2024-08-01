@@ -1,8 +1,9 @@
-import React, {memo} from 'react';
+import {memo, useMemo} from 'react';
 import {View, TextInput, StyleSheet} from 'react-native';
 import {FONTS} from '@/constants';
 import {SearchIcon} from '@/assets/icons/search';
 import {useThemeStore} from '@/store/useThemeStore';
+import {type ITheme} from '@/types';
 
 interface SearchHeaderProps {
   searchQuery: string;
@@ -11,15 +12,12 @@ interface SearchHeaderProps {
 
 const SearchHeader = memo(({searchQuery, handleSearch}: SearchHeaderProps) => {
   const {theme} = useThemeStore();
+  const styles = useMemo(() => createStyles(theme), [theme]);
 
   return (
     <View style={styles.searchContainer}>
       <TextInput
-        style={[
-          styles.searchInput,
-          FONTS.BODY2_MEDIUM,
-          {backgroundColor: theme.TEXT200},
-        ]}
+        style={styles.searchInput}
         onChangeText={handleSearch}
         value={searchQuery}
         placeholder="전체에서 검색"
@@ -37,23 +35,26 @@ SearchHeader.displayName = 'SearchHeader';
 
 export default SearchHeader;
 
-const styles = StyleSheet.create({
-  searchContainer: {
-    marginVertical: 16,
-    marginHorizontal: 18,
-    flexDirection: 'row',
-    alignItems: 'center',
-    overflow: 'hidden',
-  },
-  searchInput: {
-    flex: 1,
-    height: 50,
-    borderRadius: 8,
-    paddingLeft: 16,
-    paddingRight: 46,
-  },
-  searchIcon: {
-    position: 'absolute',
-    right: 16,
-  },
-});
+const createStyles = (theme: ITheme) =>
+  StyleSheet.create({
+    searchContainer: {
+      marginVertical: 16,
+      marginHorizontal: 18,
+      flexDirection: 'row',
+      alignItems: 'center',
+      overflow: 'hidden',
+    },
+    searchInput: {
+      flex: 1,
+      height: 50,
+      borderRadius: 8,
+      paddingLeft: 16,
+      paddingRight: 46,
+      backgroundColor: theme.TEXT200,
+      ...FONTS.BODY2_MEDIUM,
+    },
+    searchIcon: {
+      position: 'absolute',
+      right: 16,
+    },
+  });

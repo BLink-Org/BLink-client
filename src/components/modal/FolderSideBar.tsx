@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState, useMemo} from 'react';
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import {useThemeStore} from '@/store/useThemeStore';
 import {BackIcon, ForwardIcon} from '@/assets/icons/modal';
 import {AddIcon} from '@/assets/icons/common';
 import dummyFolderListRaw from '@/constants/dummy-data/dummy-folder-list.json';
+import {type ITheme} from '@/types';
 import FolderButton from '../folder/FolderButton';
 import BottomSheet from './BottomSheet';
 import FolderContent from '../folder/FolderContent';
@@ -35,6 +36,8 @@ const FolderSideBar = ({
   setSelectedFolderName,
 }: FolderSideBarProps) => {
   const {theme} = useThemeStore();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
   const insets = useSafeAreaInsets();
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
   const toggleBottomSheet = (folderName: string | null = null) => {
@@ -121,21 +124,17 @@ const FolderSideBar = ({
             <BackIcon width={26} height={26} fill={theme.TEXT900} />
           </TouchableOpacity>
           <View style={styles.titleContainer}>
-            <Text style={[FONTS.TITLE, {color: theme.TEXT900}]}>폴더</Text>
+            <Text style={styles.title}>폴더</Text>
           </View>
           <View style={styles.detailContainer}>
-            <Text style={[FONTS.BODY2_MEDIUM, {color: theme.MAIN500}]}>
-              123 Links
-            </Text>
+            <Text style={styles.linkCount}>123 Links</Text>
             <TouchableOpacity
               style={styles.totalButton}
               onPress={() => {
                 setSelectedFolderName('전체');
                 toggleSideBar();
               }}>
-              <Text style={[FONTS.BODY2_MEDIUM, {color: theme.TEXT700}]}>
-                전체보기
-              </Text>
+              <Text style={styles.totalButtonText}>전체보기</Text>
               <ForwardIcon />
             </TouchableOpacity>
           </View>
@@ -148,7 +147,6 @@ const FolderSideBar = ({
                     <View style={styles.stroke}></View>
                   )}
                   <FolderButton
-                    // TODO: delete 'as type' after connecting API
                     variants={
                       item.name === selectedFolderName
                         ? 'pressed'
@@ -178,9 +176,7 @@ const FolderSideBar = ({
                 toggleBottomSheet();
               }}>
               <AddIcon style={{marginRight: 8}} />
-              <Text style={[FONTS.BODY2_SEMIBOLD, {color: theme.TEXT700}]}>
-                폴더 생성
-              </Text>
+              <Text style={styles.addFolderButtonText}>폴더 생성</Text>
             </TouchableOpacity>
           </View>
         </Animated.View>
@@ -189,75 +185,92 @@ const FolderSideBar = ({
   );
 };
 
-const styles = StyleSheet.create({
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    borderTopRightRadius: 28,
-    borderBottomRightRadius: 28,
-    width: 316,
-    height: '100%',
-    padding: 18,
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    shadowColor: '#000',
-    shadowOffset: {width: 15, height: 0},
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-    elevation: 5,
-  },
-  titleContainer: {
-    height: 69,
-    justifyContent: 'center',
-  },
-  detailContainer: {
-    height: 24,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  totalButton: {
-    width: 70,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  folderList: {
-    flex: 1,
-    maxHeight: 517,
-    paddingVertical: 20,
-  },
-  stroke: {
-    borderWidth: 1,
-    borderColor: '#ECF1F5',
-    marginBottom: 8,
-    width: '100%',
-  },
-  separator: {
-    height: 8,
-  },
-  tabBar: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-    paddingBottom: 22,
-  },
-  addFolderButton: {
-    height: 45,
-    borderWidth: 1,
-    borderColor: '#ECF1F5',
-    borderRadius: 100,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-  },
-  closeButton: {
-    height: 58,
-    justifyContent: 'center',
-  },
-});
+const createStyles = (theme: ITheme) =>
+  StyleSheet.create({
+    overlay: {
+      ...StyleSheet.absoluteFillObject,
+    },
+    modalContent: {
+      backgroundColor: theme.BACKGROUND,
+      borderTopRightRadius: 28,
+      borderBottomRightRadius: 28,
+      width: 316,
+      height: '100%',
+      padding: 18,
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      shadowColor: '#000',
+      shadowOffset: {width: 15, height: 0},
+      shadowOpacity: 0.1,
+      shadowRadius: 20,
+      elevation: 5,
+    },
+    titleContainer: {
+      height: 69,
+      justifyContent: 'center',
+    },
+    title: {
+      color: theme.TEXT900,
+      ...FONTS.TITLE,
+    },
+    detailContainer: {
+      height: 24,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    linkCount: {
+      color: theme.MAIN500,
+      ...FONTS.BODY2_MEDIUM,
+    },
+    totalButton: {
+      width: 70,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    totalButtonText: {
+      color: theme.TEXT700,
+      ...FONTS.BODY2_MEDIUM,
+    },
+    folderList: {
+      flex: 1,
+      maxHeight: 517,
+      paddingVertical: 20,
+    },
+    stroke: {
+      borderWidth: 1,
+      borderColor: '#ECF1F5',
+      marginBottom: 8,
+      width: '100%',
+    },
+    separator: {
+      height: 8,
+    },
+    tabBar: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      alignItems: 'flex-end',
+      paddingBottom: 22,
+    },
+    addFolderButton: {
+      height: 45,
+      borderWidth: 1,
+      borderColor: '#ECF1F5',
+      borderRadius: 100,
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+    },
+    addFolderButtonText: {
+      color: theme.TEXT700,
+      ...FONTS.BODY2_SEMIBOLD,
+    },
+    closeButton: {
+      height: 58,
+      justifyContent: 'center',
+    },
+  });
 
 export default FolderSideBar;

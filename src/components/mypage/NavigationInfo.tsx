@@ -1,4 +1,3 @@
-import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {ArrowForwardIcon} from '@/assets/icons/mypage';
 import {FONTS} from '@/constants';

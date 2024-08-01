@@ -1,4 +1,3 @@
-import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {ArrowBackIcon} from '@/assets/icons/mypage';

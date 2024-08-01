@@ -1,4 +1,4 @@
-import React, {type ReactNode, useEffect, useRef, useState} from 'react';
+import {type ReactNode, useEffect, useRef, useState, useMemo} from 'react';
 import {
   View,
   StyleSheet,
@@ -15,6 +15,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {DeleteIcon} from '@/assets/icons/common';
+import {type ITheme} from '@/types';
 
 interface BottomSheetProps {
   modalTitle: string;
@@ -30,6 +31,7 @@ const BottomSheet = ({
   toggleBottomSheet,
 }: BottomSheetProps) => {
   const {theme} = useThemeStore();
+  const styles = useMemo(() => createStyles(theme), [theme]);
 
   const insets = useSafeAreaInsets();
   const statusBarHeight =
@@ -77,9 +79,7 @@ const BottomSheet = ({
         ]}>
         <View style={styles.header}>
           <View />
-          <Text style={[FONTS.SUBTITLE, {color: theme.TEXT900}]}>
-            {modalTitle}
-          </Text>
+          <Text style={styles.modalTitle}>{modalTitle}</Text>
           <TouchableOpacity onPress={toggleBottomSheet}>
             <DeleteIcon />
           </TouchableOpacity>
@@ -90,32 +90,37 @@ const BottomSheet = ({
   );
 };
 
-const styles = StyleSheet.create({
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  modalContainer: {
-    backgroundColor: 'white',
-    borderTopRightRadius: 28,
-    borderTopLeftRadius: 28,
-    width: '100%',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: -15},
-    shadowOpacity: 0.1,
-    shadowRadius: 20,
-    position: 'absolute',
-    left: 0,
-    bottom: 0,
-    elevation: 5,
-  },
-  header: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 20,
-    paddingHorizontal: 18,
-  },
-});
+const createStyles = (theme: ITheme) =>
+  StyleSheet.create({
+    overlay: {
+      ...StyleSheet.absoluteFillObject,
+    },
+    modalContainer: {
+      backgroundColor: theme.BACKGROUND,
+      borderTopRightRadius: 28,
+      borderTopLeftRadius: 28,
+      width: '100%',
+      shadowColor: '#000',
+      shadowOffset: {width: 0, height: -15},
+      shadowOpacity: 0.1,
+      shadowRadius: 20,
+      position: 'absolute',
+      left: 0,
+      bottom: 0,
+      elevation: 5,
+    },
+    header: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingVertical: 20,
+      paddingHorizontal: 18,
+    },
+    modalTitle: {
+      color: theme.TEXT900,
+      ...FONTS.SUBTITLE,
+    },
+  });
 
 export default BottomSheet;

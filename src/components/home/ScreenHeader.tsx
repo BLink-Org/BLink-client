@@ -1,4 +1,3 @@
-import React from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {LogoImage} from '@/assets/icons/common';
 import {SidebarIcon} from '@/assets/icons/home';

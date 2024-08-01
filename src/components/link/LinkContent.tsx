@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState, useMemo} from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -15,6 +15,7 @@ import {type FolderButtonProps} from '@/types/folder';
 import {hasPressedFolder} from '@/utils/folder-utils';
 import {AddIcon} from '@/assets/icons/common';
 import {useBottomButtonSizeStore} from '@/store/useBottomButtonSizeStore';
+import {type ITheme} from '@/types';
 import TextInputGroup from '../common/TextInputGroup';
 import CustomBottomButton from '../common/CustomBottomButton';
 import FolderButton from '../folder/FolderButton';
@@ -26,11 +27,12 @@ interface FolderSideBarProps {
   toggleBottomSheet: () => void;
 }
 
-// 링크 생성 (컨텐츠 읽기 내 링크 저장 포함) case
 const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
+  const {theme} = useThemeStore();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
   const [textInput, setTextInput] = useState<string | undefined>(defaultURL);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  // TODO: Need to connect API & fix interface
   const [folderList, setFolderList] = useState<FolderButtonProps[]>(
     dummyFolderListRaw as FolderButtonProps[],
   );
@@ -40,7 +42,6 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
   const toggleFolderBottomSheet = () => {
     setIsFolderBottomSheetVisible(!isFolderBottomSheetVisible);
   };
-  const {theme} = useThemeStore();
   const {buttonHeight} = useBottomButtonSizeStore();
 
   useEffect(() => {
@@ -86,20 +87,12 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
           {...{textInput, setTextInput, errorMessage}}
         />
         <View style={styles.folderTitle}>
-          <Text
-            style={[
-              FONTS.BODY1_SEMIBOLD,
-              {color: theme.MAIN500, marginRight: 4},
-            ]}>
-            폴더
-          </Text>
+          <Text style={styles.folderTitleText}>폴더</Text>
           <TouchableOpacity
             style={styles.addContainer}
             onPress={toggleFolderBottomSheet}>
             <AddIcon />
-            <Text style={[FONTS.BODY1_SEMIBOLD, {color: theme.TEXT700}]}>
-              생성
-            </Text>
+            <Text style={styles.addText}>생성</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.folderList}>
@@ -130,41 +123,51 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
   );
 };
 
-const styles = StyleSheet.create({
-  contentContainer: {
-    flex: 1,
-    paddingHorizontal: 18,
-  },
-  folderTitle: {
-    display: 'flex',
-    flexDirection: 'row',
-    marginTop: 32,
-    marginBottom: 4,
-    alignItems: 'center',
-  },
-  addContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    gap: 4,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    alignItems: 'center',
-  },
-  folderList: {
-    flex: 1,
-    maxHeight: 400,
-    paddingVertical: 12,
-    marginBottom: 27,
-  },
-  stroke: {
-    borderWidth: 1,
-    borderColor: '#ECF1F5',
-    marginBottom: 8,
-    width: '100%',
-  },
-  separator: {
-    height: 8,
-  },
-});
+const createStyles = (theme: ITheme) =>
+  StyleSheet.create({
+    contentContainer: {
+      flex: 1,
+      paddingHorizontal: 18,
+    },
+    folderTitle: {
+      display: 'flex',
+      flexDirection: 'row',
+      marginTop: 32,
+      marginBottom: 4,
+      alignItems: 'center',
+    },
+    folderTitleText: {
+      color: theme.MAIN500,
+      marginRight: 4,
+      ...FONTS.BODY1_SEMIBOLD,
+    },
+    addContainer: {
+      display: 'flex',
+      flexDirection: 'row',
+      gap: 4,
+      paddingVertical: 4,
+      paddingHorizontal: 8,
+      alignItems: 'center',
+    },
+    addText: {
+      color: theme.TEXT700,
+      ...FONTS.BODY1_SEMIBOLD,
+    },
+    folderList: {
+      flex: 1,
+      maxHeight: 400,
+      paddingVertical: 12,
+      marginBottom: 27,
+    },
+    stroke: {
+      borderWidth: 1,
+      borderColor: theme.TEXT200,
+      marginBottom: 8,
+      width: '100%',
+    },
+    separator: {
+      height: 8,
+    },
+  });
 
 export default LinkContent;

@@ -15,7 +15,7 @@ import {
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {FONTS} from '@/constants';
 import ThemeBackground from '@/components/common/ThemeBackground';
-import ScreenHeader from '@/components/common/ScreenHeader';
+import ScreenHeader from '@/components/home/ScreenHeader';
 import {useThemeStore} from '@/store/useThemeStore';
 import {LargeCardIcon, SmallCardIcon} from '@/assets/icons/home';
 import LargeCard from '@/components/home/LargeCard';
