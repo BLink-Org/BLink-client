@@ -1,13 +1,14 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {type RootStackParamList} from '@/types/navigation';
 import ThemeSetting from '@/screens/stack-screens/ThemeSetting';
-import WebViewTest from '@/screens/stack-screens/WebViewTest';
 import Support from '@/screens/stack-screens/Support';
 import AccountDelete from '@/screens/stack-screens/AccountDelete';
 import AccountManage from '@/screens/stack-screens/AccountManage';
 import Setting from '@/screens/stack-screens/Setting';
 import Trash from '@/screens/stack-screens/Trash';
 import WebViewInfo from '@/screens/stack-screens/WebViewInfo';
+import APITest from '@/screens/stack-screens/APITest';
+import WebViewTest from '@/screens/stack-screens/WebViewTest';
 import BottomTabNavigation from './BottomTabNavigation';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -22,6 +23,7 @@ const GlobalNavigation = () => {
         component={WebViewTest}
         options={{animation: 'slide_from_bottom'}}
       />
+      <Stack.Screen name="APITest" component={APITest} />
       <Stack.Screen
         name="WebViewInfo"
         component={WebViewInfo}
