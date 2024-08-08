@@ -1,4 +1,4 @@
-package com.blinkapp
+package com.blinkapplication
 
 import android.app.Application
 import android.content.Context
@@ -10,8 +10,6 @@ import com.facebook.react.ReactPackage
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.soloader.SoLoader
-import com.blinkapp.BuildConfig
-import com.blinkapp.ShareMenuPackage
 import java.lang.reflect.InvocationTargetException
 
 class MainApplication : Application(), ReactApplication {
