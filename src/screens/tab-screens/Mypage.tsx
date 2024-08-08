@@ -102,10 +102,16 @@ const MyPage = () => {
               themeColor={theme.TEXT800}
               onPress={logoutModalOpen}
             />
+            {/* 임시 테스트 페이지 */}
             <TouchableOpacity
               onPress={() => navigation.navigate('WebViewTest')}
               style={{paddingVertical: 30}}>
-              <Text>test</Text>
+              <Text>webViewTest</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('APITest')}
+              style={{paddingVertical: 30}}>
+              <Text>apiTest</Text>
             </TouchableOpacity>
           </View>
         </View>

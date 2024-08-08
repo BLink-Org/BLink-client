@@ -31,6 +31,7 @@ export interface RootStackParamList {
   Setting: undefined;
   Trash: undefined;
   WebViewInfo: {info: {url: string; title: string}};
+  APITest: undefined;
   // ex> DetailPhoto: {image: {path: string; creationDate: string}};
 }
 

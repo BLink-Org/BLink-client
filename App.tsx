@@ -3,6 +3,7 @@ import {NativeModules, Platform} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import * as RNLocalize from 'react-native-localize';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import GlobalNavigation from '@/components/navigation/GlobalNavigation';
 import {useThemeStore} from '@/store/useThemeStore';
 import i18n from '@/i18n/i18n';
@@ -10,6 +11,8 @@ import i18n from '@/i18n/i18n';
 interface AppProps {
   sharedText: string;
 }
+
+const queryClient = new QueryClient();
 
 export default function App(props: AppProps) {
   const restoreTheme = useThemeStore(state => state.restoreTheme);
@@ -31,10 +34,12 @@ export default function App(props: AppProps) {
   }, []);
 
   return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <GlobalNavigation />
-      </NavigationContainer>
-    </SafeAreaProvider>
+    <QueryClientProvider client={queryClient}>
+      <SafeAreaProvider>
+        <NavigationContainer>
+          <GlobalNavigation />
+        </NavigationContainer>
+      </SafeAreaProvider>
+    </QueryClientProvider>
   );
 }
