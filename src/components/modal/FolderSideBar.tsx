@@ -17,10 +17,10 @@ import {BackIcon, ForwardIcon} from '@/assets/icons/modal';
 import {AddIcon} from '@/assets/icons/common';
 import dummyFolderListRaw from '@/constants/dummy-data/dummy-folder-list.json';
 import {type ITheme} from '@/types';
-import FolderButton from '../folder/FolderButton';
-import BottomSheet from './BottomSheet';
-import FolderContent from '../folder/FolderContent';
-import Toast from '../common/Toast';
+import FolderButton from '@/components/folder/FolderButton';
+import BottomSheet from '@/components/modal/BottomSheet';
+import FolderContent from '@/components/folder/FolderContent';
+import Toast from '@/components/common/Toast';
 
 interface FolderSideBarProps {
   isSideBarVisible: boolean;
@@ -45,6 +45,16 @@ const FolderSideBar = ({
     setIsBottomSheetVisible(!isBottomSheetVisible);
   };
   const [isToastVisible, setIsToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const handleTaost = (label?: string) => {
+    if (!label) {
+      setToastMessage(folderToEdit ? '수정되었습니다.' : '생성되었습니다');
+    } else {
+      setToastMessage(label);
+    }
+    setIsToastVisible(true);
+  };
+
   const [folderToEdit, setFolderToEdit] = useState<string | null>(null);
 
   const handleSelect = (label: string, folderName?: string) => {
@@ -93,7 +103,7 @@ const FolderSideBar = ({
         style={styles.modalContent}>
         {isToastVisible && (
           <Toast
-            text={folderToEdit ? '수정되었습니다.' : '생성되었습니다'}
+            text={toastMessage}
             marginBottom={128}
             {...{isToastVisible, setIsToastVisible}}
           />
@@ -147,6 +157,7 @@ const FolderSideBar = ({
                     <View style={styles.stroke}></View>
                   )}
                   <FolderButton
+                    id={item.id}
                     variants={
                       item.name === selectedFolderName
                         ? 'pressed'
@@ -160,11 +171,12 @@ const FolderSideBar = ({
                       );
                       toggleSideBar();
                     }}
+                    handleTaost={handleTaost}
                     handleSelect={label => handleSelect(label, item.name)}
                   />
                 </>
               )}
-              keyExtractor={item => item.id}
+              keyExtractor={item => `${item.id}`}
               ItemSeparatorComponent={() => <View style={styles.separator} />}
               showsVerticalScrollIndicator={false}
             />

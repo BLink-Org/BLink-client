@@ -79,7 +79,8 @@ const createStyles = (theme: ITheme) =>
     },
     input: {
       flex: 1,
-      height: 56,
+      maxHeight: 56,
+      paddingVertical: 16,
       width: '100%',
       color: theme.TEXT800,
       ...FONTS.BODY1_MEDIUM,
@@ -90,6 +91,8 @@ const createStyles = (theme: ITheme) =>
       flexDirection: 'row',
       alignItems: 'center',
       marginBottom: 8,
+      borderBottomColor: theme.MAIN300,
+      borderBottomWidth: 2,
     },
     inputFieldBottom: {
       display: 'flex',

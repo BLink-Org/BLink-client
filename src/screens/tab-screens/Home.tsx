@@ -28,6 +28,7 @@ import useStickyAnimation from '@/hooks/useStickyAnimation';
 import FolderSideBar from '@/components/modal/FolderSideBar';
 import {useBottomButtonSizeStore} from '@/store/useBottomButtonSizeStore';
 import {type ITheme} from '@/types';
+import Toast from '@/components/common/Toast';
 
 const Home = () => {
   const {t} = useTranslation();
@@ -44,6 +45,9 @@ const Home = () => {
   const toggleSideBar = () => {
     setIsSideBarVisible(!isSideBarVisible);
   };
+
+  // 삭제 토스트 메세지 관리
+  const [isToastVisible, setIsToastVisible] = useState(false);
 
   // 홈 화면 제목 - 선택한 폴더명
   const [selectedFolderName, setSelectedFolderName] = useState<string>('전체');
@@ -121,9 +125,9 @@ const Home = () => {
     ({item, index}) => (
       <View>
         {isLargeCard ? (
-          <LargeCard content={item} />
+          <LargeCard content={item} {...{setIsToastVisible}} />
         ) : (
-          <SmallCard content={item} />
+          <SmallCard content={item} {...{setIsToastVisible}} />
         )}
         {index !== sortedData.length - 1 && <View style={styles.separator} />}
       </View>
@@ -176,6 +180,15 @@ const Home = () => {
           }
         />
       </View>
+
+      {/* 삭제 토스트 메세지 처리 */}
+      {isToastVisible && (
+        <Toast
+          text={'삭제되었습니다'}
+          marginBottom={44}
+          {...{isToastVisible, setIsToastVisible}}
+        />
+      )}
     </SafeAreaView>
   );
 };

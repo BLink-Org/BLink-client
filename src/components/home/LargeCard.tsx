@@ -1,4 +1,4 @@
-import {useState, useMemo} from 'react';
+import {useState, useMemo, useRef} from 'react';
 import {
   Dimensions,
   StyleSheet,
@@ -14,9 +14,14 @@ import {
   BookmarkUnselectedIcon,
 } from '@/assets/icons/common';
 import {FONTS} from '@/constants';
-import {ThreeDotIcon} from '@/assets/icons/home';
+import {MoveIcon, ShareIcon, ThreeDotIcon} from '@/assets/icons/home';
 import {type IFileList} from '@/types/home';
 import {type ITheme} from '@/types';
+import {DeleteIcon, PencilIcon} from '@/assets/icons/mypage';
+import DropDownModal from '@/components/modal/DropDownModal';
+import BottomSheet from '@/components/modal/BottomSheet';
+import TitleContent from '@/components/link/TitleContent';
+import FolderMoveContent from '@/components/link/FolderMoveContent';
 
 const screenWidth = Dimensions.get('screen').width - 36;
 const aspectRatio = 339 / 140; // 카드 비율
@@ -24,15 +29,80 @@ const cardHeight = screenWidth / aspectRatio;
 
 interface LargeCardProps {
   content: IFileList;
+  setIsToastVisible: (v: boolean) => void;
 }
 
-const LargeCard = ({content}: LargeCardProps) => {
+const LargeCard = ({content, setIsToastVisible}: LargeCardProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
   const CardImage = useMemo(() => {
     return theme.BIG_CARD_IMAGE;
   }, [theme]);
+
+  // 제목 수정 바텀시트 모달 관리
+  const [isTitleBottomSheetVisible, setIsTitleBottomSheetVisible] =
+    useState(false);
+  const toggleTitleBottomSheet = () => {
+    setIsTitleBottomSheetVisible(!isTitleBottomSheetVisible);
+  };
+
+  // 폴더 이동 바텀시트 모달 관리
+  const [isFolderBottomSheetVisible, setIsFolderBottomSheetVisible] =
+    useState(false);
+  const toggleFolderBottomSheet = () => {
+    setIsFolderBottomSheetVisible(!isFolderBottomSheetVisible);
+  };
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const closeDropdown = () => setIsDropdownOpen(false);
+
+  const [anchorPosition, setAnchorPosition] = useState({x: 0, y: 0});
+  const buttonRef = useRef<TouchableOpacity>(null);
+
+  const toggleDropdown = () => {
+    buttonRef.current?.measure((x, y, width, height, pageX, pageY) => {
+      setIsDropdownOpen(true);
+      setAnchorPosition({x: pageX, y: pageY + height});
+    });
+  };
+
+  const editOptions = useMemo(
+    () => [
+      {
+        label: '제목 수정',
+        icon: <PencilIcon />,
+        onSelect: () => {
+          closeDropdown();
+          toggleTitleBottomSheet();
+        },
+      },
+      {
+        label: '폴더 이동',
+        icon: <MoveIcon />,
+        onSelect: () => {
+          closeDropdown();
+          toggleFolderBottomSheet();
+        },
+      },
+      {
+        label: '공유',
+        icon: <ShareIcon />,
+        onSelect: () => {
+          closeDropdown();
+        },
+      },
+      {
+        label: '삭제',
+        icon: <DeleteIcon />,
+        onSelect: () => {
+          setIsToastVisible(true);
+          closeDropdown();
+        },
+      },
+    ],
+    [closeDropdown, toggleTitleBottomSheet, toggleFolderBottomSheet],
+  );
 
   // 토글 상태 관리
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
@@ -54,40 +124,71 @@ const LargeCard = ({content}: LargeCardProps) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.cardImageContainer}>
-        {content.imageUrl && imageLoading && <LoadingScreen />}
-        <TouchableOpacity style={styles.dotPosition}>
-          <ThreeDotIcon />
-        </TouchableOpacity>
-        {content.imageUrl ? (
-          <Image
-            source={{uri: content.imageUrl}}
-            style={styles.image}
-            onLoad={handleImageLoad}
-            onError={handleImageLoad}
-          />
-        ) : (
-          <CardImage width={screenWidth} height={cardHeight} />
-        )}
-      </View>
-      <View style={styles.folderTop} />
-      <Text style={styles.folderText}>{content.folder}</Text>
-      <View style={styles.titleTop} />
-      <Text style={styles.titleText} numberOfLines={1} ellipsizeMode="tail">
-        {content.title}
-      </Text>
-      <View style={styles.footerTop} />
-      <View style={styles.footer}>
-        <View style={styles.footerFront}>
-          <Text style={styles.footerText}>{content.saveDay}</Text>
-          <Text style={styles.footerText}>{content.hostname}</Text>
+    <>
+      <View style={styles.container}>
+        <View style={styles.cardImageContainer}>
+          {content.imageUrl && imageLoading && <LoadingScreen />}
+          <TouchableOpacity style={styles.dotPosition}>
+            <TouchableOpacity ref={buttonRef} onPress={toggleDropdown}>
+              <ThreeDotIcon />
+            </TouchableOpacity>
+            {isDropdownOpen && (
+              <DropDownModal
+                isVisible={isDropdownOpen}
+                options={editOptions}
+                onClose={closeDropdown}
+                anchorPosition={anchorPosition}
+              />
+            )}
+          </TouchableOpacity>
+          {content.imageUrl ? (
+            <Image
+              source={{uri: content.imageUrl}}
+              style={styles.image}
+              onLoad={handleImageLoad}
+              onError={handleImageLoad}
+            />
+          ) : (
+            <CardImage width={screenWidth} height={cardHeight} />
+          )}
         </View>
-        <TouchableOpacity onPress={toggleBookmark}>
-          {isBookmarked ? <BookmarkSelectedIcon /> : <BookmarkUnselectedIcon />}
-        </TouchableOpacity>
+        <View style={styles.folderTop} />
+        <Text style={styles.folderText}>{content.folder}</Text>
+        <View style={styles.titleTop} />
+        <Text style={styles.titleText} numberOfLines={1} ellipsizeMode="tail">
+          {content.title}
+        </Text>
+        <View style={styles.footerTop} />
+        <View style={styles.footer}>
+          <View style={styles.footerFront}>
+            <Text style={styles.footerText}>{content.saveDay}</Text>
+            <Text style={styles.footerText}>{content.hostname}</Text>
+          </View>
+          <TouchableOpacity onPress={toggleBookmark}>
+            {isBookmarked ? (
+              <BookmarkSelectedIcon />
+            ) : (
+              <BookmarkUnselectedIcon />
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+      <BottomSheet
+        modalTitle="제목 수정"
+        isBottomSheetVisible={isTitleBottomSheetVisible}
+        toggleBottomSheet={toggleTitleBottomSheet}>
+        <TitleContent
+          defaultText={content.title}
+          toggleBottomSheet={toggleTitleBottomSheet}
+        />
+      </BottomSheet>
+      <BottomSheet
+        modalTitle="폴더 이동"
+        isBottomSheetVisible={isFolderBottomSheetVisible}
+        toggleBottomSheet={toggleFolderBottomSheet}>
+        <FolderMoveContent toggleBottomSheet={toggleFolderBottomSheet} />
+      </BottomSheet>
+    </>
   );
 };
 
