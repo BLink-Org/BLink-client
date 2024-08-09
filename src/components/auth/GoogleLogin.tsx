@@ -8,30 +8,25 @@ import {
 import {CLIENT_ID, IOS_CLIENT_ID} from '@env';
 import {useGoogleLogin} from '@/api/hooks/useAuth';
 import {useUserStore} from '@/store/useUserStore';
+import {type TokensSchema} from '@/types';
 
 const GoogleLogin = () => {
-  const googleLoginMutation = useGoogleLogin();
   const {setTokens} = useUserStore();
+
+  const googleLoginMutation = useGoogleLogin({
+    onSuccess: async (data: TokensSchema) => {
+      const {accessToken, refreshToken} = data;
+      await setTokens(accessToken, refreshToken);
+    },
+  });
 
   const handleLogin = async () => {
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-
       const idToken = userInfo.idToken;
       if (idToken) {
-        googleLoginMutation.mutate(idToken, {
-          onSuccess: data => {
-            const {accessToken, refreshToken} = data;
-            (async () => {
-              try {
-                await setTokens(accessToken, refreshToken);
-              } catch (error) {
-                console.error('Error setting tokens:', error);
-              }
-            })();
-          },
-        });
+        googleLoginMutation.mutate(idToken);
       }
     } catch (error) {
       if (isErrorWithCode(error)) {
