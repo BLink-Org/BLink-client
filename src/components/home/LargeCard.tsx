@@ -22,6 +22,7 @@ import DropDownModal from '@/components/modal/DropDownModal';
 import BottomSheet from '@/components/modal/BottomSheet';
 import TitleContent from '@/components/link/TitleContent';
 import FolderMoveContent from '@/components/link/FolderMoveContent';
+import {TOAST_MESSAGE} from '@/constants/toast';
 
 const screenWidth = Dimensions.get('screen').width - 36;
 const aspectRatio = 339 / 140; // 카드 비율
@@ -29,10 +30,10 @@ const cardHeight = screenWidth / aspectRatio;
 
 interface LargeCardProps {
   content: IFileList;
-  setIsToastVisible: (v: boolean) => void;
+  showToast: (text: string) => void;
 }
 
-const LargeCard = ({content, setIsToastVisible}: LargeCardProps) => {
+const LargeCard = ({content, showToast}: LargeCardProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
@@ -96,7 +97,7 @@ const LargeCard = ({content, setIsToastVisible}: LargeCardProps) => {
         label: '삭제',
         icon: <DeleteIcon />,
         onSelect: () => {
-          setIsToastVisible(true);
+          showToast(TOAST_MESSAGE.DELETE_SUCCESS);
           closeDropdown();
         },
       },

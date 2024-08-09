@@ -8,6 +8,7 @@ import {type ITheme} from '@/types';
 import DropDownModal from '@/components/modal/DropDownModal';
 import {useModalStore} from '@/store/useModalStore';
 import AlertModal from '@/components/modal/AlertModal';
+import {TOAST_MESSAGE} from '@/constants/toast';
 
 interface FolderButtonProps {
   id: number;
@@ -15,7 +16,7 @@ interface FolderButtonProps {
   name?: string;
   number?: number;
   onPress: () => void;
-  handleTaost?: (label: string) => void;
+  showToast?: (label: string) => void;
   handleSelect?: (label: string) => void;
 }
 
@@ -25,7 +26,7 @@ const FolderButton = ({
   name,
   number,
   onPress,
-  handleTaost = () => {},
+  showToast = () => {},
   handleSelect = () => {},
 }: FolderButtonProps) => {
   const {theme} = useThemeStore();
@@ -48,8 +49,8 @@ const FolderButton = ({
   };
 
   const handleConfirmSelect = () => {
-    handleTaost('삭제되었습니다.');
     closeModal(modalId);
+    showToast(TOAST_MESSAGE.DELETE_SUCCESS);
   };
 
   const folderOptions = useMemo(
@@ -123,15 +124,15 @@ const FolderButton = ({
         ]}
         onPress={onPress}>
         <View style={styles.infoContainer}>
-          <Text style={styles.nameText}>{name ?? '폴더 없이 저장'}</Text>
+          <Text style={styles.nameText}>{name ?? '폴더 없는 링크'}</Text>
           {number && (
             <View style={styles.detailContainer}>
               <Text style={styles.numberText}>{number}</Text>
               <TouchableOpacity
                 style={styles.editIcon}
                 ref={buttonRef}
-                onPress={toggleDropdown}>
-                <EditIcon />
+                onPress={name ? toggleDropdown : () => {}}>
+                <EditIcon fill={name ? theme.TEXT300 : 'transparent'} />
               </TouchableOpacity>
               {isDropdownOpen && (
                 <DropDownModal
@@ -164,8 +165,6 @@ const createStyles = (theme: ITheme) =>
     container: {
       width: '100%',
       height: 58,
-      borderWidth: 1,
-      borderColor: '#000',
       borderRadius: 8,
       justifyContent: 'center',
       paddingVertical: 16,

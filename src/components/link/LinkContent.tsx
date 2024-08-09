@@ -1,6 +1,5 @@
-import {useEffect, useState, useMemo} from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
 import {
-  FlatList,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -12,15 +11,14 @@ import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {isValidUrl} from '@/utils/url-utils';
 import {type FolderButtonProps} from '@/types/folder';
-import {hasPressedFolder} from '@/utils/folder-utils';
 import {AddIcon} from '@/assets/icons/common';
 import {useBottomButtonSizeStore} from '@/store/useBottomButtonSizeStore';
 import {type ITheme} from '@/types';
 import TextInputGroup from '@/components/common/TextInputGroup';
 import CustomBottomButton from '@/components/common/CustomBottomButton';
-import FolderButton from '@/components/folder/FolderButton';
 import BottomSheet from '@/components/modal/BottomSheet';
 import FolderContent from '@/components/folder/FolderContent';
+import FolderList from '@/components/folder/FolderList';
 
 interface FolderSideBarProps {
   defaultURL?: string;
@@ -33,16 +31,18 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
 
   const [textInput, setTextInput] = useState<string | undefined>(defaultURL);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [folderList, setFolderList] = useState<FolderButtonProps[]>(
-    dummyFolderListRaw as FolderButtonProps[],
-  );
+  const [selectedFolderId, setSelectedFolderId] = useState<number[] | null>([]);
   const [isReadyToSave, setIsReadyToSave] = useState<boolean>(!!defaultURL);
   const [isFolderBottomSheetVisible, setIsFolderBottomSheetVisible] =
     useState(false);
+  const {buttonHeight} = useBottomButtonSizeStore();
+
+  const folderList: FolderButtonProps[] =
+    dummyFolderListRaw as FolderButtonProps[];
+
   const toggleFolderBottomSheet = () => {
     setIsFolderBottomSheetVisible(!isFolderBottomSheetVisible);
   };
-  const {buttonHeight} = useBottomButtonSizeStore();
 
   useEffect(() => {
     if (textInput && !isValidUrl(textInput)) {
@@ -50,22 +50,11 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
       setIsReadyToSave(false);
     } else {
       setErrorMessage('');
-      setIsReadyToSave(!!textInput && hasPressedFolder(folderList));
+      setIsReadyToSave(
+        !!textInput && !!selectedFolderId && selectedFolderId.length > 0,
+      );
     }
-  }, [textInput, folderList]);
-
-  const handleToggleVariant = (id: number) => {
-    setFolderList(currentList =>
-      currentList.map(folder =>
-        folder.id === id
-          ? {
-              ...folder,
-              variants: folder.variants === 'default' ? 'pressed' : 'default',
-            }
-          : folder,
-      ),
-    );
-  };
+  }, [textInput, selectedFolderId]);
 
   return (
     <>
@@ -94,25 +83,12 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
             <AddIcon />
           </TouchableOpacity>
         </View>
-        <View style={styles.folderList}>
-          <FlatList
-            data={folderList}
-            renderItem={({item, index}) => (
-              <>
-                {index === 1 && <View style={styles.stroke}></View>}
-                <FolderButton
-                  id={item.id}
-                  variants={item.variants}
-                  name={item.name}
-                  onPress={() => handleToggleVariant(item.id)}
-                />
-              </>
-            )}
-            keyExtractor={item => `${item.id}`}
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
-            showsVerticalScrollIndicator={false}
-          />
-        </View>
+        <FolderList
+          folders={folderList}
+          multipleSelection={true}
+          selectedFolderId={selectedFolderId}
+          setSelectedFolderId={setSelectedFolderId}
+        />
       </SafeAreaView>
       <CustomBottomButton
         title="저장"

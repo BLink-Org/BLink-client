@@ -24,16 +24,17 @@ import {type ITheme} from '@/types';
 import BottomSheet from '@/components/modal/BottomSheet';
 import TitleContent from '@/components/link/TitleContent';
 import FolderMoveContent from '@/components/link/FolderMoveContent';
+import {TOAST_MESSAGE} from '@/constants/toast';
 
 const screenWidth = Dimensions.get('screen').width - 36;
 
 interface SmallCardProps {
   content: IFileList;
   isTrash?: boolean;
-  setIsToastVisible: (v: boolean) => void;
+  showToast: (text: string) => void;
 }
 
-const SmallCard = ({content, isTrash, setIsToastVisible}: SmallCardProps) => {
+const SmallCard = ({content, isTrash, showToast}: SmallCardProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const {showModal, closeModal} = useModalStore();
@@ -117,7 +118,7 @@ const SmallCard = ({content, isTrash, setIsToastVisible}: SmallCardProps) => {
         label: '삭제',
         icon: <DeleteIcon />,
         onSelect: () => {
-          setIsToastVisible(true);
+          showToast(TOAST_MESSAGE.DELETE_SUCCESS);
           closeDropdown();
         },
       },

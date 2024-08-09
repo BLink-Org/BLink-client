@@ -22,13 +22,14 @@ import LargeCard from '@/components/home/LargeCard';
 import SmallCard from '@/components/home/SmallCard';
 import DropdownFilter from '@/components/home/DropDownFilter';
 import dummyFileData from '@/constants/dummy-data/dummy-file-list.json';
+import dummyFolderData from '@/constants/dummy-data/dummy-folder-list.json';
 import useSortedData from '@/hooks/useSortedData';
 import {type IFileList} from '@/types/home';
 import useStickyAnimation from '@/hooks/useStickyAnimation';
 import FolderSideBar from '@/components/modal/FolderSideBar';
 import {useBottomButtonSizeStore} from '@/store/useBottomButtonSizeStore';
 import {type ITheme} from '@/types';
-import Toast from '@/components/common/Toast';
+import useToast from '@/hooks/useToast';
 
 const Home = () => {
   const {t} = useTranslation();
@@ -39,6 +40,7 @@ const Home = () => {
   const {bottom} = useSafeAreaInsets();
   const isHomeIndicatorPresent = Platform.OS === 'ios' && bottom > 0;
   const {setButtonHeight} = useBottomButtonSizeStore();
+  const {Toast, showToast} = useToast({marginBottom: 44});
 
   // 폴더 사이드바 토글
   const [isSideBarVisible, setIsSideBarVisible] = useState(false);
@@ -46,11 +48,10 @@ const Home = () => {
     setIsSideBarVisible(!isSideBarVisible);
   };
 
-  // 삭제 토스트 메세지 관리
-  const [isToastVisible, setIsToastVisible] = useState(false);
-
-  // 홈 화면 제목 - 선택한 폴더명
-  const [selectedFolderName, setSelectedFolderName] = useState<string>('전체');
+  // 홈 화면 제목 - 선택한 폴더 아이디 (null: 전체)
+  const [selectedFolderId, setSelectedFolderId] = useState<number[] | null>(
+    null,
+  );
 
   const sortingOptions = [
     t('최근 저장순'),
@@ -95,7 +96,11 @@ const Home = () => {
     return (
       <>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>{selectedFolderName}</Text>
+          <Text style={styles.title}>
+            {selectedFolderId
+              ? dummyFolderData[selectedFolderId[0] - 1].name
+              : '전체'}
+          </Text>
         </View>
         <View style={styles.filterContainer}>
           <Text style={styles.linkCount}>123 Links</Text>
@@ -125,9 +130,9 @@ const Home = () => {
     ({item, index}) => (
       <View>
         {isLargeCard ? (
-          <LargeCard content={item} {...{setIsToastVisible}} />
+          <LargeCard content={item} {...{showToast}} />
         ) : (
-          <SmallCard content={item} {...{setIsToastVisible}} />
+          <SmallCard content={item} {...{showToast}} />
         )}
         {index !== sortedData.length - 1 && <View style={styles.separator} />}
       </View>
@@ -148,8 +153,8 @@ const Home = () => {
           {...{
             isSideBarVisible,
             toggleSideBar,
-            selectedFolderName,
-            setSelectedFolderName,
+            selectedFolderId,
+            setSelectedFolderId,
           }}
         />
         <Animated.View
@@ -182,13 +187,7 @@ const Home = () => {
       </View>
 
       {/* 삭제 토스트 메세지 처리 */}
-      {isToastVisible && (
-        <Toast
-          text={'삭제되었습니다'}
-          marginBottom={44}
-          {...{isToastVisible, setIsToastVisible}}
-        />
-      )}
+      <Toast />
     </SafeAreaView>
   );
 };
