@@ -18,6 +18,7 @@ import NavigationInfo from '@/components/mypage/NavigationInfo';
 import {useModalStore} from '@/store/useModalStore';
 import AlertModal from '@/components/modal/AlertModal';
 import {type ITheme} from '@/types';
+import {signOut} from '@/utils/auth-utils';
 
 const MyPage = () => {
   const {theme} = useThemeStore();
@@ -53,8 +54,9 @@ const MyPage = () => {
 
   // 로그아웃 시 로직
   const handleConfirmLogout = () => {
-    console.log('로그아웃');
     closeModal('logoutConfirm');
+    // TODO: 로그아웃 API 호출
+    signOut();
   };
 
   return (
