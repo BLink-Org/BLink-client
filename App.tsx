@@ -8,6 +8,7 @@ import GlobalNavigation from '@/components/navigation/GlobalNavigation';
 import {useThemeStore} from '@/store/useThemeStore';
 import i18n from '@/i18n/i18n';
 import {useUserStore} from '@/store/useUserStore';
+import {initializeAmplitude, trackEvent} from '@/utils/amplitude-utils';
 
 interface AppProps {
   sharedText: string;
@@ -31,6 +32,11 @@ export default function App(props: AppProps) {
 
     // 토큰 로드
     loadTokens();
+
+    // amplitude 초기화
+    initializeAmplitude();
+
+    trackEvent('App Opened');
 
     // To verify shared text data within the app
     Platform.OS === 'ios'
