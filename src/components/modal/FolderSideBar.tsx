@@ -20,7 +20,7 @@ import FolderContent from '@/components/folder/FolderContent';
 import useToast from '@/hooks/useToast';
 import {TOAST_MESSAGE} from '@/constants/toast';
 import dummyFolderListRaw from '@/constants/dummy-data/dummy-folder-list.json';
-import FolderList from '../folder/FolderList';
+import FolderList from '@/components/folder/FolderList';
 
 interface FolderSideBarProps {
   isSideBarVisible: boolean;
