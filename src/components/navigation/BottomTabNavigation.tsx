@@ -16,6 +16,7 @@ import SearchScreen from '@/screens/tab-screens/Search';
 import MyPageScreen from '@/screens/tab-screens/Mypage';
 import BottomSheet from '@/components/modal/BottomSheet';
 import LinkContent from '@/components/link/LinkContent';
+import {useThemeStore} from '@/store/useThemeStore';
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -28,6 +29,7 @@ const SearchBarIcon = ({color}: {color: string}) => <SearchIcon fill={color} />;
 const MyPageBarIcon = ({color}: {color: string}) => <MypageIcon fill={color} />;
 
 const BottomTabNavigation = () => {
+  const {theme} = useThemeStore();
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
   const toggleBottomSheet = () => {
     setIsBottomSheetVisible(!isBottomSheetVisible);
@@ -42,10 +44,11 @@ const BottomTabNavigation = () => {
       <Tab.Navigator
         screenOptions={{
           tabBarShowLabel: false,
-          tabBarActiveTintColor: 'black',
-          tabBarInactiveTintColor: 'gray',
+          tabBarActiveTintColor: theme.TEXT900,
+          tabBarInactiveTintColor: theme.TEXT900,
           tabBarStyle: {
             borderTopWidth: 0,
+            backgroundColor: theme.BACKGROUND,
           },
         }}>
         <Tab.Screen
