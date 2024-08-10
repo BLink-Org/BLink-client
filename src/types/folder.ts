@@ -4,3 +4,11 @@ export interface FolderButtonProps {
   name?: string;
   number: number;
 }
+
+export interface IFolderDtos {
+  id: number;
+  title: string;
+  sortOrder: number;
+  linkCount: number;
+  recent: boolean;
+}

@@ -17,7 +17,7 @@ export const API_ENDPOINTS = {
     CREATE: '/api/folders', // 폴더 생성
     DELETE: '/api/folders/:folderId', // 폴더 삭제
     UPDATE_TITLE: '/api/folders/:folderId', // 폴더 제목 수정
-    MOVE: '/api/folders/:folderId/move', // 폴더 순서 이동
+    MOVE: '/api/folders/:folderId/move?direction=:direction', // 폴더 순서 이동
   },
   LINKS: {
     FETCH: '/api/links', // 링크 목록 조회
