@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import {useEffect} from 'react';
 import {NativeModules, Platform} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
@@ -7,6 +7,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import GlobalNavigation from '@/components/navigation/GlobalNavigation';
 import {useThemeStore} from '@/store/useThemeStore';
 import i18n from '@/i18n/i18n';
+import {useUserStore} from '@/store/useUserStore';
 
 interface AppProps {
   sharedText: string;
@@ -17,13 +18,19 @@ const queryClient = new QueryClient();
 export default function App(props: AppProps) {
   const restoreTheme = useThemeStore(state => state.restoreTheme);
   const {ShareMenu} = NativeModules;
+  const isAuthenticated = useUserStore(state => state.isAuthenticated);
+  const loadTokens = useUserStore(state => state.loadTokens);
 
+  // TODO: 추후 Splash 구현 시 넣어주기
   useEffect(() => {
     // 테마 변경
     restoreTheme();
     // 언어 변경 -> 시스템 언어로 변경
     const locale = RNLocalize.getLocales()[0].languageCode;
     i18n.changeLanguage(locale);
+
+    // 토큰 로드
+    loadTokens();
 
     // To verify shared text data within the app
     Platform.OS === 'ios'
@@ -36,8 +43,8 @@ export default function App(props: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
-        <NavigationContainer>
-          <GlobalNavigation />
+        <NavigationContainer key={isAuthenticated ? 'auth-true' : 'auth-false'}>
+          <GlobalNavigation isAuthenticated={isAuthenticated} />
         </NavigationContainer>
       </SafeAreaProvider>
     </QueryClientProvider>

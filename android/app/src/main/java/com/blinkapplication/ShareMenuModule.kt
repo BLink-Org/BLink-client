@@ -1,4 +1,4 @@
-package com.blinkapp
+package com.blinkapplication
 
 import android.app.Activity
 import android.content.Intent
@@ -6,7 +6,6 @@ import android.net.Uri
 import android.util.Log
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
-import java.util.*
 
 class ShareMenuModule(private val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext), ActivityEventListener {
 

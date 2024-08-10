@@ -1,20 +1,19 @@
+import React from 'react';
 import {SafeAreaView, Text} from 'react-native';
 import {useHealthCheck} from '@/api/hooks/useTest';
+import {useUserInfo} from '@/api/hooks/useUser';
 
-const HealthCheck = () => {
-  const {data} = useHealthCheck();
-
-  // data가 undefined일 경우 에러 처리
-  if (!data) {
-    return <Text>data is undefined</Text>;
-  }
+const APITest = () => {
+  const {data: healthCheckData} = useHealthCheck();
+  const {data: userInfoData} = useUserInfo();
 
   return (
     <SafeAreaView>
-      <Text>health check message</Text>
-      <Text>{JSON.stringify(data)}</Text>
+      <Text>API Test</Text>
+      <Text>{JSON.stringify(healthCheckData)}</Text>
+      <Text>{JSON.stringify(userInfoData)}</Text>
     </SafeAreaView>
   );
 };
 
-export default HealthCheck;
+export default APITest;

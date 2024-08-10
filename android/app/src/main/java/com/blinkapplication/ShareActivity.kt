@@ -1,4 +1,4 @@
-package com.blinkapp
+package com.blinkapplication
 
 import android.app.Activity
 import android.app.Dialog
@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
-import android.widget.ScrollView
 import android.widget.Toast
 
 class ShareActivity : Activity() {

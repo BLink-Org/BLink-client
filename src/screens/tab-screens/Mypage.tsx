@@ -18,10 +18,16 @@ import NavigationInfo from '@/components/mypage/NavigationInfo';
 import {useModalStore} from '@/store/useModalStore';
 import AlertModal from '@/components/modal/AlertModal';
 import {type ITheme} from '@/types';
+import {signOut} from '@/utils/auth-utils';
+import {useLogout} from '@/api/hooks/useAuth';
+import {useUserStore} from '@/store/useUserStore';
 
 const MyPage = () => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {refreshToken} = useUserStore.getState();
+  // 로그아웃 post
+  const logout = useLogout();
 
   const navigation = useNavigation<RootStackNavigationProp>();
 
@@ -53,8 +59,11 @@ const MyPage = () => {
 
   // 로그아웃 시 로직
   const handleConfirmLogout = () => {
-    console.log('로그아웃');
     closeModal('logoutConfirm');
+    if (refreshToken) {
+      logout.mutate(refreshToken);
+    }
+    signOut();
   };
 
   return (
