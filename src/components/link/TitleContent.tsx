@@ -1,51 +1,39 @@
 import {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {calculateByteLength} from '@/utils/link-utils';
-import CustomBottomButton from '@/components/common/CustomBottomButton';
 import TextInputGroup from '@/components/common/TextInputGroup';
+import CustomBottomButton from '@/components/common/CustomBottomButton';
 
-interface FolderContentProps {
-  defaultText?: string;
+interface TitleContentProps {
+  defaultText: string;
   toggleBottomSheet: () => void;
 }
 
-// 폴더 생성 및 수정 case
-const FolderContent = ({
-  defaultText,
-  toggleBottomSheet,
-}: FolderContentProps) => {
+// 제목 수정 case
+const TitleContent = ({defaultText, toggleBottomSheet}: TitleContentProps) => {
   const [textInput, setTextInput] = useState<string | undefined>(defaultText);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isByteCountVisible, setIsByteCountVisible] = useState<boolean>(true);
   const [isReadyToSave, setIsReadyToSave] = useState<boolean>(!!defaultText);
-  // TODO: api call
-  const folderList: string[] = [];
 
   useEffect(() => {
     if (calculateByteLength(textInput) > 30) {
       setErrorMessage('');
       setIsByteCountVisible(true);
       setIsReadyToSave(false);
-      return;
-    }
-    const isDuplicate = folderList.some(folderName => folderName === textInput);
-    if (isDuplicate) {
-      setErrorMessage('이미 사용 중인 이름입니다');
-      setIsByteCountVisible(false);
-      setIsReadyToSave(false);
     } else {
       setErrorMessage('');
       setIsByteCountVisible(true);
       setIsReadyToSave(!!textInput);
     }
-  }, [textInput, folderList]);
+  }, [textInput]);
 
   return (
     <>
       <View style={styles.contentContainer}>
         <TextInputGroup
-          inputTitle="폴더명"
-          placeholder="폴더명을 입력해주세요"
+          inputTitle="제목"
+          placeholder="제목을 입력해주세요"
           {...{textInput, setTextInput, errorMessage, isByteCountVisible}}
         />
       </View>
@@ -65,4 +53,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FolderContent;
+export default TitleContent;

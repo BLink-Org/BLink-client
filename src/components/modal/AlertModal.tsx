@@ -84,6 +84,7 @@ const createStyles = (theme: ITheme) =>
     bodyText: {
       color: theme.TEXT600,
       ...FONTS.BODY2_REGULAR,
+      textAlign: 'center',
     },
     buttonContainer: {
       flexDirection: 'row',

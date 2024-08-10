@@ -8,43 +8,42 @@ import {
   Animated,
   Dimensions,
   TouchableWithoutFeedback,
-  FlatList,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {BackIcon, ForwardIcon} from '@/assets/icons/modal';
 import {AddIcon} from '@/assets/icons/common';
+import {type FolderButtonProps, type ITheme} from '@/types';
+import BottomSheet from '@/components/modal/BottomSheet';
+import FolderContent from '@/components/folder/FolderContent';
+import useToast from '@/hooks/useToast';
+import {TOAST_MESSAGE} from '@/constants/toast';
 import dummyFolderListRaw from '@/constants/dummy-data/dummy-folder-list.json';
-import {type ITheme} from '@/types';
-import FolderButton from '../folder/FolderButton';
-import BottomSheet from './BottomSheet';
-import FolderContent from '../folder/FolderContent';
-import Toast from '../common/Toast';
+import FolderList from '@/components/folder/FolderList';
 
 interface FolderSideBarProps {
   isSideBarVisible: boolean;
   toggleSideBar: () => void;
-  selectedFolderName: string;
-  setSelectedFolderName: (v: string) => void;
+  selectedFolderId: number[] | null;
+  setSelectedFolderId: (v: number[] | null) => void;
 }
 
 const FolderSideBar = ({
   isSideBarVisible,
   toggleSideBar,
-  selectedFolderName,
-  setSelectedFolderName,
+  selectedFolderId,
+  setSelectedFolderId,
 }: FolderSideBarProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
   const insets = useSafeAreaInsets();
+  const {Toast, showToast} = useToast({
+    marginBottom: 128,
+  });
+
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
-  const toggleBottomSheet = (folderName: string | null = null) => {
-    setFolderToEdit(folderName);
-    setIsBottomSheetVisible(!isBottomSheetVisible);
-  };
-  const [isToastVisible, setIsToastVisible] = useState(false);
   const [folderToEdit, setFolderToEdit] = useState<string | null>(null);
 
   const handleSelect = (label: string, folderName?: string) => {
@@ -57,9 +56,15 @@ const FolderSideBar = ({
   };
 
   const [visible, setVisible] = useState(isSideBarVisible);
+
   const animation = useRef(
     new Animated.Value(-Dimensions.get('window').width),
   ).current;
+
+  const toggleBottomSheet = (folderName: string | null = null) => {
+    setFolderToEdit(folderName);
+    setIsBottomSheetVisible(!isBottomSheetVisible);
+  };
 
   useEffect(() => {
     if (isSideBarVisible) {
@@ -76,112 +81,84 @@ const FolderSideBar = ({
         useNativeDriver: true,
       }).start(() => {
         setVisible(false);
-        setIsToastVisible(false);
       });
     }
   }, [isSideBarVisible]);
 
   return (
-    <>
-      <RNModal
-        visible={visible}
-        onRequestClose={toggleSideBar}
-        transparent
-        animationType="none"
-        hardwareAccelerated
-        presentationStyle="overFullScreen"
-        style={styles.modalContent}>
-        {isToastVisible && (
-          <Toast
-            text={folderToEdit ? '수정되었습니다.' : '생성되었습니다'}
-            marginBottom={128}
-            {...{isToastVisible, setIsToastVisible}}
-          />
-        )}
-        <BottomSheet
-          modalTitle={folderToEdit ? '폴더 수정' : '폴더 생성'}
-          {...{isBottomSheetVisible, toggleBottomSheet}}>
-          <FolderContent
-            defaultText={folderToEdit ?? undefined}
-            toggleBottomSheet={() => {
-              toggleBottomSheet(folderToEdit);
-              setIsToastVisible(true);
-            }}
-          />
-        </BottomSheet>
-        <TouchableWithoutFeedback onPress={toggleSideBar}>
-          <View style={styles.overlay} />
-        </TouchableWithoutFeedback>
-        <Animated.View
-          style={[
-            styles.modalContent,
-            {
-              transform: [{translateX: animation}],
-              paddingTop: insets.top,
-            },
-          ]}>
-          <TouchableOpacity onPress={toggleSideBar} style={styles.closeButton}>
-            <BackIcon width={26} height={26} fill={theme.TEXT900} />
+    <RNModal
+      visible={visible}
+      onRequestClose={toggleSideBar}
+      transparent
+      animationType="none"
+      hardwareAccelerated
+      presentationStyle="overFullScreen"
+      style={styles.modalContent}>
+      <TouchableWithoutFeedback onPress={toggleSideBar}>
+        <View style={styles.overlay} />
+      </TouchableWithoutFeedback>
+      <Animated.View
+        style={[
+          styles.modalContent,
+          {
+            transform: [{translateX: animation}],
+            paddingTop: insets.top,
+          },
+        ]}>
+        <TouchableOpacity onPress={toggleSideBar} style={styles.closeButton}>
+          <BackIcon width={26} height={26} fill={theme.TEXT900} />
+        </TouchableOpacity>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>폴더</Text>
+        </View>
+        <View style={styles.detailContainer}>
+          <Text style={styles.linkCount}>123 Links</Text>
+          <TouchableOpacity
+            style={styles.totalButton}
+            onPress={() => {
+              setSelectedFolderId(null);
+              toggleSideBar();
+            }}>
+            <Text style={styles.totalButtonText}>전체보기</Text>
+            <ForwardIcon />
           </TouchableOpacity>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>폴더</Text>
-          </View>
-          <View style={styles.detailContainer}>
-            <Text style={styles.linkCount}>123 Links</Text>
-            <TouchableOpacity
-              style={styles.totalButton}
-              onPress={() => {
-                setSelectedFolderName('전체');
-                toggleSideBar();
-              }}>
-              <Text style={styles.totalButtonText}>전체보기</Text>
-              <ForwardIcon />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.folderList}>
-            <FlatList
-              data={dummyFolderListRaw}
-              renderItem={({item, index}) => (
-                <>
-                  {dummyFolderListRaw.length - 1 === index && (
-                    <View style={styles.stroke}></View>
-                  )}
-                  <FolderButton
-                    variants={
-                      item.name === selectedFolderName
-                        ? 'pressed'
-                        : (item.variants as 'pressed' | 'activated' | 'default')
-                    }
-                    name={item.name}
-                    number={item.number}
-                    onPress={() => {
-                      setSelectedFolderName(
-                        item.name ? `${item.name}` : '폴더 없이 저장',
-                      );
-                      toggleSideBar();
-                    }}
-                    handleSelect={label => handleSelect(label, item.name)}
-                  />
-                </>
-              )}
-              keyExtractor={item => item.id}
-              ItemSeparatorComponent={() => <View style={styles.separator} />}
-              showsVerticalScrollIndicator={false}
-            />
-          </View>
-          <View style={styles.tabBar}>
-            <TouchableOpacity
-              style={styles.addFolderButton}
-              onPress={() => {
-                toggleBottomSheet();
-              }}>
-              <AddIcon style={{marginRight: 8}} />
-              <Text style={styles.addFolderButtonText}>폴더 생성</Text>
-            </TouchableOpacity>
-          </View>
-        </Animated.View>
-      </RNModal>
-    </>
+        </View>
+
+        <FolderList
+          folders={dummyFolderListRaw as FolderButtonProps[]}
+          multipleSelection={false}
+          onFolderPress={toggleSideBar}
+          {...{selectedFolderId, setSelectedFolderId, handleSelect, showToast}}
+        />
+
+        <View style={styles.tabBar}>
+          <TouchableOpacity
+            style={styles.addFolderButton}
+            onPress={() => {
+              toggleBottomSheet();
+            }}>
+            <AddIcon style={{marginRight: 8}} />
+            <Text style={styles.addFolderButtonText}>폴더 생성</Text>
+          </TouchableOpacity>
+        </View>
+      </Animated.View>
+      <Toast />
+      <BottomSheet
+        modalTitle={folderToEdit ? '폴더 수정' : '폴더 생성'}
+        {...{isBottomSheetVisible, toggleBottomSheet}}>
+        <FolderContent
+          defaultText={folderToEdit ?? undefined}
+          toggleBottomSheet={() => {
+            toggleBottomSheet(folderToEdit);
+            showToast(
+              folderToEdit
+                ? TOAST_MESSAGE.EDIT_SUCCESS
+                : TOAST_MESSAGE.CREATE_SUCCESS,
+            );
+          }}
+        />
+      </BottomSheet>
+    </RNModal>
   );
 };
 
@@ -232,20 +209,6 @@ const createStyles = (theme: ITheme) =>
     totalButtonText: {
       color: theme.TEXT700,
       ...FONTS.BODY2_MEDIUM,
-    },
-    folderList: {
-      flex: 1,
-      maxHeight: 517,
-      paddingVertical: 20,
-    },
-    stroke: {
-      borderWidth: 1,
-      borderColor: '#ECF1F5',
-      marginBottom: 8,
-      width: '100%',
-    },
-    separator: {
-      height: 8,
     },
     tabBar: {
       flexDirection: 'row',

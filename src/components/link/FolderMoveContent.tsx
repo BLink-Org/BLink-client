@@ -6,55 +6,39 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import dummyFolderListRaw from '@/constants/dummy-data/dummy-link-list.json';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
-import {isValidUrl} from '@/utils/url-utils';
 import {type FolderButtonProps} from '@/types/folder';
 import {AddIcon} from '@/assets/icons/common';
 import {useBottomButtonSizeStore} from '@/store/useBottomButtonSizeStore';
 import {type ITheme} from '@/types';
-import TextInputGroup from '@/components/common/TextInputGroup';
 import CustomBottomButton from '@/components/common/CustomBottomButton';
 import BottomSheet from '@/components/modal/BottomSheet';
 import FolderContent from '@/components/folder/FolderContent';
 import FolderList from '@/components/folder/FolderList';
+import dummyFolderData from '@/constants/dummy-data/dummy-folder-list.json';
 
-interface FolderSideBarProps {
-  defaultURL?: string;
+interface FolderMoveContentProps {
   toggleBottomSheet: () => void;
 }
 
-const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
+const FolderMoveContent = ({toggleBottomSheet}: FolderMoveContentProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
-  const [textInput, setTextInput] = useState<string | undefined>(defaultURL);
-  const [errorMessage, setErrorMessage] = useState<string>('');
   const [selectedFolderId, setSelectedFolderId] = useState<number[] | null>([]);
-  const [isReadyToSave, setIsReadyToSave] = useState<boolean>(!!defaultURL);
+  const [isReadyToSave, setIsReadyToSave] = useState<boolean>(true);
   const [isFolderBottomSheetVisible, setIsFolderBottomSheetVisible] =
     useState(false);
   const {buttonHeight} = useBottomButtonSizeStore();
-
-  const folderList: FolderButtonProps[] =
-    dummyFolderListRaw as FolderButtonProps[];
 
   const toggleFolderBottomSheet = () => {
     setIsFolderBottomSheetVisible(!isFolderBottomSheetVisible);
   };
 
   useEffect(() => {
-    if (textInput && !isValidUrl(textInput)) {
-      setErrorMessage('입력한 정보의 링크를 찾을 수 없습니다');
-      setIsReadyToSave(false);
-    } else {
-      setErrorMessage('');
-      setIsReadyToSave(
-        !!textInput && !!selectedFolderId && selectedFolderId.length > 0,
-      );
-    }
-  }, [textInput, selectedFolderId]);
+    setIsReadyToSave(!!selectedFolderId && selectedFolderId.length > 0);
+  }, [selectedFolderId]);
 
   return (
     <>
@@ -62,19 +46,10 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
         modalTitle="폴더 생성"
         isBottomSheetVisible={isFolderBottomSheetVisible}
         toggleBottomSheet={toggleFolderBottomSheet}>
-        <FolderContent
-          toggleBottomSheet={() => {
-            toggleFolderBottomSheet();
-          }}
-        />
+        <FolderContent toggleBottomSheet={toggleFolderBottomSheet} />
       </BottomSheet>
       <SafeAreaView
         style={[styles.contentContainer, {marginBottom: buttonHeight}]}>
-        <TextInputGroup
-          inputTitle="링크"
-          placeholder="www.example.co.kr"
-          {...{textInput, setTextInput, errorMessage}}
-        />
         <View style={styles.folderTitle}>
           <Text style={styles.folderTitleText}>폴더</Text>
           <TouchableOpacity
@@ -84,10 +59,9 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
           </TouchableOpacity>
         </View>
         <FolderList
-          folders={folderList}
+          folders={dummyFolderData as FolderButtonProps[]}
           multipleSelection={true}
-          selectedFolderId={selectedFolderId}
-          setSelectedFolderId={setSelectedFolderId}
+          {...{selectedFolderId, setSelectedFolderId}}
         />
       </SafeAreaView>
       <CustomBottomButton
@@ -108,7 +82,6 @@ const createStyles = (theme: ITheme) =>
     folderTitle: {
       display: 'flex',
       flexDirection: 'row',
-      marginTop: 32,
       marginBottom: 4,
       alignItems: 'center',
     },
@@ -132,7 +105,7 @@ const createStyles = (theme: ITheme) =>
     folderList: {
       flex: 1,
       paddingVertical: 12,
-      marginBottom: 35,
+      marginBottom: 43,
     },
     stroke: {
       borderWidth: 1,
@@ -145,4 +118,4 @@ const createStyles = (theme: ITheme) =>
     },
   });
 
-export default LinkContent;
+export default FolderMoveContent;
