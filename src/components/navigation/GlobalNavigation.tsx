@@ -10,6 +10,7 @@ import WebViewInfo from '@/screens/stack-screens/WebViewInfo';
 import APITest from '@/screens/stack-screens/APITest';
 import WebViewTest from '@/screens/stack-screens/WebViewTest';
 import Onboarding from '@/screens/stack-screens/Onboarding';
+import LinkApiTest from '@/screens/stack-screens/LinkApiTest';
 import BottomTabNavigation from './BottomTabNavigation';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -27,6 +28,7 @@ const GlobalNavigation = ({isAuthenticated}: {isAuthenticated: boolean}) => {
         <>
           <Stack.Screen name="Main" component={BottomTabNavigation} />
           <Stack.Screen name="ThemeSetting" component={ThemeSetting} />
+          <Stack.Screen name="LinkApiTest" component={LinkApiTest} />
           <Stack.Screen
             name="WebViewTest"
             component={WebViewTest}

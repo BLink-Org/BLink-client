@@ -23,7 +23,7 @@ import {
   useMoveFolder,
 } from '@/api/hooks/useFolder';
 import {ArrowBackIcon} from '@/assets/icons/mypage';
-import {type IFolderDtos} from '@/types';
+import {type RootStackNavigationProp, type IFolderDtos} from '@/types';
 
 const APITest = () => {
   const queryClient = useQueryClient();
@@ -31,7 +31,7 @@ const APITest = () => {
   const {data: userInfoData} = useUserInfo();
   const {data: useFolderData} = useFolders();
   const foldersData = useFolderData?.folderDtos;
-  const navigation = useNavigation();
+  const navigation = useNavigation<RootStackNavigationProp>();
 
   const goBackPage = () => {
     navigation.goBack();
@@ -124,12 +124,18 @@ const APITest = () => {
     moveFolderMutation.mutate({folderId: String(folderId), direction: 'down'});
   };
 
+  // linkApiTest로 이동
+  const handleLinkApiTest = () => {
+    navigation.navigate('LinkApiTest');
+  };
+
   return (
     <SafeAreaView>
       <ScrollView>
         <TouchableOpacity onPress={goBackPage}>
           <ArrowBackIcon />
         </TouchableOpacity>
+
         <Text style={{fontSize: 25}}>Health API Test</Text>
         <Text>{JSON.stringify(healthCheckData)}</Text>
         <Text style={{fontSize: 25}}>User API Test</Text>
@@ -143,6 +149,9 @@ const APITest = () => {
             onPress={handleCancelDeleteAccount}
           />
         </View>
+
+        <Text style={{fontSize: 25}}>Link API Test</Text>
+        <Button title="Link API Test" onPress={handleLinkApiTest} />
 
         <Text style={{fontSize: 25}}>Folder API Test</Text>
         <View style={{padding: 20}}>

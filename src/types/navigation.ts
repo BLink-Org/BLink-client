@@ -29,6 +29,7 @@ export interface RootStackParamList extends ParamListBase {
   WebViewInfo: {info: {url: string; title: string}};
   APITest: undefined;
   Onboarding: undefined;
+  LinkApiText: undefined;
 }
 
 // BottomTab Screen에 대한 Navigation Object의 Type을 정의
