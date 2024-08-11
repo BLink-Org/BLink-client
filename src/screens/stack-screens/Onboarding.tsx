@@ -28,6 +28,12 @@ const Onboarding = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.bodyContainer}>
+        <Carousel
+          gap={50}
+          offset={(screenWidth - 300) / 2}
+          pages={onboardingImages}
+          pageWidth={200}
+        />
       </View>
       <View style={styles.loginContainer}>
         <GoogleLogin />
