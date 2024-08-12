@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
-import {FlatList, View, StyleSheet, Text} from 'react-native';
+import {FlatList, View, StyleSheet, Text, Image} from 'react-native';
 import {FONTS} from '@/constants';
-import {LogoImage} from '@/assets/icons/common';
 
 interface IPage {
   key: string;
@@ -36,7 +35,10 @@ const Carousel = ({pages, pageWidth, gap, offset}: ICarousel) => {
 
   return (
     <View style={styles.container}>
-      <LogoImage width={144} height={48} />
+      <Image
+        source={require('@/assets/images/blue-logo.png')}
+        style={styles.logoImage}
+      />
       <FlatList
         automaticallyAdjustContentInsets={false}
         contentContainerStyle={{
@@ -85,6 +87,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 40,
+  },
+  logoImage: {
+    width: 144,
+    height: 48,
   },
   page: {
     justifyContent: 'center',

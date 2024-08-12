@@ -1,19 +1,18 @@
-import {useEffect} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useEffect, useState} from 'react';
-import {Button, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {
   GoogleSignin,
   isErrorWithCode,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
-import {CLIENT_ID, IOS_CLIENT_ID} from '@env';
+import * as amplitude from '@amplitude/analytics-react-native';
+import {CLIENT_ID, IOS_CLIENT_ID, AMPLITUDE_API_KEY} from '@env';
 import {useGoogleLogin} from '@/api/hooks/useAuth';
 import {useUserStore} from '@/store/useUserStore';
 import {type TokensSchema} from '@/types';
 import {GoogleLogoIcon} from '@/assets/icons/onboarding';
 import {FONTS} from '@/constants';
-import {initializeAmplitude, trackEvent} from '@/utils/amplitude-utils';
+import {trackEvent} from '@/utils/amplitude-utils';
 
 const GoogleLogin = () => {
   const {setTokens} = useUserStore();
@@ -23,7 +22,7 @@ const GoogleLogin = () => {
     onSuccess: async (data: TokensSchema) => {
       const {accessToken, refreshToken} = data;
       await setTokens(accessToken, refreshToken);
-      initializeAmplitude(userId);
+      amplitude.init(AMPLITUDE_API_KEY, userId);
       trackEvent('Login Success', {method: 'Google'});
     },
   });

@@ -1,12 +1,12 @@
-import {StyleSheet, View} from 'react-native';
-import {LogoImage} from '@/assets/icons/common';
-import {useThemeStore} from '@/store/useThemeStore';
+import {Image, StyleSheet, View} from 'react-native';
 
 const LogoHeader = () => {
-  const {theme} = useThemeStore();
   return (
     <View style={styles.container}>
-      <LogoImage fill={theme.MAIN500} />
+      <Image
+        source={require('@/assets/images/blue-logo.png')}
+        style={styles.logoImage}
+      />
     </View>
   );
 };
@@ -20,5 +20,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
+  },
+  logoImage: {
+    marginLeft: 4,
+    width: 67,
+    height: 24,
   },
 });

@@ -226,8 +226,8 @@ const SmallCard = ({
               <PinnedSelectedIcon
                 width={20}
                 height={20}
-                fill={theme.TEXT400}
-                stroke={theme.TEXT400}
+                fill={theme.MAIN400}
+                stroke={theme.MAIN400}
               />
             ) : (
               <PinnedUnselectedIcon

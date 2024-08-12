@@ -1,5 +1,4 @@
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
-import {LogoImage} from '@/assets/icons/common';
+import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {SidebarIcon} from '@/assets/icons/home';
 import {useThemeStore} from '@/store/useThemeStore';
 
@@ -14,7 +13,10 @@ const ScreenHeader = ({toggleSideBar}: ScreenHeaderProps) => {
       <TouchableOpacity onPress={toggleSideBar}>
         <SidebarIcon stroke={theme.TEXT900} />
       </TouchableOpacity>
-      <LogoImage fill={theme.MAIN500} />
+      <Image
+        source={require('@/assets/images/blue-logo.png')}
+        style={styles.logoImage}
+      />
       <View style={styles.rightSpace} />
     </View>
   );
@@ -29,6 +31,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'row',
+  },
+  logoImage: {
+    marginLeft: 4,
+    width: 67,
+    height: 24,
   },
   rightSpace: {
     width: 26,
