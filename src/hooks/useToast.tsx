@@ -1,27 +1,33 @@
-import {useEffect, useRef, useMemo} from 'react';
+import {useEffect, useRef, useState, useMemo} from 'react';
 import {Animated, Dimensions, StyleSheet, Text} from 'react-native';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {type ITheme} from '@/types';
+import {THEMES} from '@/constants/theme';
 
 interface ToastProps {
-  text: string;
   marginBottom: number;
-  isToastVisible: boolean;
-  setIsToastVisible: (v: boolean) => void;
 }
 const screenWidth = Dimensions.get('window').width;
 const toastWidth = screenWidth - 36;
 
-const Toast = ({
-  text,
-  marginBottom,
-  isToastVisible,
-  setIsToastVisible,
-}: ToastProps) => {
+export default function useToast({marginBottom}: ToastProps) {
   const {theme} = useThemeStore();
-  const styles = useMemo(() => createStyles(theme), [theme]);
+  const styles = useMemo(() => createStyles(theme, compareTheme), [theme]);
   const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const [toastMessage, setToastMessage] = useState('');
+  const [isToastVisible, setIsToastVisible] = useState(false);
+
+  const compareTheme: boolean = useMemo(() => {
+    if (theme === THEMES[1]) return true;
+    return false;
+  }, [theme]);
+
+  function showToast(text: string) {
+    setToastMessage(text);
+    setIsToastVisible(true);
+  }
 
   useEffect(() => {
     if (isToastVisible) {
@@ -48,28 +54,31 @@ const Toast = ({
     }
   }, [isToastVisible, fadeAnim, setIsToastVisible]);
 
-  if (!isToastVisible) {
-    return null;
-  }
-  return (
-    <Animated.View
-      style={[
-        styles.container,
-        {
-          opacity: fadeAnim,
-          bottom: marginBottom,
-          left: (screenWidth - toastWidth) / 2,
-        },
-      ]}>
-      <Text style={styles.text}>{text}</Text>
-    </Animated.View>
-  );
-};
+  const Toast = () => {
+    return (
+      isToastVisible && (
+        <Animated.View
+          style={[
+            styles.container,
+            {
+              opacity: fadeAnim,
+              bottom: marginBottom,
+              left: (screenWidth - toastWidth) / 2,
+            },
+          ]}>
+          <Text style={styles.text}>{toastMessage}</Text>
+        </Animated.View>
+      )
+    );
+  };
 
-const createStyles = (theme: ITheme) =>
+  return {Toast, showToast};
+}
+
+const createStyles = (theme: ITheme, compareTheme: boolean) =>
   StyleSheet.create({
     container: {
-      backgroundColor: theme.TEXT700,
+      backgroundColor: compareTheme ? theme.TEXT700 : theme.TEXT200,
       position: 'absolute',
       width: toastWidth,
       paddingVertical: 12,
@@ -78,9 +87,7 @@ const createStyles = (theme: ITheme) =>
       zIndex: 9999,
     },
     text: {
-      color: theme.BACKGROUND,
+      color: compareTheme ? theme.BACKGROUND : theme.TEXT900,
       ...FONTS.BODY1_MEDIUM,
     },
   });
-
-export default Toast;

@@ -1,18 +1,20 @@
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {LogoImage} from '@/assets/icons/common';
 import {SidebarIcon} from '@/assets/icons/home';
+import {useThemeStore} from '@/store/useThemeStore';
 
 interface ScreenHeaderProps {
   toggleSideBar: () => void;
 }
 
 const ScreenHeader = ({toggleSideBar}: ScreenHeaderProps) => {
+  const {theme} = useThemeStore();
   return (
     <View style={styles.container}>
-      <TouchableOpacity>
-        <SidebarIcon onPress={toggleSideBar} />
+      <TouchableOpacity onPress={toggleSideBar}>
+        <SidebarIcon stroke={theme.TEXT900} />
       </TouchableOpacity>
-      <LogoImage />
+      <LogoImage fill={theme.MAIN500} />
       <View style={styles.rightSpace} />
     </View>
   );

@@ -1,10 +1,10 @@
 import {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {calculateByteLength} from '@/utils/link-utils';
-import TextInputGroup from '../common/TextInputGroup';
-import CustomBottomButton from '../common/CustomBottomButton';
+import CustomBottomButton from '@/components/common/CustomBottomButton';
+import TextInputGroup from '@/components/common/TextInputGroup';
 
-interface FolderSideBarProps {
+interface FolderContentProps {
   defaultText?: string;
   toggleBottomSheet: () => void;
 }
@@ -13,7 +13,7 @@ interface FolderSideBarProps {
 const FolderContent = ({
   defaultText,
   toggleBottomSheet,
-}: FolderSideBarProps) => {
+}: FolderContentProps) => {
   const [textInput, setTextInput] = useState<string | undefined>(defaultText);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isByteCountVisible, setIsByteCountVisible] = useState<boolean>(true);

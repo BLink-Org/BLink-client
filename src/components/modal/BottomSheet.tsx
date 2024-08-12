@@ -81,7 +81,7 @@ const BottomSheet = ({
           <View />
           <Text style={styles.modalTitle}>{modalTitle}</Text>
           <TouchableOpacity onPress={toggleBottomSheet}>
-            <DeleteIcon />
+            <DeleteIcon fill={theme.TEXT600} />
           </TouchableOpacity>
         </View>
         {children}

@@ -1,4 +1,4 @@
-package com.blinkapp
+package com.blinkapplication
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.ReactApplicationContext

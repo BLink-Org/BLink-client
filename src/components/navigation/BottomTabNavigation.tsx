@@ -3,10 +3,12 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {TouchableOpacity} from 'react-native';
 import {
   HomeIcon,
-  BookmarkIcon,
+  PinnedIcon,
   LinkIcon,
   MypageIcon,
   SearchIcon,
+  SearchUnfocusedIcon,
+  MypageUnfocusedIcon,
 } from '@/assets/icons/bottom-tab';
 import {type BottomTabParamList} from '@/types/navigation';
 import HomeScreen from '@/screens/tab-screens/Home';
@@ -17,16 +19,48 @@ import MyPageScreen from '@/screens/tab-screens/Mypage';
 import BottomSheet from '@/components/modal/BottomSheet';
 import LinkContent from '@/components/link/LinkContent';
 import {useThemeStore} from '@/store/useThemeStore';
+import {type Theme} from '@/constants/theme';
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
-const HomeBarIcon = ({color}: {color: string}) => <HomeIcon fill={color} />;
-const BookmarkBarIcon = ({color}: {color: string}) => (
-  <BookmarkIcon fill={color} />
+interface IconProps {
+  focused: boolean;
+  theme: Theme;
+}
+
+const HomeBarIcon = ({focused, theme}: IconProps) => (
+  <HomeIcon
+    strokeWidth={1.5}
+    fill={focused ? theme.TEXT900 : 'transparent'}
+    stroke={theme.TEXT900}
+  />
+);
+const PinnedBarIcon = ({focused, theme}: IconProps) => (
+  <PinnedIcon
+    strokeWidth={1.5}
+    fill={focused ? theme.TEXT900 : 'transparent'}
+    stroke={theme.TEXT900}
+  />
 );
 const AddBarIcon = ({color}: {color: string}) => <LinkIcon fill={color} />;
-const SearchBarIcon = ({color}: {color: string}) => <SearchIcon fill={color} />;
-const MyPageBarIcon = ({color}: {color: string}) => <MypageIcon fill={color} />;
+const SearchBarIcon = ({focused, theme}: IconProps) => {
+  return focused ? (
+    <SearchIcon strokeWidth={1.5} fill={theme.TEXT900} />
+  ) : (
+    <SearchUnfocusedIcon
+      strokeWidth={1.5}
+      stroke={theme.TEXT900}
+      fill={theme.TEXT900}
+    />
+  );
+};
+const MyPageBarIcon = ({focused, theme}: IconProps) => {
+  return focused ? (
+    <MypageIcon fill={theme.TEXT900} />
+  ) : (
+    <MypageUnfocusedIcon strokeWidth={1.5} stroke={theme.TEXT900} />
+  );
+};
 
 const BottomTabNavigation = () => {
   const {theme} = useThemeStore();
@@ -56,7 +90,7 @@ const BottomTabNavigation = () => {
           component={HomeScreen}
           options={{
             headerShown: false,
-            tabBarIcon: HomeBarIcon,
+            tabBarIcon: ({focused}) => <HomeBarIcon {...{focused, theme}} />,
           }}
         />
         <Tab.Screen
@@ -64,7 +98,7 @@ const BottomTabNavigation = () => {
           component={BookmarkScreen}
           options={{
             headerShown: false,
-            tabBarIcon: BookmarkBarIcon,
+            tabBarIcon: ({focused}) => <PinnedBarIcon {...{focused, theme}} />,
           }}
         />
         <Tab.Screen
@@ -83,7 +117,7 @@ const BottomTabNavigation = () => {
           component={SearchScreen}
           options={{
             headerShown: false,
-            tabBarIcon: SearchBarIcon,
+            tabBarIcon: ({focused}) => <SearchBarIcon {...{focused, theme}} />,
           }}
         />
 
@@ -92,7 +126,7 @@ const BottomTabNavigation = () => {
           component={MyPageScreen}
           options={{
             headerShown: false,
-            tabBarIcon: MyPageBarIcon,
+            tabBarIcon: ({focused}) => <MyPageBarIcon {...{focused, theme}} />,
           }}
         />
       </Tab.Navigator>

@@ -5,21 +5,28 @@ import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {DeleteIcon, PencilIcon} from '@/assets/icons/mypage';
 import {type ITheme} from '@/types';
-import DropDownModal from '../modal/DropDownModal';
+import DropDownModal from '@/components/modal/DropDownModal';
+import {useModalStore} from '@/store/useModalStore';
+import AlertModal from '@/components/modal/AlertModal';
+import {TOAST_MESSAGE} from '@/constants/toast';
 
 interface FolderButtonProps {
+  id: number;
   variants: 'pressed' | 'activated' | 'default';
   name?: string;
   number?: number;
   onPress: () => void;
+  showToast?: (label: string) => void;
   handleSelect?: (label: string) => void;
 }
 
 const FolderButton = ({
+  id,
   variants,
   name,
   number,
   onPress,
+  showToast = () => {},
   handleSelect = () => {},
 }: FolderButtonProps) => {
   const {theme} = useThemeStore();
@@ -27,8 +34,12 @@ const FolderButton = ({
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const closeDropdown = () => setIsDropdownOpen(false);
+
   const [anchorPosition, setAnchorPosition] = useState({x: 0, y: 0});
   const buttonRef = useRef<TouchableOpacity>(null);
+
+  const {showModal, closeModal} = useModalStore();
+  const modalId = `folderDelete-${id}`;
 
   const toggleDropdown = () => {
     buttonRef.current?.measure((x, y, width, height, pageX, pageY) => {
@@ -37,11 +48,16 @@ const FolderButton = ({
     });
   };
 
+  const handleConfirmSelect = () => {
+    closeModal(modalId);
+    showToast(TOAST_MESSAGE.DELETE_SUCCESS);
+  };
+
   const folderOptions = useMemo(
     () => [
       {
         label: '폴더명 수정',
-        icon: <PencilIcon />,
+        icon: <PencilIcon fill={theme.TEXT600} />,
         onSelect: () => {
           closeDropdown();
           handleSelect('폴더명 수정');
@@ -49,7 +65,7 @@ const FolderButton = ({
       },
       {
         label: '위로 이동',
-        icon: <UpIcon />,
+        icon: <UpIcon fill={theme.TEXT600} />,
         onSelect: () => {
           closeDropdown();
           handleSelect('위로 이동');
@@ -57,7 +73,7 @@ const FolderButton = ({
       },
       {
         label: '아래로 이동',
-        icon: <DownIcon />,
+        icon: <DownIcon fill={theme.TEXT600} />,
         onSelect: () => {
           closeDropdown();
           handleSelect('아래로 이동');
@@ -67,8 +83,8 @@ const FolderButton = ({
         label: '삭제',
         icon: <DeleteIcon />,
         onSelect: () => {
+          showModal(modalId);
           closeDropdown();
-          handleSelect('영구삭제');
         },
       },
     ],
@@ -92,40 +108,55 @@ const FolderButton = ({
       default:
         return {
           borderWidth: 1,
-          backgroundColor: name ? theme.TEXT100 : '#ffffff',
+          backgroundColor: name ? theme.TEXT100 : theme.BACKGROUND,
           borderColor: theme.TEXT200,
         };
     }
   })();
 
   return (
-    <TouchableOpacity
-      style={[
-        styles.container,
-        variantStyles,
-        {borderStyle: name ? 'solid' : 'dashed'},
-      ]}
-      onPress={onPress}>
-      <View style={styles.infoContainer}>
-        <Text style={styles.nameText}>{name ?? '폴더 없이 저장'}</Text>
-        {number && (
-          <View style={styles.detailContainer}>
-            <Text style={styles.numberText}>{number}</Text>
-            <TouchableOpacity ref={buttonRef} onPress={toggleDropdown}>
-              <EditIcon />
-            </TouchableOpacity>
-            {isDropdownOpen && (
-              <DropDownModal
-                isVisible={isDropdownOpen}
-                options={folderOptions}
-                onClose={closeDropdown}
-                anchorPosition={anchorPosition}
-              />
-            )}
-          </View>
-        )}
-      </View>
-    </TouchableOpacity>
+    <>
+      <TouchableOpacity
+        style={[
+          styles.container,
+          variantStyles,
+          {borderStyle: name ? 'solid' : 'dashed'},
+        ]}
+        onPress={onPress}>
+        <View style={styles.infoContainer}>
+          <Text style={styles.nameText}>{name ?? '폴더 없는 링크'}</Text>
+          {number && (
+            <View style={styles.detailContainer}>
+              <Text style={styles.numberText}>{number}</Text>
+              <TouchableOpacity
+                style={styles.editIcon}
+                ref={buttonRef}
+                onPress={name ? toggleDropdown : () => {}}>
+                <EditIcon fill={name ? theme.TEXT300 : 'transparent'} />
+              </TouchableOpacity>
+              {isDropdownOpen && (
+                <DropDownModal
+                  isVisible={isDropdownOpen}
+                  options={folderOptions}
+                  onClose={closeDropdown}
+                  anchorPosition={anchorPosition}
+                />
+              )}
+            </View>
+          )}
+        </View>
+      </TouchableOpacity>
+
+      {/* alertModal 처리 */}
+      <AlertModal
+        modalId={modalId}
+        headerText="폴더 속 링크도 삭제됩니다."
+        bodyText="링크가 다른 폴더에도 저장되어 있었다면 그 폴더에서는 삭제되지 않아요."
+        leftText="취소"
+        rightText="삭제"
+        rightOnPress={handleConfirmSelect}
+      />
+    </>
   );
 };
 
@@ -134,8 +165,6 @@ const createStyles = (theme: ITheme) =>
     container: {
       width: '100%',
       height: 58,
-      borderWidth: 1,
-      borderColor: '#000',
       borderRadius: 8,
       justifyContent: 'center',
       paddingVertical: 16,
@@ -147,7 +176,6 @@ const createStyles = (theme: ITheme) =>
       alignItems: 'center',
     },
     detailContainer: {
-      gap: 16,
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
@@ -156,6 +184,9 @@ const createStyles = (theme: ITheme) =>
       flex: 1,
       color: theme.TEXT900,
       ...FONTS.BODY1_MEDIUM,
+    },
+    editIcon: {
+      paddingLeft: 16,
     },
     numberText: {
       color: theme.TEXT700,

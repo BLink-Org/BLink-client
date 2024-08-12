@@ -1,10 +1,12 @@
 import {StyleSheet, View} from 'react-native';
 import {LogoImage} from '@/assets/icons/common';
+import {useThemeStore} from '@/store/useThemeStore';
 
 const LogoHeader = () => {
+  const {theme} = useThemeStore();
   return (
     <View style={styles.container}>
-      <LogoImage />
+      <LogoImage fill={theme.MAIN500} />
     </View>
   );
 };
