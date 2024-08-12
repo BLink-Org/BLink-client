@@ -93,7 +93,7 @@ const createStyles = (theme: ITheme) =>
       width: 160,
     },
     dropdown: {
-      backgroundColor: 'white',
+      backgroundColor: theme.BACKGROUND,
       borderRadius: 5,
       shadowColor: '#000',
       shadowOffset: {

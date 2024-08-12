@@ -20,13 +20,13 @@ const themes = [
     id: 3,
     name: '무드오렌지',
     price: '3,000원',
-    color: '#FF5722',
+    color: '#FF7970',
   },
   {
     id: 4,
     name: '사이니스타',
     price: '3,000원',
-    color: '#7E57C2',
+    color: '#EdE4FC',
   },
 ];
 

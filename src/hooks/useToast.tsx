@@ -3,6 +3,7 @@ import {Animated, Dimensions, StyleSheet, Text} from 'react-native';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {type ITheme} from '@/types';
+import {THEMES} from '@/constants/theme';
 
 interface ToastProps {
   marginBottom: number;
@@ -12,11 +13,16 @@ const toastWidth = screenWidth - 36;
 
 export default function useToast({marginBottom}: ToastProps) {
   const {theme} = useThemeStore();
-  const styles = useMemo(() => createStyles(theme), [theme]);
+  const styles = useMemo(() => createStyles(theme, compareTheme), [theme]);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const [toastMessage, setToastMessage] = useState('');
   const [isToastVisible, setIsToastVisible] = useState(false);
+
+  const compareTheme: boolean = useMemo(() => {
+    if (theme === THEMES[1]) return true;
+    return false;
+  }, [theme]);
 
   function showToast(text: string) {
     setToastMessage(text);
@@ -69,10 +75,10 @@ export default function useToast({marginBottom}: ToastProps) {
   return {Toast, showToast};
 }
 
-const createStyles = (theme: ITheme) =>
+const createStyles = (theme: ITheme, compareTheme: boolean) =>
   StyleSheet.create({
     container: {
-      backgroundColor: theme.TEXT700,
+      backgroundColor: compareTheme ? theme.TEXT700 : theme.TEXT200,
       position: 'absolute',
       width: toastWidth,
       paddingVertical: 12,
@@ -81,7 +87,7 @@ const createStyles = (theme: ITheme) =>
       zIndex: 9999,
     },
     text: {
-      color: theme.BACKGROUND,
+      color: compareTheme ? theme.BACKGROUND : theme.TEXT900,
       ...FONTS.BODY1_MEDIUM,
     },
   });

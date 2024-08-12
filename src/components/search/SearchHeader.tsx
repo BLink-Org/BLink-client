@@ -24,7 +24,7 @@ const SearchHeader = memo(({searchQuery, handleSearch}: SearchHeaderProps) => {
         placeholderTextColor={theme.TEXT300}
       />
       <View style={styles.searchIcon}>
-        <SearchIcon />
+        <SearchIcon strokeWidth={1.5} fill={theme.TEXT900} />
       </View>
     </View>
   );
@@ -50,6 +50,7 @@ const createStyles = (theme: ITheme) =>
       borderRadius: 8,
       paddingLeft: 16,
       paddingRight: 46,
+      color: theme.TEXT800,
       backgroundColor: theme.TEXT200,
       ...FONTS.BODY2_MEDIUM,
     },

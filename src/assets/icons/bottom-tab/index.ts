@@ -1,7 +1,15 @@
 import HomeIcon from './home.svg';
-import BookmarkIcon from './bookmark.svg';
+import PinnedIcon from './pinned.svg';
 import LinkIcon from './link.svg';
-import MypageIcon from './mypage.svg';
 import SearchIcon from './search.svg';
+import MypageIcon from './mypage.svg';
+import SearchUnfocusedIcon from './search-unfocused.svg';
 
-export {HomeIcon, BookmarkIcon, LinkIcon, MypageIcon, SearchIcon};
+export {
+  HomeIcon,
+  PinnedIcon,
+  LinkIcon,
+  MypageIcon,
+  SearchIcon,
+  SearchUnfocusedIcon,
+};

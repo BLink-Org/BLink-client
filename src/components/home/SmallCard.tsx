@@ -9,10 +9,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {useThemeStore} from '@/store/useThemeStore';
-import {
-  BookmarkSelectedIcon,
-  BookmarkUnselectedIcon,
-} from '@/assets/icons/common';
+import {PinnedSelectedIcon, PinnedUnselectedIcon} from '@/assets/icons/common';
 import {FONTS} from '@/constants';
 import {MoveIcon, ShareIcon, ThreeDotIcon} from '@/assets/icons/home';
 import {type IFileList} from '@/types/home';
@@ -31,10 +28,14 @@ const screenWidth = Dimensions.get('screen').width - 36;
 interface SmallCardProps {
   content: IFileList;
   isTrash?: boolean;
-  showToast: (text: string) => void;
+  showToast?: (text: string) => void;
 }
 
-const SmallCard = ({content, isTrash, showToast}: SmallCardProps) => {
+const SmallCard = ({
+  content,
+  isTrash,
+  showToast = () => {},
+}: SmallCardProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const {showModal, closeModal} = useModalStore();
@@ -173,7 +174,7 @@ const SmallCard = ({content, isTrash, showToast}: SmallCardProps) => {
         <View style={styles.dotPosition}>
           <Text style={styles.folderText}>{content.folder}</Text>
           <TouchableOpacity ref={buttonRef} onPress={toggleDropdown}>
-            <ThreeDotIcon />
+            <ThreeDotIcon fill={theme.TEXT300} />
           </TouchableOpacity>
           {isDropdownOpen && (
             <DropDownModal
@@ -222,9 +223,18 @@ const SmallCard = ({content, isTrash, showToast}: SmallCardProps) => {
           </View>
           <TouchableOpacity onPress={toggleBookmark}>
             {isBookmarked ? (
-              <BookmarkSelectedIcon />
+              <PinnedSelectedIcon
+                width={20}
+                height={20}
+                fill={theme.TEXT400}
+                stroke={theme.TEXT400}
+              />
             ) : (
-              <BookmarkUnselectedIcon />
+              <PinnedUnselectedIcon
+                width={20}
+                height={20}
+                stroke={theme.TEXT400}
+              />
             )}
           </TouchableOpacity>
         </View>

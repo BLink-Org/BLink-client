@@ -108,7 +108,7 @@ const FolderButton = ({
       default:
         return {
           borderWidth: 1,
-          backgroundColor: name ? theme.TEXT100 : '#ffffff',
+          backgroundColor: name ? theme.TEXT100 : theme.BACKGROUND,
           borderColor: theme.TEXT200,
         };
     }

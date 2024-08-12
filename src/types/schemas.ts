@@ -15,4 +15,3 @@ export interface GetLinksSchema {
   linkCount: number;
   linkDtos: ILinkDtos[];
 }
-

@@ -43,7 +43,9 @@ const ThemeCard = ({
       <View
         style={[
           styles.card,
-          selected ? {borderColor: mainColor} : {borderColor: theme.TEXT200},
+          selected
+            ? {borderColor: theme.MAIN400}
+            : {borderColor: theme.TEXT200},
         ]}>
         <View style={[styles.headerBackground, {backgroundColor: mainColor}]} />
         <View style={styles.bodyContainer}>
