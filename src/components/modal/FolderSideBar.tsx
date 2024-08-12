@@ -120,7 +120,7 @@ const FolderSideBar = ({
               toggleSideBar();
             }}>
             <Text style={styles.totalButtonText}>전체보기</Text>
-            <ForwardIcon />
+            <ForwardIcon fill={theme.TEXT700} />
           </TouchableOpacity>
         </View>
 
@@ -137,7 +137,11 @@ const FolderSideBar = ({
             onPress={() => {
               toggleBottomSheet();
             }}>
-            <AddIcon style={{marginRight: 8}} />
+            <AddIcon
+              stroke={theme.BACKGROUND}
+              fill={theme.MAIN400}
+              style={{marginRight: 8}}
+            />
             <Text style={styles.addFolderButtonText}>폴더 생성</Text>
           </TouchableOpacity>
         </View>
@@ -219,7 +223,7 @@ const createStyles = (theme: ITheme) =>
     addFolderButton: {
       height: 45,
       borderWidth: 1,
-      borderColor: '#ECF1F5',
+      borderColor: theme.TEXT200,
       borderRadius: 100,
       paddingVertical: 12,
       paddingHorizontal: 16,
@@ -229,6 +233,7 @@ const createStyles = (theme: ITheme) =>
     addFolderButtonText: {
       color: theme.TEXT700,
       ...FONTS.BODY2_SEMIBOLD,
+      lineHeight: 19,
     },
     closeButton: {
       height: 58,

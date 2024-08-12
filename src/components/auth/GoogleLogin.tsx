@@ -1,5 +1,7 @@
 import {useEffect} from 'react';
-import {Button, SafeAreaView} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {useEffect, useState} from 'react';
+import {Button, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {
   GoogleSignin,
   isErrorWithCode,
@@ -9,14 +11,20 @@ import {CLIENT_ID, IOS_CLIENT_ID} from '@env';
 import {useGoogleLogin} from '@/api/hooks/useAuth';
 import {useUserStore} from '@/store/useUserStore';
 import {type TokensSchema} from '@/types';
+import {GoogleLogoIcon} from '@/assets/icons/onboarding';
+import {FONTS} from '@/constants';
+import {initializeAmplitude, trackEvent} from '@/utils/amplitude-utils';
 
 const GoogleLogin = () => {
   const {setTokens} = useUserStore();
+  const [userId, setUserId] = useState<string>('');
 
   const googleLoginMutation = useGoogleLogin({
     onSuccess: async (data: TokensSchema) => {
       const {accessToken, refreshToken} = data;
       await setTokens(accessToken, refreshToken);
+      initializeAmplitude(userId);
+      trackEvent('Login Success', {method: 'Google'});
     },
   });
 
@@ -26,6 +34,7 @@ const GoogleLogin = () => {
       const userInfo = await GoogleSignin.signIn();
       const idToken = userInfo.idToken;
       if (idToken) {
+        setUserId(userInfo.user.id);
         googleLoginMutation.mutate(idToken);
       }
     } catch (error) {
@@ -58,10 +67,29 @@ const GoogleLogin = () => {
   }, []);
 
   return (
-    <SafeAreaView>
-      <Button title="Sign In with Google" onPress={handleLoginPress} />
-    </SafeAreaView>
+    <TouchableOpacity onPress={handleLoginPress}>
+      <View style={styles.logo}>
+        <GoogleLogoIcon />
+        <Text style={styles.logoText}>Google로 시작하기</Text>
+      </View>
+    </TouchableOpacity>
   );
 };
 
 export default GoogleLogin;
+
+const styles = StyleSheet.create({
+  logo: {
+    backgroundColor: '#FFF',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 12,
+    height: 54,
+    borderRadius: 100,
+  },
+  logoText: {
+    color: '#000',
+    ...FONTS.BODY1_SEMIBOLD,
+  },
+});

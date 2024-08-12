@@ -1,5 +1,7 @@
 import {appleAuth} from '@invertase/react-native-apple-authentication';
-import {Button, Platform, View} from 'react-native';
+import {Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {AppleLogoIcon} from '@/assets/icons/onboarding';
+import {FONTS} from '@/constants';
 
 const AppleLogin = () => {
   const handleSignInApple = async () => {
@@ -45,10 +47,29 @@ const AppleLogin = () => {
   }
 
   return (
-    <View>
-      <Button title="Sign In with Apple" onPress={handleLoginPress} />
-    </View>
+    <TouchableOpacity onPress={handleLoginPress}>
+      <View style={styles.logo}>
+        <AppleLogoIcon />
+        <Text style={styles.logoText}>Apple로 시작하기</Text>
+      </View>
+    </TouchableOpacity>
   );
 };
 
 export default AppleLogin;
+
+const styles = StyleSheet.create({
+  logo: {
+    backgroundColor: '#000',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 12,
+    height: 54,
+    borderRadius: 100,
+  },
+  logoText: {
+    color: '#fff',
+    ...FONTS.BODY1_SEMIBOLD,
+  },
+});

@@ -53,7 +53,7 @@ const AccountDelete = () => {
           <BackHeader title="계정 삭제 신청" themeColor={theme.TEXT900} />
           <View style={styles.contentContainer}>
             <View style={styles.alertContainer}>
-              <WarningIcon />
+              <WarningIcon fill={theme.MAIN400} />
               <Text style={styles.alertText}>삭제 신청된 계정입니다.</Text>
             </View>
             <Text style={styles.infoText}>

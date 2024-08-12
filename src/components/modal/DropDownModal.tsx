@@ -54,7 +54,7 @@ const DropDownModal = ({
               onPress={option.onSelect}>
               {cloneElement(option.icon, {
                 fill:
-                  index === options.length - 1 ? theme.ERROR : theme.TEXT800,
+                  index === options.length - 1 ? theme.ERROR : theme.TEXT600,
               })}
               <Text
                 style={[

@@ -14,6 +14,7 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		22F3F8ECCB1C4AC7A2A72A00 /* Pretendard-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D4B564E9444458E9411EAA0 /* Pretendard-Medium.ttf */; };
 		4759A4A52C3DC48700833EAB /* Share.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4759A49B2C3DC48700833EAB /* Share.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		476AEA4F2C67248600C8409D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 476AEA4E2C67248600C8409D /* GoogleService-Info.plist */; };
 		47F2A6372C47A14600C4A085 /* CustomShareNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F2A6352C47A14600C4A085 /* CustomShareNavigationController.swift */; };
 		47F2A6382C47A14600C4A085 /* CustomShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F2A6362C47A14600C4A085 /* CustomShareViewController.swift */; };
 		48DF832DE280A44347976C44 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6E1E857E777D7E0FCDF19B51 /* PrivacyInfo.xcprivacy */; };
@@ -74,6 +75,7 @@
 		4759A4A22C3DC48700833EAB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4759A4AA2C3DE4FF00833EAB /* BLinkApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = BLinkApp.entitlements; path = BLinkApp/BLinkApp.entitlements; sourceTree = "<group>"; };
 		4759A4AB2C3DE52B00833EAB /* Share.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Share.entitlements; sourceTree = "<group>"; };
+		476AEA4E2C67248600C8409D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		47F2A6352C47A14600C4A085 /* CustomShareNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomShareNavigationController.swift; sourceTree = "<group>"; };
 		47F2A6362C47A14600C4A085 /* CustomShareViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomShareViewController.swift; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-BLinkApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BLinkApp.release.xcconfig"; path = "Target Support Files/Pods-BLinkApp/Pods-BLinkApp.release.xcconfig"; sourceTree = "<group>"; };

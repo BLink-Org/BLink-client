@@ -2,7 +2,7 @@ import axios, {type AxiosRequestConfig} from 'axios';
 import {API_URL} from '@env';
 import {useUserStore} from '@/store/useUserStore';
 import {signOut} from '@/utils/auth-utils';
-import {useRefreshTokens} from '@/api/hooks/useAuth';
+import {refreshTokenDirectly} from '@/api/hooks/useAuth';
 
 const apiClient = axios.create({
   baseURL: API_URL,
@@ -15,7 +15,7 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   async config => {
     const {accessToken} = useUserStore.getState();
-    console.log('🚀 ~ file: client.ts:19 ~ accessToken:', accessToken);
+    // console.log('🚀 ~ file: client.ts:19 ~ accessToken:', accessToken);
     if (accessToken && config.headers) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
@@ -36,10 +36,9 @@ apiClient.interceptors.response.use(
     } = error;
 
     // 401 Unauthorized 오류 처리
-    if (status === 401 && error.response?.data?.message === 'Unauthorized') {
+    if (status === 401) {
       const originalRequest = config as AxiosRequestConfig;
       const {refreshToken} = useUserStore.getState();
-      const {mutateAsync: refreshTokens} = useRefreshTokens();
 
       if (!refreshToken) {
         console.warn('Refresh token not found, logging out...');
@@ -49,7 +48,8 @@ apiClient.interceptors.response.use(
 
       try {
         // 리프레시 토큰 요청
-        const tokenResponse = await refreshTokens(refreshToken);
+        const tokenResponse = await refreshTokenDirectly(refreshToken);
+        console.log('tokenResponse:', tokenResponse);
 
         // 새로운 토큰이 있을 경우
         if (tokenResponse) {
@@ -67,6 +67,7 @@ apiClient.interceptors.response.use(
           }
 
           // 원래의 요청을 재시도
+          console.log('Retrying original request with new token...');
           return await apiClient(originalRequest);
         } else {
           // 리프레시 토큰도 만료된 경우

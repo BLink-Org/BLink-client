@@ -1,6 +1,7 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useMemo} from 'react';
 import {Animated, StyleSheet, Easing, TouchableHighlight} from 'react-native';
 import {useThemeStore} from '@/store/useThemeStore';
+import {THEMES} from '@/constants/theme';
 
 interface CustomToggleProps {
   isToggled?: boolean; // 초기 토글 상태
@@ -14,6 +15,10 @@ const CustomToggle = ({
   const {theme} = useThemeStore();
   const [isOn, setIsOn] = useState(isToggled);
   const translateX = useState(new Animated.Value(isOn ? 9.5 : -9.5))[0];
+  const compareTheme: boolean = useMemo(() => {
+    if (theme === THEMES[1]) return true;
+    return false;
+  }, [theme]);
 
   useEffect(() => {
     setIsOn(isToggled);
@@ -53,7 +58,7 @@ const CustomToggle = ({
           styles.thumb,
           {
             transform: [{translateX}],
-            backgroundColor: theme.BACKGROUND,
+            backgroundColor: compareTheme ? theme.BACKGROUND : theme.TEXT900,
           },
         ]}
       />

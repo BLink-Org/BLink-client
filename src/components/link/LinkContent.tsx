@@ -80,7 +80,7 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
           <TouchableOpacity
             style={styles.addContainer}
             onPress={toggleFolderBottomSheet}>
-            <AddIcon />
+            <AddIcon stroke={theme.BACKGROUND} fill={theme.MAIN400} />
           </TouchableOpacity>
         </View>
         <FolderList

@@ -7,6 +7,7 @@ import BackHeader from '@/components/common/BackHeader';
 import {FONTS} from '@/constants';
 import ThemeCard from '@/components/mypage/ThemeCard';
 import {type ITheme} from '@/types';
+import {trackEvent} from '@/utils/amplitude-utils';
 
 const themes = [
   {id: 1, name: '기본', price: 'Free', color: '#4285F4'},
@@ -20,13 +21,13 @@ const themes = [
     id: 3,
     name: '무드오렌지',
     price: '3,000원',
-    color: '#FF5722',
+    color: '#FF7970',
   },
   {
     id: 4,
     name: '사이니스타',
     price: '3,000원',
-    color: '#7E57C2',
+    color: '#EdE4FC',
   },
 ];
 
@@ -46,9 +47,20 @@ const ThemeSetting = () => {
   }, [getSavedTheme]);
 
   const handleSetTheme = (themeId: number) => {
+    const themeName = themes.find(theme => theme.id === themeId)?.name;
+
+    const previousThemeName = themes.find(
+      theme => theme.id === selectedThemeId,
+    )?.name;
+
     setSelectedThemeId(themeId);
     setTheme(themeId);
     void asyncSetTheme(themeId);
+
+    trackEvent('Apply_Theme', {
+      newTheme: themeName,
+      previousTheme: previousThemeName,
+    });
   };
 
   return (

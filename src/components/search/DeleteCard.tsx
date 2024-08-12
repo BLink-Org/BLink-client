@@ -23,7 +23,7 @@ const DeleteCard = ({content}: LargeCardProps) => {
         </Text>
       </View>
       <TouchableOpacity style={styles.rightContainer}>
-        <DeleteIcon />
+        <DeleteIcon fill={theme.TEXT500} />
       </TouchableOpacity>
     </View>
   );
