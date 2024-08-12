@@ -8,7 +8,6 @@ import {
   MypageIcon,
   SearchIcon,
   SearchUnfocusedIcon,
-  MypageUnfocusedIcon,
 } from '@/assets/icons/bottom-tab';
 import {type BottomTabParamList} from '@/types/navigation';
 import HomeScreen from '@/screens/tab-screens/Home';
@@ -52,9 +51,9 @@ const SearchBarIcon = ({focused, theme}: IconProps) => {
 };
 const MyPageBarIcon = ({focused, theme}: IconProps) => {
   return focused ? (
-    <MypageIcon fill={theme.TEXT900} />
+    <MypageIcon fill={theme.TEXT900} stroke={theme.TEXT900} />
   ) : (
-    <MypageUnfocusedIcon strokeWidth={1.5} stroke={theme.TEXT900} />
+    <MypageIcon stroke={theme.TEXT900} strokeWidth={1.5} />
   );
 };
 

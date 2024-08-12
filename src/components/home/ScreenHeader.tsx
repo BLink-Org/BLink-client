@@ -31,6 +31,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   rightSpace: {
-    width: 28,
+    width: 26,
   },
 });

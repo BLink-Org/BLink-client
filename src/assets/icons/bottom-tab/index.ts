@@ -4,7 +4,6 @@ import LinkIcon from './link.svg';
 import SearchIcon from './search.svg';
 import MypageIcon from './mypage.svg';
 import SearchUnfocusedIcon from './search-unfocused.svg';
-import MypageUnfocusedIcon from './mypage-unfocused.svg';
 
 export {
   HomeIcon,
@@ -13,5 +12,4 @@ export {
   MypageIcon,
   SearchIcon,
   SearchUnfocusedIcon,
-  MypageUnfocusedIcon,
 };
