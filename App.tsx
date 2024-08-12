@@ -4,11 +4,13 @@ import {NavigationContainer} from '@react-navigation/native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import * as RNLocalize from 'react-native-localize';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import * as amplitude from '@amplitude/analytics-react-native';
 import GlobalNavigation from '@/components/navigation/GlobalNavigation';
 import {useThemeStore} from '@/store/useThemeStore';
 import i18n from '@/i18n/i18n';
 import {useUserStore} from '@/store/useUserStore';
-import {initializeAmplitude, trackEvent} from '@/utils/amplitude-utils';
+import {trackEvent} from '@/utils/amplitude-utils';
+import {AMPLITUDE_API_KEY} from '@env';
 
 interface AppProps {
   sharedText: string;
@@ -34,7 +36,7 @@ export default function App(props: AppProps) {
     loadTokens();
 
     // amplitude 초기화
-    initializeAmplitude();
+    amplitude.init(AMPLITUDE_API_KEY);
 
     trackEvent('App Opened');
 

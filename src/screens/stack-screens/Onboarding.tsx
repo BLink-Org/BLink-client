@@ -51,7 +51,7 @@ export default Onboarding;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#6D96FF',
+    backgroundColor: '#ffffff',
   },
   bodyContainer: {
     flex: 1,
