@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {Button, SafeAreaView} from 'react-native';
 import {
   GoogleSignin,
@@ -9,14 +9,18 @@ import {CLIENT_ID, IOS_CLIENT_ID} from '@env';
 import {useGoogleLogin} from '@/api/hooks/useAuth';
 import {useUserStore} from '@/store/useUserStore';
 import {type TokensSchema} from '@/types';
+import {initializeAmplitude, trackEvent} from '@/utils/amplitude-utils';
 
 const GoogleLogin = () => {
   const {setTokens} = useUserStore();
+  const [userId, setUserId] = useState<string>('');
 
   const googleLoginMutation = useGoogleLogin({
     onSuccess: async (data: TokensSchema) => {
       const {accessToken, refreshToken} = data;
       await setTokens(accessToken, refreshToken);
+      initializeAmplitude(userId);
+      trackEvent('Login Success', {method: 'Google'});
     },
   });
 
@@ -26,6 +30,7 @@ const GoogleLogin = () => {
       const userInfo = await GoogleSignin.signIn();
       const idToken = userInfo.idToken;
       if (idToken) {
+        setUserId(userInfo.user.id);
         googleLoginMutation.mutate(idToken);
       }
     } catch (error) {
