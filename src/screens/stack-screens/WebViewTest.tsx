@@ -12,6 +12,7 @@ import {
   PinnedSelectedIcon,
   ContentBackIcon,
   ContentFrontIcon,
+  PinnedUnselectedIcon,
 } from '@/assets/icons/webview';
 import {FONTS} from '@/constants';
 import {extractHostname} from '@/utils/url-utils';
@@ -137,12 +138,12 @@ const WebViewList = () => {
             {canGoBack ? (
               <ContentBackIcon fill={theme.TEXT700} />
             ) : (
-              <ContentBackIcon fill={theme.TEXT700} />
+              <ContentBackIcon fill={theme.TEXT300} />
             )}
           </TouchableOpacity>
           <TouchableOpacity onPress={directFront} disabled={!canGoForward}>
             {canGoForward ? (
-              <ContentFrontIcon fill={theme.TEXT300} />
+              <ContentFrontIcon fill={theme.TEXT700} />
             ) : (
               <ContentFrontIcon fill={theme.TEXT300} />
             )}
@@ -152,7 +153,8 @@ const WebViewList = () => {
             <ShareIcon fill={theme.TEXT900} />
           </TouchableOpacity>
           <TouchableOpacity onPress={saveBookmark}>
-            <PinnedSelectedIcon fill={theme.TEXT900} stroke={theme.TEXT900} />
+            <PinnedUnselectedIcon stroke={theme.TEXT900} strokeWidth={1.5} />
+            {/* <PinnedSelectedIcon fill={theme.TEXT900} stroke={theme.TEXT900} /> */}
           </TouchableOpacity>
           <TouchableOpacity onPress={openModal}>
             <SaveIcon fill={theme.TEXT900} />

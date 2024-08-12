@@ -45,13 +45,9 @@ const PinnedBarIcon = ({focused, theme}: IconProps) => (
 const AddBarIcon = ({color}: {color: string}) => <LinkIcon fill={color} />;
 const SearchBarIcon = ({focused, theme}: IconProps) => {
   return focused ? (
-    <SearchIcon strokeWidth={1.5} fill={theme.TEXT900} />
+    <SearchIcon fill={theme.TEXT900} strokeWidth={1.5} />
   ) : (
-    <SearchUnfocusedIcon
-      strokeWidth={1.5}
-      stroke={theme.TEXT900}
-      fill={theme.TEXT900}
-    />
+    <SearchUnfocusedIcon fill={theme.TEXT900} strokeWidth={1.5} />
   );
 };
 const MyPageBarIcon = ({focused, theme}: IconProps) => {

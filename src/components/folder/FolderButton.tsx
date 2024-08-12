@@ -57,7 +57,7 @@ const FolderButton = ({
     () => [
       {
         label: '폴더명 수정',
-        icon: <PencilIcon fill={theme.TEXT600} />,
+        icon: <PencilIcon />,
         onSelect: () => {
           closeDropdown();
           handleSelect('폴더명 수정');
@@ -65,7 +65,7 @@ const FolderButton = ({
       },
       {
         label: '위로 이동',
-        icon: <UpIcon fill={theme.TEXT600} />,
+        icon: <UpIcon />,
         onSelect: () => {
           closeDropdown();
           handleSelect('위로 이동');
@@ -73,7 +73,7 @@ const FolderButton = ({
       },
       {
         label: '아래로 이동',
-        icon: <DownIcon fill={theme.TEXT600} />,
+        icon: <DownIcon />,
         onSelect: () => {
           closeDropdown();
           handleSelect('아래로 이동');

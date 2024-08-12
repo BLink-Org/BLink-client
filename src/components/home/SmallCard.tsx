@@ -174,7 +174,7 @@ const SmallCard = ({
         <View style={styles.dotPosition}>
           <Text style={styles.folderText}>{content.folder}</Text>
           <TouchableOpacity ref={buttonRef} onPress={toggleDropdown}>
-            <ThreeDotIcon />
+            <ThreeDotIcon fill={theme.TEXT300} />
           </TouchableOpacity>
           {isDropdownOpen && (
             <DropDownModal
@@ -223,9 +223,18 @@ const SmallCard = ({
           </View>
           <TouchableOpacity onPress={toggleBookmark}>
             {isBookmarked ? (
-              <PinnedSelectedIcon fill={theme.TEXT900} stroke={theme.TEXT900} />
+              <PinnedSelectedIcon
+                width={20}
+                height={20}
+                fill={theme.TEXT400}
+                stroke={theme.TEXT400}
+              />
             ) : (
-              <PinnedUnselectedIcon stroke={theme.TEXT900} />
+              <PinnedUnselectedIcon
+                width={20}
+                height={20}
+                stroke={theme.TEXT400}
+              />
             )}
           </TouchableOpacity>
         </View>
