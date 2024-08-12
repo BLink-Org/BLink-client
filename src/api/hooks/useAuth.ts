@@ -22,23 +22,22 @@ export const useGoogleLogin = (options = {}) => {
 };
 
 // 토큰 재발급
-const refreshTokens = async (refreshToken: string): Promise<TokensSchema> => {
-  const {data} = await apiClient.post(API_ENDPOINTS.AUTH.REISSUE, {
-    refreshToken,
-  });
-  return data.result;
-};
-
-export const useRefreshTokens = () => {
-  return useMutation({
-    mutationFn: refreshTokens,
-    onSuccess: data => {
-      console.log('Refresh Token success:', data);
-    },
-    onError: error => {
-      console.log('Refresh Token error:', error);
-    },
-  });
+export const refreshTokenDirectly = async (
+  refreshToken: string,
+): Promise<TokensSchema> => {
+  try {
+    const {data} = await apiClient.post(API_ENDPOINTS.AUTH.REISSUE, {
+      refreshToken,
+    });
+    if (data.result) {
+      return data.result;
+    } else {
+      throw new Error('No result in response');
+    }
+  } catch (error) {
+    console.error('Failed to refresh token:', error);
+    throw error;
+  }
 };
 
 // 로그아웃

@@ -21,6 +21,7 @@ import {type ITheme} from '@/types';
 import {signOut} from '@/utils/auth-utils';
 import {useLogout} from '@/api/hooks/useAuth';
 import {useUserStore} from '@/store/useUserStore';
+import {trackEvent} from '@/utils/amplitude-utils';
 
 const MyPage = () => {
   const {theme} = useThemeStore();
@@ -62,6 +63,7 @@ const MyPage = () => {
     closeModal('logoutConfirm');
     if (refreshToken) {
       logout.mutate(refreshToken);
+      trackEvent('Logout');
     }
     signOut();
   };

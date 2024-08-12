@@ -1,6 +1,7 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {ArrowForwardIcon} from '@/assets/icons/mypage';
 import {FONTS} from '@/constants';
+import {useThemeStore} from '@/store/useThemeStore';
 
 interface NavigationInfoProps {
   title: string;
@@ -9,11 +10,12 @@ interface NavigationInfoProps {
 }
 
 const NavigationInfo = ({title, themeColor, onPress}: NavigationInfoProps) => {
+  const {theme} = useThemeStore();
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={styles.container}>
         <Text style={[FONTS.BODY1_MEDIUM, {color: themeColor}]}>{title}</Text>
-        <ArrowForwardIcon />
+        <ArrowForwardIcon fill={theme.TEXT300} />
       </View>
     </TouchableOpacity>
   );

@@ -107,7 +107,7 @@ const Trash = () => {
             },
           ]}>
           <TouchableOpacity style={styles.headerIcon} onPress={handleGoBack}>
-            <ArrowBackIcon />
+            <ArrowBackIcon fill={theme.TEXT900} />
           </TouchableOpacity>
         </Animated.View>
 
@@ -146,7 +146,7 @@ const createStyles = (theme: ITheme) =>
       left: 0,
       right: 0,
       zIndex: 1,
-      backgroundColor: 'white',
+      backgroundColor: theme.BACKGROUND,
     },
     titleContainer: {
       marginTop: 58,
