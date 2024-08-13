@@ -20,6 +20,7 @@ import FolderContent from '@/components/folder/FolderContent';
 import useToast from '@/hooks/useToast';
 import {TOAST_MESSAGE} from '@/constants/toast';
 import FolderList from '@/components/folder/FolderList';
+import {useFolders} from '@/api/hooks/useFolder';
 import FolderButton from '../folder/FolderButton';
 
 interface FolderSideBarProps {
@@ -39,6 +40,7 @@ const FolderSideBar = ({
 }: FolderSideBarProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {data: useFolderData} = useFolders();
 
   const insets = useSafeAreaInsets();
   const {Toast, showToast} = useToast({
@@ -47,15 +49,6 @@ const FolderSideBar = ({
 
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
   const [folderToEdit, setFolderToEdit] = useState<string | null>(null);
-
-  const handleSelect = (label: string, folderName?: string) => {
-    switch (label) {
-      case '폴더명 수정':
-        toggleBottomSheet(folderName);
-        break;
-      default:
-    }
-  };
 
   const [visible, setVisible] = useState(isSideBarVisible);
 
@@ -67,6 +60,21 @@ const FolderSideBar = ({
     setFolderToEdit(folderName);
     setIsBottomSheetVisible(!isBottomSheetVisible);
   };
+
+  // 폴더 id 변경 시 홈 화면 폴더 이름 변경
+  useEffect(() => {
+    const findFolderName = () => {
+      if (!useFolderData || selectedFolderId.length === 0) return '전체';
+      if (selectedFolderId[0] === 0) return '폴더 없는 링크';
+
+      const selectedFolder = useFolderData.folderDtos.find(
+        item => item.id === selectedFolderId[0],
+      );
+      return selectedFolder?.title ?? '';
+    };
+
+    setSelectedFolderName(findFolderName());
+  }, [selectedFolderId]);
 
   useEffect(() => {
     if (isSideBarVisible) {
@@ -118,7 +126,7 @@ const FolderSideBar = ({
           <TouchableOpacity
             style={styles.totalButton}
             onPress={() => {
-              setSelectedFolderId([0]);
+              setSelectedFolderId([]);
               toggleSideBar();
             }}>
             <Text style={styles.totalButtonText}>전체보기</Text>
@@ -126,41 +134,43 @@ const FolderSideBar = ({
           </TouchableOpacity>
         </View>
 
-        {/* <FolderList
-          isMultipleSelection={false}
-          onFolderPress={toggleSideBar}
-          {...{
-            selectedFolderId,
-            setSelectedFolderId,
-            handleSelect,
-            showToast,
-          }}
-        /> */}
-        {/* {true && ( // 폴더 없는 링크 있으면
-          <FolderButton
-            id={0}
-            name="폴더 없는 링크"
-            variants={selectedFolderId?.includes(0) ? 'pressed' : 'default'}
-            handleSelect={handleSelect}
-            onPress={toggleSideBar}
-          />
-        )} */}
-
-        <View style={styles.folderView}>
-          <FolderList
-            isMultipleSelection={false}
-            {...{selectedFolderId, setSelectedFolderId}}
-          />
-          <View style={styles.stroke}></View>
-          <View style={styles.lastFolderview}>
-            <FolderButton
-              id={0}
-              name="폴더 없는 링크"
-              variants={selectedFolderId?.includes(0) ? 'pressed' : 'default'}
-              onPress={() => setSelectedFolderId([0])}
-            />
+        {useFolderData && (
+          <View style={styles.folderView}>
+            {useFolderData.folderDtos.length > 0 && (
+              <FolderList
+                isMultipleSelection={false}
+                handleSelect={toggleBottomSheet}
+                onFolderPress={() => {
+                  toggleSideBar();
+                }}
+                {...{
+                  selectedFolderId,
+                  setSelectedFolderId,
+                  showToast,
+                  useFolderData,
+                }}
+              />
+            )}
+            {useFolderData.folderDtos.length > 0 &&
+              useFolderData.noFolderLinkCount > 0 && (
+                <View style={styles.stroke}></View>
+              )}
+            <View style={styles.lastFolderview}>
+              {useFolderData.noFolderLinkCount > 0 && (
+                <FolderButton
+                  id={0}
+                  variants={
+                    selectedFolderId?.includes(0) ? 'pressed' : 'default'
+                  }
+                  onPress={() => {
+                    setSelectedFolderId([0]);
+                    toggleSideBar();
+                  }}
+                />
+              )}
+            </View>
           </View>
-        </View>
+        )}
 
         <View style={styles.tabBar}>
           <TouchableOpacity
@@ -253,8 +263,7 @@ const createStyles = (theme: ITheme) =>
     },
     folderView: {
       flex: 1,
-      paddingVertical: 12,
-      marginBottom: 35,
+      marginVertical: 20,
     },
     lastFolderview: {
       flex: 1,

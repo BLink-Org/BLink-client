@@ -125,7 +125,7 @@ const FolderButton = ({
         onPress={onPress}>
         <View style={styles.infoContainer}>
           <Text style={styles.nameText}>{name ?? '폴더 없는 링크'}</Text>
-          {number ? (
+          {number !== undefined ? (
             <View style={styles.detailContainer}>
               <Text style={styles.numberText}>{number}</Text>
               <TouchableOpacity

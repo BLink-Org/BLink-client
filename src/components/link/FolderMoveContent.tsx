@@ -15,6 +15,7 @@ import CustomBottomButton from '@/components/common/CustomBottomButton';
 import BottomSheet from '@/components/modal/BottomSheet';
 import FolderContent from '@/components/folder/FolderContent';
 import FolderList from '@/components/folder/FolderList';
+import {useFolders} from '@/api/hooks/useFolder';
 import FolderButton from '../folder/FolderButton';
 
 interface FolderMoveContentProps {
@@ -24,6 +25,7 @@ interface FolderMoveContentProps {
 const FolderMoveContent = ({toggleBottomSheet}: FolderMoveContentProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {data: useFolderData} = useFolders();
 
   const [selectedFolderId, setSelectedFolderId] = useState<number[]>([]);
   const [isReadyToSave, setIsReadyToSave] = useState<boolean>(true);
@@ -60,13 +62,12 @@ const FolderMoveContent = ({toggleBottomSheet}: FolderMoveContentProps) => {
         <View style={styles.folderView}>
           <FolderList
             isMultipleSelection={true}
-            {...{selectedFolderId, setSelectedFolderId}}
+            {...{selectedFolderId, setSelectedFolderId, useFolderData}}
           />
           <View style={styles.stroke}></View>
           <View style={styles.lastFolderview}>
             <FolderButton
               id={0}
-              name="폴더 없는 링크"
               variants={selectedFolderId?.includes(0) ? 'pressed' : 'default'}
               onPress={() => setSelectedFolderId([0])}
             />
