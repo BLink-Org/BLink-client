@@ -38,7 +38,7 @@ const FolderList = ({
     setSelectedFolderId(prev =>
       isMultipleSelection && prev.length > 1
         ? prev.filter(id => id !== folderId)
-        : [0],
+        : [folderId],
     );
   };
 
@@ -95,6 +95,7 @@ const FolderList = ({
                     <View style={styles.stroke}></View>
                     <FolderButton
                       id={0}
+                      number={useFolderData.noFolderLinkCount}
                       variants={
                         selectedFolderId?.includes(0) ? 'pressed' : 'default'
                       }

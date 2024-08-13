@@ -181,7 +181,7 @@ const createStyles = (theme: ITheme) =>
       borderRadius: 8,
       justifyContent: 'center',
       paddingVertical: 16,
-      paddingHorizontal: 20,
+      paddingLeft: 20,
     },
     infoContainer: {
       flexDirection: 'row',
@@ -200,6 +200,7 @@ const createStyles = (theme: ITheme) =>
     },
     editIcon: {
       paddingLeft: 16,
+      paddingRight: 20,
     },
     numberText: {
       color: theme.TEXT700,
