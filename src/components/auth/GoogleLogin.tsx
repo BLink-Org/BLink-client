@@ -16,13 +16,17 @@ import {trackEvent} from '@/utils/amplitude-utils';
 
 const GoogleLogin = () => {
   const {setTokens} = useUserStore();
-  const [userId, setUserId] = useState<string>('');
+  const [userEmail, setUserEmail] = useState<string>('');
+  console.log(
+    '🚀 ~ file: GoogleLogin.tsx:20 ~ GoogleLogin ~ userEmail:',
+    userEmail,
+  );
 
-  const googleLoginMutation = useGoogleLogin({
+  const {mutate: googleLoginMutation} = useGoogleLogin({
     onSuccess: async (data: TokensSchema) => {
       const {accessToken, refreshToken} = data;
       await setTokens(accessToken, refreshToken);
-      amplitude.init(AMPLITUDE_API_KEY, userId);
+      amplitude.init(AMPLITUDE_API_KEY, userEmail);
       trackEvent('Login Success', {method: 'Google'});
     },
   });
@@ -33,8 +37,8 @@ const GoogleLogin = () => {
       const userInfo = await GoogleSignin.signIn();
       const idToken = userInfo.idToken;
       if (idToken) {
-        setUserId(userInfo.user.id);
-        googleLoginMutation.mutate(idToken);
+        setUserEmail(userInfo.user.email);
+        googleLoginMutation(idToken);
       }
     } catch (error) {
       if (isErrorWithCode(error)) {

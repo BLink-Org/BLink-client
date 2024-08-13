@@ -22,3 +22,8 @@ export interface UpdateLinkTitleArgs {
   linkId: string;
   title: string;
 }
+
+export interface AppleLoginArgs {
+  identityToken: string;
+  email: string;
+}

@@ -1,7 +1,7 @@
 import {useMutation} from '@tanstack/react-query';
 import apiClient from '@/api/client';
 import {API_ENDPOINTS} from '@/api/endpoints';
-import {type TokensSchema} from '@/types';
+import {type AppleLoginArgs, type TokensSchema} from '@/types';
 
 // 구글 로그인
 const loginWithGoogle = async (idToken: string): Promise<TokensSchema> => {
@@ -16,6 +16,22 @@ export const useGoogleLogin = (options = {}) => {
     mutationFn: loginWithGoogle,
     onError: error => {
       console.log('Google Login error:', error);
+    },
+    ...options,
+  });
+};
+
+// 애플 로그인
+const loginWithApple = async (payload: AppleLoginArgs) => {
+  const {data} = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN_APPLE, payload);
+  return data.result;
+};
+
+export const useAppleLogin = (options = {}) => {
+  return useMutation({
+    mutationFn: loginWithApple,
+    onError: error => {
+      console.log('Apple Login error:', error);
     },
     ...options,
   });
