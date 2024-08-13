@@ -13,16 +13,19 @@ const toastWidth = screenWidth - 36;
 
 export default function useToast({marginBottom}: ToastProps) {
   const {theme} = useThemeStore();
-  const styles = useMemo(() => createStyles(theme, compareTheme), [theme]);
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-
-  const [toastMessage, setToastMessage] = useState('');
-  const [isToastVisible, setIsToastVisible] = useState(false);
-
   const compareTheme: boolean = useMemo(() => {
     if (theme === THEMES[1]) return true;
     return false;
   }, [theme]);
+
+  const styles = useMemo(
+    () => createStyles(theme, compareTheme),
+    [theme, compareTheme],
+  );
+
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const [toastMessage, setToastMessage] = useState('');
+  const [isToastVisible, setIsToastVisible] = useState(false);
 
   function showToast(text: string) {
     setToastMessage(text);

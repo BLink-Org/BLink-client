@@ -27,13 +27,8 @@ const createFolder = async (payload: {title: string}) => {
 };
 
 export const useCreateFolder = (options = {}) => {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: createFolder,
-    onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['folders']});
-    },
     onError: (error: string) => {
       console.warn('Create Folder error:', error);
     },
@@ -51,13 +46,8 @@ const deleteFolder = async (folderId: number) => {
 };
 
 export const useDeleteFolder = (options = {}) => {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: deleteFolder,
-    onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['folders']});
-    },
     onError: error => {
       console.warn('Delete Folder error:', error);
     },
@@ -75,13 +65,8 @@ const updateFolderTitle = async (payload: UpdateFolderTitleArgs) => {
 };
 
 export const useUpdateFolderTitle = (options = {}) => {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: updateFolderTitle,
-    onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['folders']});
-    },
     onError: error => {
       console.warn('Update Folder Title error:', error);
     },

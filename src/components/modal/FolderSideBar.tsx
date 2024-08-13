@@ -11,6 +11,7 @@ import {
   Image,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useQueryClient} from '@tanstack/react-query';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {BackIcon, ForwardIcon} from '@/assets/icons/modal';
@@ -49,18 +50,21 @@ const FolderSideBar = ({
     marginBottom: 128,
   });
 
+  const queryClient = useQueryClient();
   const {data: useFolderData} = useFolders();
   // 폴더 생성 API
   const {mutate: createFolder} = useCreateFolder({
-    onSettled: () => {
+    onSuccess: () => {
       setIsBottomSheetVisible(!isBottomSheetVisible);
+      queryClient.invalidateQueries({queryKey: ['folders']});
       showToast(TOAST_MESSAGE.CREATE_SUCCESS);
     },
   });
   // 폴더 이름 수정 API
   const {mutate: updateFolderTitle} = useUpdateFolderTitle({
-    onSettled: () => {
+    onSuccess: () => {
       setIsBottomSheetVisible(!isBottomSheetVisible);
+      queryClient.invalidateQueries({queryKey: ['folders']});
       showToast(TOAST_MESSAGE.EDIT_SUCCESS);
     },
   });
@@ -218,7 +222,7 @@ const FolderSideBar = ({
           folderTitles={
             useFolderData?.folderDtos.map(folder => folder.title) ?? []
           }
-          {...{toggleBottomSheet, onSaveFolder}}
+          {...{onSaveFolder}}
         />
       </BottomSheet>
     </RNModal>

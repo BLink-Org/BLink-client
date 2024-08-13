@@ -1,5 +1,6 @@
 import {useMemo, useRef, useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {useQueryClient} from '@tanstack/react-query';
 import {DownIcon, EditIcon, UpIcon} from '@/assets/icons/modal';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
@@ -9,7 +10,7 @@ import DropDownModal from '@/components/modal/DropDownModal';
 import {useModalStore} from '@/store/useModalStore';
 import AlertModal from '@/components/modal/AlertModal';
 import {TOAST_MESSAGE} from '@/constants/toast';
-import {useDeleteFolder, useFolders} from '@/api/hooks/useFolder';
+import {useDeleteFolder} from '@/api/hooks/useFolder';
 
 interface FolderButtonProps {
   id: number;
@@ -43,10 +44,10 @@ const FolderButton = ({
   const modalId = `folderDelete-${id}`;
 
   // 폴더 삭제
-  const {refetch: refetchFolderInfo} = useFolders();
+  const queryClient = useQueryClient();
   const {mutate: deleteFolder} = useDeleteFolder({
-    onSettled: async () => {
-      await refetchFolderInfo();
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['folders']});
       showToast(TOAST_MESSAGE.DELETE_SUCCESS);
     },
   });
