@@ -41,7 +41,7 @@ const MyPage = () => {
   const route = useRoute<MyPageRouteProp>();
   const navigation = useNavigation<RootStackNavigationProp>();
 
-  const {Toast, showToast} = useToast({marginBottom: 44});
+  const {renderToast, showToast} = useToast({marginBottom: 44});
   useEffect(() => {
     if (!route.params?.toastState) return;
     if (route.params?.toastState === 'delete') {
@@ -78,7 +78,7 @@ const MyPage = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Toast />
+      {renderToast()}
       <ThemeBackground />
       <LogoHeader />
       <ScrollView>

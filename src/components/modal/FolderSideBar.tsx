@@ -15,14 +15,17 @@ import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {BackIcon, ForwardIcon} from '@/assets/icons/modal';
 import {AddIcon} from '@/assets/icons/common';
-import {type ITheme} from '@/types';
+import {type IFolderDtos, type ITheme} from '@/types';
 import BottomSheet from '@/components/modal/BottomSheet';
 import FolderContent from '@/components/folder/FolderContent';
 import useToast from '@/hooks/useToast';
 import {TOAST_MESSAGE} from '@/constants/toast';
 import FolderList from '@/components/folder/FolderList';
-import {useFolders} from '@/api/hooks/useFolder';
-import FolderButton from '../folder/FolderButton';
+import {
+  useCreateFolder,
+  useFolders,
+  useUpdateFolderTitle,
+} from '@/api/hooks/useFolder';
 
 interface FolderSideBarProps {
   isSideBarVisible: boolean;
@@ -41,15 +44,38 @@ const FolderSideBar = ({
 }: FolderSideBarProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
-  const {data: useFolderData} = useFolders();
-
   const insets = useSafeAreaInsets();
-  const {Toast, showToast} = useToast({
+  const {renderToast, showToast} = useToast({
     marginBottom: 128,
   });
 
+  const {data: useFolderData} = useFolders();
+  // 폴더 생성 API
+  const {mutate: createFolder} = useCreateFolder({
+    onSettled: () => {
+      setIsBottomSheetVisible(!isBottomSheetVisible);
+      showToast(TOAST_MESSAGE.CREATE_SUCCESS);
+    },
+  });
+  // 폴더 이름 수정 API
+  const {mutate: updateFolderTitle} = useUpdateFolderTitle({
+    onSettled: () => {
+      setIsBottomSheetVisible(!isBottomSheetVisible);
+      showToast(TOAST_MESSAGE.EDIT_SUCCESS);
+    },
+  });
+
+  const onSaveFolder = (textInput: string) => {
+    if (isCreate) {
+      createFolder({title: textInput});
+    } else {
+      updateFolderTitle({folderId: folderToEdit.id, title: textInput});
+    }
+  };
+
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
-  const [folderToEdit, setFolderToEdit] = useState<string | null>(null);
+  const [folderToEdit, setFolderToEdit] = useState<IFolderDtos | null>(null);
+  const isCreate = !folderToEdit;
 
   const [visible, setVisible] = useState(isSideBarVisible);
 
@@ -57,8 +83,8 @@ const FolderSideBar = ({
     new Animated.Value(-Dimensions.get('window').width),
   ).current;
 
-  const toggleBottomSheet = (folderName: string | null = null) => {
-    setFolderToEdit(folderName);
+  const toggleBottomSheet = (folderData: IFolderDtos | null) => {
+    setFolderToEdit(folderData);
     setIsBottomSheetVisible(!isBottomSheetVisible);
   };
 
@@ -108,6 +134,9 @@ const FolderSideBar = ({
       <TouchableWithoutFeedback onPress={toggleSideBar}>
         <View style={styles.overlay} />
       </TouchableWithoutFeedback>
+
+      {renderToast()}
+
       <Animated.View
         style={[
           styles.modalContent,
@@ -168,7 +197,7 @@ const FolderSideBar = ({
           <TouchableOpacity
             style={styles.addFolderButton}
             onPress={() => {
-              toggleBottomSheet();
+              toggleBottomSheet(null);
             }}>
             <AddIcon
               stroke={theme.BACKGROUND}
@@ -179,23 +208,17 @@ const FolderSideBar = ({
           </TouchableOpacity>
         </View>
       </Animated.View>
-      <Toast />
+
       <BottomSheet
-        modalTitle={folderToEdit ? '폴더 수정' : '폴더 생성'}
-        {...{isBottomSheetVisible, toggleBottomSheet}}>
+        modalTitle={isCreate ? '폴더 생성' : '폴더 수정'}
+        toggleBottomSheet={() => setIsBottomSheetVisible(!isBottomSheetVisible)}
+        {...{isBottomSheetVisible}}>
         <FolderContent
-          defaultText={folderToEdit ?? undefined}
+          defaultText={folderToEdit?.title ?? undefined}
           folderTitles={
             useFolderData?.folderDtos.map(folder => folder.title) ?? []
           }
-          toggleBottomSheet={() => {
-            toggleBottomSheet(folderToEdit);
-            showToast(
-              folderToEdit
-                ? TOAST_MESSAGE.EDIT_SUCCESS
-                : TOAST_MESSAGE.CREATE_SUCCESS,
-            );
-          }}
+          {...{toggleBottomSheet, onSaveFolder}}
         />
       </BottomSheet>
     </RNModal>

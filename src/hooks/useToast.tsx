@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState, useMemo} from 'react';
+import {useEffect, useRef, useState, useMemo, useCallback} from 'react';
 import {Animated, Dimensions, StyleSheet, Text} from 'react-native';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
@@ -54,7 +54,7 @@ export default function useToast({marginBottom}: ToastProps) {
     }
   }, [isToastVisible, fadeAnim, setIsToastVisible]);
 
-  const Toast = () => {
+  const renderToast = useCallback(() => {
     return (
       isToastVisible && (
         <Animated.View
@@ -70,9 +70,9 @@ export default function useToast({marginBottom}: ToastProps) {
         </Animated.View>
       )
     );
-  };
+  }, [isToastVisible, toastMessage]);
 
-  return {Toast, showToast};
+  return {renderToast, showToast};
 }
 
 const createStyles = (theme: ITheme, compareTheme: boolean) =>

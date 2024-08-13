@@ -39,7 +39,7 @@ const Home = () => {
   const {bottom} = useSafeAreaInsets();
   const isHomeIndicatorPresent = Platform.OS === 'ios' && bottom > 0;
   const {setButtonHeight} = useBottomButtonSizeStore();
-  const {Toast, showToast} = useToast({marginBottom: 44});
+  const {renderToast, showToast} = useToast({marginBottom: 44});
 
   // 폴더 사이드바 토글
   const [isSideBarVisible, setIsSideBarVisible] = useState(false);
@@ -182,7 +182,7 @@ const Home = () => {
       </View>
 
       {/* 삭제 토스트 메세지 처리 */}
-      <Toast />
+      {renderToast()}
     </SafeAreaView>
   );
 };

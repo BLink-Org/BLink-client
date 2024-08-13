@@ -1,7 +1,7 @@
 import React, {useMemo} from 'react';
 import {View, FlatList, StyleSheet} from 'react-native';
 import FolderButton from '@/components/folder/FolderButton';
-import {type ITheme, type GetFoldersSchema} from '@/types';
+import {type ITheme, type GetFoldersSchema, type IFolderDtos} from '@/types';
 import {useThemeStore} from '@/store/useThemeStore';
 
 interface FolderListProps {
@@ -10,7 +10,7 @@ interface FolderListProps {
   selectedFolderId: number[];
   setSelectedFolderId: React.Dispatch<React.SetStateAction<number[]>>;
   showToast?: (text: string) => void; // [사이드바] showToast
-  handleSelect?: (label: string, folderName?: string) => void; // [사이드바] detail 선택
+  handleSelect?: (folderData: IFolderDtos | null) => void; // [사이드바] detail 선택
   onFolderPress?: (selectedFolderIds: number[]) => void; // [사이드바] 사이드바 closed
   useFolderData?: GetFoldersSchema; // [api response] 폴더 데이터
 }
@@ -65,7 +65,7 @@ const FolderList = ({
               }
               onPress={() => handlePress(item.id)}
               showToast={showToast}
-              handleSelect={label => handleSelect(label, item.title)}
+              handleSelect={() => handleSelect(item)}
             />
           )}
           keyExtractor={item => `${item.id}`}

@@ -9,6 +9,7 @@ import DropDownModal from '@/components/modal/DropDownModal';
 import {useModalStore} from '@/store/useModalStore';
 import AlertModal from '@/components/modal/AlertModal';
 import {TOAST_MESSAGE} from '@/constants/toast';
+import {useDeleteFolder, useFolders} from '@/api/hooks/useFolder';
 
 interface FolderButtonProps {
   id: number;
@@ -41,6 +42,15 @@ const FolderButton = ({
   const {showModal, closeModal} = useModalStore();
   const modalId = `folderDelete-${id}`;
 
+  // 폴더 삭제
+  const {refetch: refetchFolderInfo} = useFolders();
+  const {mutate: deleteFolder} = useDeleteFolder({
+    onSettled: async () => {
+      await refetchFolderInfo();
+      showToast(TOAST_MESSAGE.DELETE_SUCCESS);
+    },
+  });
+
   const toggleDropdown = () => {
     buttonRef.current?.measure((x, y, width, height, pageX, pageY) => {
       setIsDropdownOpen(true);
@@ -50,7 +60,7 @@ const FolderButton = ({
 
   const handleConfirmSelect = () => {
     closeModal(modalId);
-    showToast(TOAST_MESSAGE.DELETE_SUCCESS);
+    deleteFolder(id);
   };
 
   const folderOptions = useMemo(
