@@ -79,7 +79,7 @@ const createStyles = (theme: ITheme) =>
     },
     input: {
       flex: 1,
-      maxHeight: 56,
+      height: 59,
       paddingVertical: 16,
       width: '100%',
       color: theme.TEXT800,

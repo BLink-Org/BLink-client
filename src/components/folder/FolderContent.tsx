@@ -3,23 +3,32 @@ import {StyleSheet, View} from 'react-native';
 import {calculateByteLength} from '@/utils/link-utils';
 import CustomBottomButton from '@/components/common/CustomBottomButton';
 import TextInputGroup from '@/components/common/TextInputGroup';
+import {useCreateFolder, useFolders} from '@/api/hooks/useFolder';
 
 interface FolderContentProps {
-  defaultText?: string;
+  defaultText?: string; // defaultText 유 - 수정, 무 - 생성
   toggleBottomSheet: () => void;
+  folderTitles: string[];
 }
 
 // 폴더 생성 및 수정 case
 const FolderContent = ({
   defaultText,
   toggleBottomSheet,
+  folderTitles,
 }: FolderContentProps) => {
   const [textInput, setTextInput] = useState<string | undefined>(defaultText);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isByteCountVisible, setIsByteCountVisible] = useState<boolean>(true);
   const [isReadyToSave, setIsReadyToSave] = useState<boolean>(!!defaultText);
-  // TODO: api call
-  const folderList: string[] = [];
+
+  const {refetch: refetchUserInfo} = useFolders();
+  const {mutate: createFolder} = useCreateFolder({
+    onSettled: async () => {
+      await refetchUserInfo();
+      toggleBottomSheet();
+    },
+  });
 
   useEffect(() => {
     if (calculateByteLength(textInput) > 30) {
@@ -28,7 +37,9 @@ const FolderContent = ({
       setIsReadyToSave(false);
       return;
     }
-    const isDuplicate = folderList.some(folderName => folderName === textInput);
+    const isDuplicate = folderTitles.some(
+      folderName => folderName === textInput,
+    );
     if (isDuplicate) {
       setErrorMessage('이미 사용 중인 이름입니다');
       setIsByteCountVisible(false);
@@ -38,7 +49,7 @@ const FolderContent = ({
       setIsByteCountVisible(true);
       setIsReadyToSave(!!textInput);
     }
-  }, [textInput, folderList]);
+  }, [textInput, folderTitles]);
 
   return (
     <>
@@ -51,7 +62,9 @@ const FolderContent = ({
       </View>
       <CustomBottomButton
         title="저장"
-        onPress={toggleBottomSheet}
+        onPress={() => {
+          !defaultText && textInput && createFolder({title: textInput});
+        }}
         isDisabled={!isReadyToSave}
       />
     </>

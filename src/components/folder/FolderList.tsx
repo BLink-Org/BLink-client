@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {View, FlatList, StyleSheet} from 'react-native';
 import FolderButton from '@/components/folder/FolderButton';
-import {type GetFoldersSchema} from '@/types';
+import {type ITheme, type GetFoldersSchema} from '@/types';
+import {useThemeStore} from '@/store/useThemeStore';
 
 interface FolderListProps {
   isMultipleSelection: boolean; // 단일 선택(토글), 다중 선택
@@ -23,6 +24,9 @@ const FolderList = ({
   onFolderPress = () => {},
   useFolderData,
 }: FolderListProps) => {
+  const {theme} = useThemeStore();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
   const addSelection = (folderId: number) => {
     setSelectedFolderId(prev => [
       ...(isMultipleSelection && !prev.includes(0) ? prev : []),
@@ -47,7 +51,7 @@ const FolderList = ({
   };
 
   return (
-    <View>
+    <>
       {useFolderData && (
         <FlatList
           data={useFolderData.folderDtos}
@@ -67,16 +71,62 @@ const FolderList = ({
           keyExtractor={item => `${item.id}`}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           showsVerticalScrollIndicator={false}
+          ListHeaderComponent={
+            isMultipleSelection ? (
+              <>
+                <FolderButton
+                  id={0}
+                  variants={
+                    selectedFolderId?.includes(0) ? 'pressed' : 'default'
+                  }
+                  onPress={() => setSelectedFolderId([0])}
+                />
+                <View style={styles.stroke}></View>
+              </>
+            ) : (
+              <></>
+            )
+          }
+          ListFooterComponent={
+            !isMultipleSelection ? (
+              <View style={styles.lastFolderview}>
+                {useFolderData.noFolderLinkCount > 0 && (
+                  <>
+                    <View style={styles.stroke}></View>
+                    <FolderButton
+                      id={0}
+                      variants={
+                        selectedFolderId?.includes(0) ? 'pressed' : 'default'
+                      }
+                      onPress={() => handlePress(0)}
+                    />
+                  </>
+                )}
+              </View>
+            ) : (
+              <></>
+            )
+          }
         />
       )}
-    </View>
+    </>
   );
 };
 
-const styles = StyleSheet.create({
-  separator: {
-    height: 8,
-  },
-});
+const createStyles = (theme: ITheme) =>
+  StyleSheet.create({
+    separator: {
+      height: 8,
+    },
+    stroke: {
+      borderWidth: 1,
+      borderColor: theme.TEXT200,
+      marginVertical: 8,
+      width: '100%',
+    },
+    lastFolderview: {
+      flex: 1,
+    },
+  });
 
 export default FolderList;

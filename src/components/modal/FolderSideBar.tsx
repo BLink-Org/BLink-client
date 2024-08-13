@@ -8,6 +8,7 @@ import {
   Animated,
   Dimensions,
   TouchableWithoutFeedback,
+  Image,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {FONTS} from '@/constants';
@@ -122,7 +123,9 @@ const FolderSideBar = ({
           <Text style={styles.title}>폴더</Text>
         </View>
         <View style={styles.detailContainer}>
-          <Text style={styles.linkCount}>123 Links</Text>
+          <Text style={styles.linkCount}>
+            {useFolderData?.linkTotalCount + ' Links'}
+          </Text>
           <TouchableOpacity
             style={styles.totalButton}
             onPress={() => {
@@ -134,43 +137,32 @@ const FolderSideBar = ({
           </TouchableOpacity>
         </View>
 
-        {useFolderData && (
-          <View style={styles.folderView}>
-            {useFolderData.folderDtos.length > 0 && (
-              <FolderList
-                isMultipleSelection={false}
-                handleSelect={toggleBottomSheet}
-                onFolderPress={() => {
-                  toggleSideBar();
-                }}
-                {...{
-                  selectedFolderId,
-                  setSelectedFolderId,
-                  showToast,
-                  useFolderData,
-                }}
-              />
-            )}
-            {useFolderData.folderDtos.length > 0 &&
-              useFolderData.noFolderLinkCount > 0 && (
-                <View style={styles.stroke}></View>
-              )}
-            <View style={styles.lastFolderview}>
-              {useFolderData.noFolderLinkCount > 0 && (
-                <FolderButton
-                  id={0}
-                  variants={
-                    selectedFolderId?.includes(0) ? 'pressed' : 'default'
-                  }
-                  onPress={() => {
-                    setSelectedFolderId([0]);
-                    toggleSideBar();
-                  }}
-                />
-              )}
+        <View style={styles.folderView}>
+          {useFolderData &&
+          (useFolderData?.folderDtos.length > 0 ||
+            useFolderData?.noFolderLinkCount > 0) ? (
+            <FolderList
+              isMultipleSelection={false}
+              handleSelect={toggleBottomSheet}
+              onFolderPress={() => {
+                toggleSideBar();
+              }}
+              {...{
+                selectedFolderId,
+                setSelectedFolderId,
+                showToast,
+                useFolderData,
+              }}
+            />
+          ) : (
+            <View style={styles.emptyView}>
+              <Image source={theme.EMPTY_IMAGE} style={styles.emptyImage} />
+              <Text style={styles.emptyText}>
+                생성한 폴더가 있으면 여기에 보여요
+              </Text>
             </View>
-          </View>
-        )}
+          )}
+        </View>
 
         <View style={styles.tabBar}>
           <TouchableOpacity
@@ -193,6 +185,9 @@ const FolderSideBar = ({
         {...{isBottomSheetVisible, toggleBottomSheet}}>
         <FolderContent
           defaultText={folderToEdit ?? undefined}
+          folderTitles={
+            useFolderData?.folderDtos.map(folder => folder.title) ?? []
+          }
           toggleBottomSheet={() => {
             toggleBottomSheet(folderToEdit);
             showToast(
@@ -265,14 +260,26 @@ const createStyles = (theme: ITheme) =>
       flex: 1,
       marginVertical: 20,
     },
-    lastFolderview: {
-      flex: 1,
-    },
     stroke: {
       borderWidth: 1,
       borderColor: theme.TEXT200,
       marginVertical: 8,
       width: '100%',
+    },
+    emptyView: {
+      flex: 1,
+      gap: 12,
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    emptyImage: {
+      width: 180,
+      height: 180,
+    },
+    emptyText: {
+      color: theme.TEXT500,
+      ...FONTS.BODY2_MEDIUM,
     },
     addFolderButton: {
       height: 45,

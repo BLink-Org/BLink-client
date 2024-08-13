@@ -61,6 +61,9 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
         isBottomSheetVisible={isFolderBottomSheetVisible}
         toggleBottomSheet={toggleFolderBottomSheet}>
         <FolderContent
+          folderTitles={
+            useFolderData?.folderDtos.map(folder => folder.title) ?? []
+          }
           toggleBottomSheet={() => {
             toggleFolderBottomSheet();
           }}
@@ -82,12 +85,6 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
           </TouchableOpacity>
         </View>
         <View style={styles.folderView}>
-          <FolderButton
-            id={0}
-            variants={selectedFolderId?.includes(0) ? 'pressed' : 'default'}
-            onPress={() => setSelectedFolderId([0])}
-          />
-          <View style={styles.stroke}></View>
           <FolderList
             isMultipleSelection={true}
             {...{selectedFolderId, setSelectedFolderId, useFolderData}}

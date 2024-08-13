@@ -1,6 +1,7 @@
 import React, {useEffect, useState, useMemo} from 'react';
 import {
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -47,7 +48,12 @@ const FolderMoveContent = ({toggleBottomSheet}: FolderMoveContentProps) => {
         modalTitle="폴더 생성"
         isBottomSheetVisible={isFolderBottomSheetVisible}
         toggleBottomSheet={toggleFolderBottomSheet}>
-        <FolderContent toggleBottomSheet={toggleFolderBottomSheet} />
+        <FolderContent
+          folderTitles={
+            useFolderData?.folderDtos.map(folder => folder.title) ?? []
+          }
+          toggleBottomSheet={toggleFolderBottomSheet}
+        />
       </BottomSheet>
       <SafeAreaView
         style={[styles.contentContainer, {marginBottom: buttonHeight}]}>
@@ -59,19 +65,11 @@ const FolderMoveContent = ({toggleBottomSheet}: FolderMoveContentProps) => {
             <AddIcon stroke={theme.BACKGROUND} fill={theme.MAIN400} />
           </TouchableOpacity>
         </View>
-        <View style={styles.folderView}>
+        <View style={[styles.folderView]}>
           <FolderList
             isMultipleSelection={true}
             {...{selectedFolderId, setSelectedFolderId, useFolderData}}
           />
-          <View style={styles.stroke}></View>
-          <View style={styles.lastFolderview}>
-            <FolderButton
-              id={0}
-              variants={selectedFolderId?.includes(0) ? 'pressed' : 'default'}
-              onPress={() => setSelectedFolderId([0])}
-            />
-          </View>
         </View>
       </SafeAreaView>
       <CustomBottomButton
@@ -115,7 +113,7 @@ const createStyles = (theme: ITheme) =>
     folderView: {
       flex: 1,
       paddingVertical: 12,
-      marginBottom: 35,
+      marginBottom: 58,
     },
     lastFolderview: {
       flex: 1,

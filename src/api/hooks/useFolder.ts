@@ -1,4 +1,4 @@
-import {useQuery, useMutation} from '@tanstack/react-query';
+import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import {API_ENDPOINTS} from '@/api/endpoints';
 import apiClient from '@/api/client';
 import {
@@ -27,8 +27,14 @@ const createFolder = async (payload: {title: string}) => {
 };
 
 export const useCreateFolder = (options = {}) => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: createFolder,
+    onSuccess: () => {
+      console.log('Folder created successfully');
+      queryClient.invalidateQueries({queryKey: ['folders']});
+    },
     onError: (error: string) => {
       console.warn('Create Folder error:', error);
     },

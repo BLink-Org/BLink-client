@@ -1,4 +1,5 @@
 import {type SvgProps} from 'react-native-svg';
+import {type ImageSourcePropType} from 'react-native';
 import {
   Theme1BackgroundImage,
   Theme1BigCardImage,
@@ -36,6 +37,7 @@ export interface Theme {
   BACKGROUND_IMAGE: React.FC<SvgProps>;
   BIG_CARD_IMAGE: React.FC<SvgProps>;
   SMALL_CARD_IMAGE: React.FC<SvgProps>;
+  EMPTY_IMAGE: ImageSourcePropType;
   BACKGROUND: string;
   TEXT100: string;
   TEXT200: string;
@@ -60,6 +62,7 @@ export const THEMES: Record<number, Theme> = {
     BACKGROUND_IMAGE: Theme1BackgroundImage,
     BIG_CARD_IMAGE: Theme1BigCardImage,
     SMALL_CARD_IMAGE: Theme1SmallCardImage,
+    EMPTY_IMAGE: require('@/assets/images/img-empty.png'),
     BACKGROUND: '#FFFFFF',
     TEXT100: '#F7F9FB',
     TEXT200: '#ECF1F5',
@@ -82,6 +85,7 @@ export const THEMES: Record<number, Theme> = {
     BACKGROUND_IMAGE: Theme2BackgroundImage,
     BIG_CARD_IMAGE: Theme2BigCardImage,
     SMALL_CARD_IMAGE: Theme2SmallCardImage,
+    EMPTY_IMAGE: require('@/assets/images/img-empty-dark.png'),
     BACKGROUND: '#1F1F26',
     TEXT100: '#292934',
     TEXT200: '#3A4049',
@@ -104,6 +108,7 @@ export const THEMES: Record<number, Theme> = {
     BACKGROUND_IMAGE: Temp2BackgroundImage,
     BIG_CARD_IMAGE: Theme1BigCardImage,
     SMALL_CARD_IMAGE: Theme1SmallCardImage,
+    EMPTY_IMAGE: require('@/assets/images/img-empty.png'),
     BACKGROUND: '#FFFFFF',
     TEXT100: '#F7F9FB',
     TEXT200: '#ECF1F5',
@@ -126,6 +131,7 @@ export const THEMES: Record<number, Theme> = {
     BACKGROUND_IMAGE: Theme1BackgroundImage,
     BIG_CARD_IMAGE: Theme1BigCardImage,
     SMALL_CARD_IMAGE: Theme1SmallCardImage,
+    EMPTY_IMAGE: require('@/assets/images/img-empty.png'),
     BACKGROUND: '#FFFFFF',
     TEXT100: '#123123',
     TEXT200: '#432123',
