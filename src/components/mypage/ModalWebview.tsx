@@ -23,14 +23,19 @@ const ModalWebView = ({visible, onClose, url, title}: ModalWebViewProps) => {
       transparent={false}
       visible={visible}
       onRequestClose={onClose}>
-      <SafeAreaView style={[styles.container, {paddingTop: insets.top}]}>
+      <SafeAreaView
+        style={[
+          styles.container,
+          {paddingTop: insets.top},
+          {backgroundColor: theme.BACKGROUND},
+        ]}>
         <View style={styles.header}>
           <TouchableOpacity
             onPress={onClose}
             style={styles.closeButtonContainer}>
             <CloseIcon fill={theme.TEXT900} />
           </TouchableOpacity>
-          <Text style={styles.title}>{title}</Text>
+          <Text style={[styles.title, {color: theme.TEXT800}]}>{title}</Text>
           <View style={styles.spacer}></View>
         </View>
         <WebView source={{uri: url}} style={styles.webView} />

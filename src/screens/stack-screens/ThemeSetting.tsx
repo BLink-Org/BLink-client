@@ -8,28 +8,7 @@ import {FONTS} from '@/constants';
 import ThemeCard from '@/components/mypage/ThemeCard';
 import {type ITheme} from '@/types';
 import {trackEvent} from '@/utils/amplitude-utils';
-
-const themes = [
-  {id: 1, name: '기본', price: 'Free', color: '#4285F4'},
-  {
-    id: 2,
-    name: '다크모드',
-    price: 'Free',
-    color: '#000000',
-  },
-  {
-    id: 3,
-    name: '무드오렌지',
-    price: '3,000원',
-    color: '#FF7970',
-  },
-  {
-    id: 4,
-    name: '사이니스타',
-    price: '3,000원',
-    color: '#EdE4FC',
-  },
-];
+import {THEME_INFOS} from '@/constants/theme';
 
 const ThemeSetting = () => {
   const {theme, setTheme, asyncSetTheme, getSavedTheme} = useThemeStore();
@@ -47,9 +26,9 @@ const ThemeSetting = () => {
   }, [getSavedTheme]);
 
   const handleSetTheme = (themeId: number) => {
-    const themeName = themes.find(theme => theme.id === themeId)?.name;
+    const themeName = THEME_INFOS.find(theme => theme.id === themeId)?.name;
 
-    const previousThemeName = themes.find(
+    const previousThemeName = THEME_INFOS.find(
       theme => theme.id === selectedThemeId,
     )?.name;
 
@@ -71,7 +50,7 @@ const ThemeSetting = () => {
         <Text style={styles.templateText}>4 templates</Text>
       </View>
       <FlatList
-        data={themes}
+        data={THEME_INFOS}
         contentContainerStyle={styles.contentContainerStyle}
         renderItem={({item}) => (
           <ThemeCard

@@ -9,7 +9,30 @@ import {
   Theme2SmallCardImage,
 } from '@/assets/icons/theme';
 
-interface Theme {
+export const THEME_INFOS = [
+  {id: 1, name: '기본', price: 'Free', color: '#4285F4'},
+  {
+    id: 2,
+    name: '다크모드',
+    price: 'Free',
+    color: '#000000',
+  },
+  {
+    id: 3,
+    name: '무드오렌지',
+    price: '3,000원',
+    color: '#FF7970',
+  },
+  {
+    id: 4,
+    name: '사이니스타',
+    price: '3,000원',
+    color: '#EdE4FC',
+  },
+];
+
+// TODO: 추후 type폴더로 이동
+export interface Theme {
   BACKGROUND_IMAGE: React.FC<SvgProps>;
   BIG_CARD_IMAGE: React.FC<SvgProps>;
   SMALL_CARD_IMAGE: React.FC<SvgProps>;
@@ -32,7 +55,7 @@ interface Theme {
   ERROR: string;
 }
 
-const THEMES: Record<number, Theme> = {
+export const THEMES: Record<number, Theme> = {
   1: {
     BACKGROUND_IMAGE: Theme1BackgroundImage,
     BIG_CARD_IMAGE: Theme1BigCardImage,
@@ -122,5 +145,3 @@ const THEMES: Record<number, Theme> = {
     ERROR: '#FF554A',
   },
 };
-
-export {THEMES, type Theme};
