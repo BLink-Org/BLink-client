@@ -38,6 +38,8 @@ export interface Theme {
   BIG_CARD_IMAGE: React.FC<SvgProps>;
   SMALL_CARD_IMAGE: React.FC<SvgProps>;
   EMPTY_IMAGE: ImageSourcePropType;
+  SEARCHEDGE_IMAGE: ImageSourcePropType;
+  ERROR_IMAGE: ImageSourcePropType;
   BACKGROUND: string;
   TEXT100: string;
   TEXT200: string;
@@ -63,6 +65,8 @@ export const THEMES: Record<number, Theme> = {
     BIG_CARD_IMAGE: Theme1BigCardImage,
     SMALL_CARD_IMAGE: Theme1SmallCardImage,
     EMPTY_IMAGE: require('@/assets/images/img-empty.png'),
+    SEARCHEDGE_IMAGE: require('@/assets/images/img-searchedge.png'),
+    ERROR_IMAGE: require('@/assets/images/img-error.png'),
     BACKGROUND: '#FFFFFF',
     TEXT100: '#F7F9FB',
     TEXT200: '#ECF1F5',
@@ -86,6 +90,8 @@ export const THEMES: Record<number, Theme> = {
     BIG_CARD_IMAGE: Theme2BigCardImage,
     SMALL_CARD_IMAGE: Theme2SmallCardImage,
     EMPTY_IMAGE: require('@/assets/images/img-empty-dark.png'),
+    SEARCHEDGE_IMAGE: require('@/assets/images/img-searchedge-dark.png'),
+    ERROR_IMAGE: require('@/assets/images/img-error-dark.png'),
     BACKGROUND: '#1F1F26',
     TEXT100: '#292934',
     TEXT200: '#3A4049',
@@ -109,6 +115,8 @@ export const THEMES: Record<number, Theme> = {
     BIG_CARD_IMAGE: Theme1BigCardImage,
     SMALL_CARD_IMAGE: Theme1SmallCardImage,
     EMPTY_IMAGE: require('@/assets/images/img-empty.png'),
+    SEARCHEDGE_IMAGE: require('@/assets/images/img-searchedge.png'),
+    ERROR_IMAGE: require('@/assets/images/img-error.png'),
     BACKGROUND: '#FFFFFF',
     TEXT100: '#F7F9FB',
     TEXT200: '#ECF1F5',
@@ -132,6 +140,8 @@ export const THEMES: Record<number, Theme> = {
     BIG_CARD_IMAGE: Theme1BigCardImage,
     SMALL_CARD_IMAGE: Theme1SmallCardImage,
     EMPTY_IMAGE: require('@/assets/images/img-empty.png'),
+    SEARCHEDGE_IMAGE: require('@/assets/images/img-searchedge.png'),
+    ERROR_IMAGE: require('@/assets/images/img-error.png'),
     BACKGROUND: '#FFFFFF',
     TEXT100: '#123123',
     TEXT200: '#432123',
