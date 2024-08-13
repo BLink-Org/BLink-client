@@ -22,10 +22,16 @@ import {signOut} from '@/utils/auth-utils';
 import {useLogout} from '@/api/hooks/useAuth';
 import {useUserStore} from '@/store/useUserStore';
 import {trackEvent} from '@/utils/amplitude-utils';
+import {useUserInfo} from '@/api/hooks/useUser';
+import CustomLoading from '@/components/common/CustomLoading';
+import DeletedTrueContainer from '@/components/mypage/DeletedTrueContainer';
 
 const MyPage = () => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+
+  const {data: userInfoData, isLoading, isError} = useUserInfo();
+
   const {refreshToken} = useUserStore.getState();
   // 로그아웃 post
   const logout = useLogout();
@@ -34,12 +40,9 @@ const MyPage = () => {
 
   const {showModal, closeModal} = useModalStore();
 
-  // 임시 이메일 데이터
-  const tempEmail = 'aksentemp5240@gmail.com';
-
   // Navigation Handler
   const handleAccountManage = () => {
-    navigation.navigate('AccountManage', {email: tempEmail});
+    navigation.navigate('AccountManage');
   };
   const handleThemeSetting = () => {
     navigation.navigate('ThemeSetting');
@@ -68,6 +71,13 @@ const MyPage = () => {
     signOut();
   };
 
+  if (isLoading) {
+    return <CustomLoading />;
+  }
+  if (isError) {
+    return <Text>error</Text>;
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <ThemeBackground />
@@ -78,13 +88,21 @@ const MyPage = () => {
             <Text style={styles.titleText}>계정</Text>
           </View>
           <View style={styles.userInfo}>
-            <Text style={styles.emailText}>{tempEmail}</Text>
+            <Text style={styles.emailText}>{userInfoData?.email}</Text>
             <TouchableOpacity onPress={handleAccountManage}>
               <Text style={styles.accountManageText}>계정 관리</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.staticInfoContainer}>
-            <StaticInfo linkCount={123} bookmarkCount={15} folderCount={3} />
+            {userInfoData?.deleteRequest ? (
+              <DeletedTrueContainer />
+            ) : (
+              <StaticInfo
+                linkCount={userInfoData?.linkCount}
+                bookmarkCount={userInfoData?.pinCount}
+                folderCount={userInfoData?.folderCount}
+              />
+            )}
           </View>
           <View style={styles.divider} />
           <View style={styles.navigationContainer}>

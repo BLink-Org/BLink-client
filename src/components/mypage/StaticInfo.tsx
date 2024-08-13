@@ -5,9 +5,9 @@ import {FONTS} from '@/constants';
 import {type ITheme} from '@/types';
 
 interface StaticInfoProps {
-  linkCount: number;
-  bookmarkCount: number;
-  folderCount: number;
+  linkCount: number | undefined;
+  bookmarkCount: number | undefined;
+  folderCount: number | undefined;
 }
 
 const StaticInfo = ({
@@ -28,7 +28,7 @@ const StaticInfo = ({
 
         <View style={styles.content}>
           <Text style={styles.linkCount}>{bookmarkCount}</Text>
-          <Text style={styles.linkText}>북마크</Text>
+          <Text style={styles.linkText}>핀</Text>
         </View>
         <View style={[styles.content, styles.lastContent]}>
           <Text style={styles.linkCount}>{folderCount}</Text>

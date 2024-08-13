@@ -1,9 +1,10 @@
 import {useMutation, useQuery} from '@tanstack/react-query';
 import {API_ENDPOINTS} from '@/api/endpoints';
 import apiClient from '@/api/client';
+import {type UserInfoSchema} from '@/types';
 
 // 유저 정보 조회
-const getUserInfo = async () => {
+const getUserInfo = async (): Promise<UserInfoSchema> => {
   const {data} = await apiClient.get(API_ENDPOINTS.USER.INFO);
   return data.result;
 };

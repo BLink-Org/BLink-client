@@ -23,10 +23,9 @@ export interface RootStackParamList extends ParamListBase {
   WebViewTest: undefined;
   Support: undefined;
   AccountDelete: undefined;
-  AccountManage: {email: string};
+  AccountManage: undefined;
   Setting: undefined;
   Trash: undefined;
-  WebViewInfo: {info: {url: string; title: string}};
   APITest: undefined;
   Onboarding: undefined;
   LinkApiText: undefined;

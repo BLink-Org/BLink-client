@@ -1,30 +1,19 @@
 import {useMemo} from 'react';
 import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import {
-  type RouteProp,
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import BackHeader from '@/components/common/BackHeader';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import {useThemeStore} from '@/store/useThemeStore';
-import {
-  type RootStackParamList,
-  type RootStackNavigationProp,
-} from '@/types/navigation';
+import {type RootStackNavigationProp} from '@/types/navigation';
 import {FONTS} from '@/constants';
 import NavigationInfo from '@/components/mypage/NavigationInfo';
 import {type ITheme} from '@/types';
-
-type AccountManageRouteProp = RouteProp<RootStackParamList, 'AccountManage'>;
+import {useUserInfo} from '@/api/hooks/useUser';
 
 const AccountManage = () => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
-
-  const route = useRoute<AccountManageRouteProp>();
-  const {email} = route.params;
-
+  const {data: userInfoData} = useUserInfo();
   const navigation = useNavigation<RootStackNavigationProp>();
 
   // 계정 삭제 클릭 시
@@ -39,7 +28,7 @@ const AccountManage = () => {
       <View style={styles.contentContainer}>
         <View style={styles.bodyContainer}>
           <Text style={styles.loginText}>로그인 한 계정</Text>
-          <Text style={styles.emailText}>{email}</Text>
+          <Text style={styles.emailText}>{userInfoData?.email}</Text>
         </View>
         <NavigationInfo
           title="계정 삭제 신청"
