@@ -6,6 +6,7 @@ import PinnedUnselectedIcon from './pinned-unselected.svg';
 import PinnedSelectedIcon from './pinned-selected.svg';
 import SaveIcon from './save.svg';
 import ShareIcon from './share.svg';
+import CloseIcon from './close.svg';
 
 export {
   ArrowBackIcon,
@@ -16,4 +17,5 @@ export {
   RefreshIcon,
   SaveIcon,
   ShareIcon,
+  CloseIcon,
 };

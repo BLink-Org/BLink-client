@@ -1,5 +1,6 @@
 import {appleAuth} from '@invertase/react-native-apple-authentication';
 import {Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {jwtDecode} from 'jwt-decode';
 import {AppleLogoIcon} from '@/assets/icons/onboarding';
 import {FONTS} from '@/constants';
 
@@ -10,6 +11,12 @@ const AppleLogin = () => {
         requestedOperation: appleAuth.Operation.LOGIN,
         requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
       });
+      console.log(
+        '🚀 ~ file: AppleLogin.tsx:13 ~ handleSignInApple ~ appleAuthRequestResponse:',
+        appleAuthRequestResponse,
+      );
+      const email = appleAuthRequestResponse.email; // 가상 이메일 주소
+      console.log('User Email:', email);
 
       // 사용자에 대한 현재 인증 상태
       const credentialState = await appleAuth.getCredentialStateForUser(
@@ -24,6 +31,10 @@ const AppleLogin = () => {
         const identityToken = appleAuthRequestResponse.identityToken;
         if (identityToken) {
           console.log('Apple Login -> Identity Token:', identityToken);
+          console.log(
+            'Apple Login -> decoded Identity Token:',
+            jwtDecode(identityToken),
+          );
 
           // TODO: 서버에 identityToken을 보내고 자체 발급 토큰을 요청 로직 추가
         }

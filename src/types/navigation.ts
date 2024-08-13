@@ -7,7 +7,7 @@ export interface BottomTabParamList extends ParamListBase {
   home: undefined;
   add: undefined;
   bookmark: undefined;
-  mypage: undefined;
+  mypage: {toastState: string | undefined};
 }
 
 // BottomTab Screen 대한 Route Object의 Type을 정의
@@ -23,10 +23,9 @@ export interface RootStackParamList extends ParamListBase {
   WebViewTest: undefined;
   Support: undefined;
   AccountDelete: undefined;
-  AccountManage: {email: string};
+  AccountManage: undefined;
   Setting: undefined;
   Trash: undefined;
-  WebViewInfo: {info: {url: string; title: string}};
   APITest: undefined;
   Onboarding: undefined;
   LinkApiText: undefined;

@@ -1,14 +1,17 @@
-import React, {useMemo} from 'react';
-import {useNavigation} from '@react-navigation/native';
+import React, {useEffect, useMemo} from 'react';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {
   View,
   StyleSheet,
   Text,
   SafeAreaView,
-  TouchableOpacity,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
-import {type RootStackNavigationProp} from '@/types/navigation';
+import {
+  type MyPageRouteProp,
+  type RootStackNavigationProp,
+} from '@/types/navigation';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import LogoHeader from '@/components/common/LogoHeader';
 import {FONTS} from '@/constants';
@@ -22,43 +25,45 @@ import {signOut} from '@/utils/auth-utils';
 import {useLogout} from '@/api/hooks/useAuth';
 import {useUserStore} from '@/store/useUserStore';
 import {trackEvent} from '@/utils/amplitude-utils';
+import {useUserInfo} from '@/api/hooks/useUser';
+import CustomLoading from '@/components/common/CustomLoading';
+import DeletedTrueContainer from '@/components/mypage/DeletedTrueContainer';
+import useToast from '@/hooks/useToast';
+import {TOAST_MESSAGE} from '@/constants/toast';
 
 const MyPage = () => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
-  const {refreshToken} = useUserStore.getState();
-  // 로그아웃 post
-  const logout = useLogout();
 
+  const {data: userInfoData, isLoading, isError} = useUserInfo();
+  const {refreshToken} = useUserStore.getState();
+
+  const route = useRoute<MyPageRouteProp>();
   const navigation = useNavigation<RootStackNavigationProp>();
 
+  const {Toast, showToast} = useToast({marginBottom: 44});
+  useEffect(() => {
+    if (!route.params?.toastState) return;
+    if (route.params?.toastState === 'delete') {
+      showToast(TOAST_MESSAGE.DELETE_ACCOUNT);
+    } else if (route.params?.toastState === 'cancel') {
+      showToast(TOAST_MESSAGE.DELETE_ACCOUNT_CANCEL);
+    }
+    navigation.setParams({toastState: null});
+  }, [route.params?.toastState]);
+
+  // 로그아웃 post
+  const logout = useLogout();
   const {showModal, closeModal} = useModalStore();
 
-  // 임시 이메일 데이터
-  const tempEmail = 'aksentemp5240@gmail.com';
+  // Navigation Handlers
+  const handleAccountManage = () => navigation.navigate('AccountManage');
+  const handleThemeSetting = () => navigation.navigate('ThemeSetting');
+  const handleSetting = () => navigation.navigate('Setting');
+  const handleTrash = () => navigation.navigate('Trash');
+  const handleSupport = () => navigation.navigate('Support');
 
-  // Navigation Handler
-  const handleAccountManage = () => {
-    navigation.navigate('AccountManage', {email: tempEmail});
-  };
-  const handleThemeSetting = () => {
-    navigation.navigate('ThemeSetting');
-  };
-  const handleSetting = () => {
-    navigation.navigate('Setting');
-  };
-  const handleTrash = () => {
-    navigation.navigate('Trash');
-  };
-  const handleSupport = () => {
-    navigation.navigate('Support');
-  };
-
-  const logoutModalOpen = () => {
-    showModal('logoutConfirm');
-  };
-
-  // 로그아웃 시 로직
+  const logoutModalOpen = () => showModal('logoutConfirm');
   const handleConfirmLogout = () => {
     closeModal('logoutConfirm');
     if (refreshToken) {
@@ -68,8 +73,12 @@ const MyPage = () => {
     signOut();
   };
 
+  if (isLoading) return <CustomLoading />;
+  if (isError) return <Text>error</Text>;
+
   return (
     <SafeAreaView style={styles.container}>
+      <Toast />
       <ThemeBackground />
       <LogoHeader />
       <ScrollView>
@@ -78,13 +87,21 @@ const MyPage = () => {
             <Text style={styles.titleText}>계정</Text>
           </View>
           <View style={styles.userInfo}>
-            <Text style={styles.emailText}>{tempEmail}</Text>
+            <Text style={styles.emailText}>{userInfoData?.email}</Text>
             <TouchableOpacity onPress={handleAccountManage}>
               <Text style={styles.accountManageText}>계정 관리</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.staticInfoContainer}>
-            <StaticInfo linkCount={123} bookmarkCount={15} folderCount={3} />
+            {userInfoData?.deleteRequest ? (
+              <DeletedTrueContainer />
+            ) : (
+              <StaticInfo
+                linkCount={userInfoData?.linkCount}
+                bookmarkCount={userInfoData?.pinCount}
+                folderCount={userInfoData?.folderCount}
+              />
+            )}
           </View>
           <View style={styles.divider} />
           <View style={styles.navigationContainer}>
@@ -113,22 +130,20 @@ const MyPage = () => {
               themeColor={theme.TEXT800}
               onPress={logoutModalOpen}
             />
-            {/* 임시 테스트 페이지 */}
-            <TouchableOpacity
-              onPress={() => navigation.navigate('WebViewTest')}
-              style={{paddingVertical: 30}}>
-              <Text>webViewTest</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('APITest')}
-              style={{paddingVertical: 30}}>
-              <Text>apiTest</Text>
-            </TouchableOpacity>
           </View>
+          {/* 임시 테스트 페이지 */}
+          <TouchableOpacity
+            onPress={() => navigation.navigate('WebViewTest')}
+            style={{paddingVertical: 30}}>
+            <Text>webViewTest</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('APITest')}
+            style={{paddingVertical: 30}}>
+            <Text>apiTest</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
-
-      {/* alertModal 처리 */}
       <AlertModal
         modalId="logoutConfirm"
         headerText="로그아웃"

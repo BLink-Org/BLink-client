@@ -6,7 +6,6 @@ import AccountDelete from '@/screens/stack-screens/AccountDelete';
 import AccountManage from '@/screens/stack-screens/AccountManage';
 import Setting from '@/screens/stack-screens/Setting';
 import Trash from '@/screens/stack-screens/Trash';
-import WebViewInfo from '@/screens/stack-screens/WebViewInfo';
 import APITest from '@/screens/stack-screens/APITest';
 import WebViewTest from '@/screens/stack-screens/WebViewTest';
 import Onboarding from '@/screens/stack-screens/Onboarding';
@@ -35,11 +34,6 @@ const GlobalNavigation = ({isAuthenticated}: {isAuthenticated: boolean}) => {
             options={{animation: 'slide_from_bottom'}}
           />
           <Stack.Screen name="APITest" component={APITest} />
-          <Stack.Screen
-            name="WebViewInfo"
-            component={WebViewInfo}
-            options={{animation: 'slide_from_bottom'}}
-          />
           <Stack.Screen name="Support" component={Support} />
           <Stack.Screen name="AccountDelete" component={AccountDelete} />
           <Stack.Screen name="AccountManage" component={AccountManage} />
