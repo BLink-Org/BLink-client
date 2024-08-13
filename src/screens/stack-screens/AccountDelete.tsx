@@ -25,8 +25,7 @@ import {
 } from '@/api/hooks/useUser';
 
 const AccountDelete = () => {
-  const {data: userInfoData} = useUserInfo();
-
+  const {data: userInfoData, refetch: refetchUserInfo} = useUserInfo();
   const queryClient = useQueryClient();
   const navigation = useNavigation<RootStackNavigationProp>();
 
@@ -42,10 +41,18 @@ const AccountDelete = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: ['userInfo']});
     },
+    onSettled: async () => {
+      await refetchUserInfo();
+      navigation.navigate('mypage', {toastState: 'delete'});
+    },
   });
   const {mutate: cancelDeleteAccount} = useCancelDeleteUserAccount({
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: ['userInfo']});
+    },
+    onSettled: async () => {
+      await refetchUserInfo();
+      navigation.navigate('mypage', {toastState: 'cancel'});
     },
   });
 
@@ -59,13 +66,11 @@ const AccountDelete = () => {
 
   const handleConfirmDelete = () => {
     deleteUserAccount();
-    navigation.navigate('mypage', {showToastBoolean: true});
     closeModal('deleteConfirm');
   };
 
   const handleCancelDeleteAccount = () => {
     cancelDeleteAccount();
-    navigation.navigate('mypage', {showToastBoolean: true});
   };
 
   if (isDeletedState) {

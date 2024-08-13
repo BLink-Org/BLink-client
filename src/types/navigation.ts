@@ -7,7 +7,7 @@ export interface BottomTabParamList extends ParamListBase {
   home: undefined;
   add: undefined;
   bookmark: undefined;
-  mypage: undefined;
+  mypage: {toastState: string | undefined};
 }
 
 // BottomTab Screen 대한 Route Object의 Type을 정의

@@ -5,10 +5,13 @@ import {
   StyleSheet,
   Text,
   SafeAreaView,
-  TouchableOpacity,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
-import {type RootStackNavigationProp} from '@/types/navigation';
+import {
+  type MyPageRouteProp,
+  type RootStackNavigationProp,
+} from '@/types/navigation';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import LogoHeader from '@/components/common/LogoHeader';
 import {FONTS} from '@/constants';
@@ -26,55 +29,41 @@ import {useUserInfo} from '@/api/hooks/useUser';
 import CustomLoading from '@/components/common/CustomLoading';
 import DeletedTrueContainer from '@/components/mypage/DeletedTrueContainer';
 import useToast from '@/hooks/useToast';
+import {TOAST_MESSAGE} from '@/constants/toast';
 
 const MyPage = () => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
   const {data: userInfoData, isLoading, isError} = useUserInfo();
-
   const {refreshToken} = useUserStore.getState();
 
-  const route = useRoute();
+  const route = useRoute<MyPageRouteProp>();
   const navigation = useNavigation<RootStackNavigationProp>();
 
   const {Toast, showToast} = useToast({marginBottom: 44});
-
   useEffect(() => {
-    if (route.params?.showToastBoolean) {
-      console.log('시작~');
-      showToast('계정 삭제가 취소되었습니다.');
-      navigation.setParams({showToastBoolean: false});
+    if (!route.params?.toastState) return;
+    if (route.params?.toastState === 'delete') {
+      showToast(TOAST_MESSAGE.DELETE_ACCOUNT);
+    } else if (route.params?.toastState === 'cancel') {
+      showToast(TOAST_MESSAGE.DELETE_ACCOUNT_CANCEL);
     }
-  }, [route.params?.showToastBoolean]);
+    navigation.setParams({toastState: null});
+  }, [route.params?.toastState]);
 
   // 로그아웃 post
   const logout = useLogout();
-
   const {showModal, closeModal} = useModalStore();
 
-  // Navigation Handler
-  const handleAccountManage = () => {
-    navigation.navigate('AccountManage');
-  };
-  const handleThemeSetting = () => {
-    navigation.navigate('ThemeSetting');
-  };
-  const handleSetting = () => {
-    navigation.navigate('Setting');
-  };
-  const handleTrash = () => {
-    navigation.navigate('Trash');
-  };
-  const handleSupport = () => {
-    navigation.navigate('Support');
-  };
+  // Navigation Handlers
+  const handleAccountManage = () => navigation.navigate('AccountManage');
+  const handleThemeSetting = () => navigation.navigate('ThemeSetting');
+  const handleSetting = () => navigation.navigate('Setting');
+  const handleTrash = () => navigation.navigate('Trash');
+  const handleSupport = () => navigation.navigate('Support');
 
-  const logoutModalOpen = () => {
-    showModal('logoutConfirm');
-  };
-
-  // 로그아웃 시 로직
+  const logoutModalOpen = () => showModal('logoutConfirm');
   const handleConfirmLogout = () => {
     closeModal('logoutConfirm');
     if (refreshToken) {
@@ -84,12 +73,8 @@ const MyPage = () => {
     signOut();
   };
 
-  if (isLoading) {
-    return <CustomLoading />;
-  }
-  if (isError) {
-    return <Text>error</Text>;
-  }
+  if (isLoading) return <CustomLoading />;
+  if (isError) return <Text>error</Text>;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -145,23 +130,20 @@ const MyPage = () => {
               themeColor={theme.TEXT800}
               onPress={logoutModalOpen}
             />
-
-            {/* 임시 테스트 페이지 */}
-            {/* <TouchableOpacity
-              onPress={() => navigation.navigate('WebViewTest')}
-              style={{paddingVertical: 30}}>
-              <Text>webViewTest</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('APITest')}
-              style={{paddingVertical: 30}}>
-              <Text>apiTest</Text>
-            </TouchableOpacity> */}
           </View>
+          {/* 임시 테스트 페이지 */}
+          <TouchableOpacity
+            onPress={() => navigation.navigate('WebViewTest')}
+            style={{paddingVertical: 30}}>
+            <Text>webViewTest</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('APITest')}
+            style={{paddingVertical: 30}}>
+            <Text>apiTest</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
-
-      {/* alertModal 처리 */}
       <AlertModal
         modalId="logoutConfirm"
         headerText="로그아웃"
