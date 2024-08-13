@@ -41,15 +41,11 @@ const AccountDelete = () => {
   const {mutate: deleteUserAccount} = useDeleteUserAccount({
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: ['userInfo']});
-      navigation.navigate('mypage');
     },
   });
   const {mutate: cancelDeleteAccount} = useCancelDeleteUserAccount({
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: ['userInfo']});
-      // toast message 띄우고
-      // mypage로 이동
-      navigation.navigate('mypage');
     },
   });
 
@@ -63,11 +59,13 @@ const AccountDelete = () => {
 
   const handleConfirmDelete = () => {
     deleteUserAccount();
+    navigation.navigate('mypage', {showToastBoolean: true});
     closeModal('deleteConfirm');
   };
 
   const handleCancelDeleteAccount = () => {
     cancelDeleteAccount();
+    navigation.navigate('mypage', {showToastBoolean: true});
   };
 
   if (isDeletedState) {

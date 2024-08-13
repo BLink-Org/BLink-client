@@ -1,5 +1,5 @@
-import React, {useMemo} from 'react';
-import {useNavigation} from '@react-navigation/native';
+import React, {useEffect, useMemo} from 'react';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {
   View,
   StyleSheet,
@@ -25,6 +25,7 @@ import {trackEvent} from '@/utils/amplitude-utils';
 import {useUserInfo} from '@/api/hooks/useUser';
 import CustomLoading from '@/components/common/CustomLoading';
 import DeletedTrueContainer from '@/components/mypage/DeletedTrueContainer';
+import useToast from '@/hooks/useToast';
 
 const MyPage = () => {
   const {theme} = useThemeStore();
@@ -33,10 +34,22 @@ const MyPage = () => {
   const {data: userInfoData, isLoading, isError} = useUserInfo();
 
   const {refreshToken} = useUserStore.getState();
+
+  const route = useRoute();
+  const navigation = useNavigation<RootStackNavigationProp>();
+
+  const {Toast, showToast} = useToast({marginBottom: 44});
+
+  useEffect(() => {
+    if (route.params?.showToastBoolean) {
+      console.log('시작~');
+      showToast('계정 삭제가 취소되었습니다.');
+      navigation.setParams({showToastBoolean: false});
+    }
+  }, [route.params?.showToastBoolean]);
+
   // 로그아웃 post
   const logout = useLogout();
-
-  const navigation = useNavigation<RootStackNavigationProp>();
 
   const {showModal, closeModal} = useModalStore();
 
@@ -80,6 +93,7 @@ const MyPage = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Toast />
       <ThemeBackground />
       <LogoHeader />
       <ScrollView>
@@ -131,8 +145,9 @@ const MyPage = () => {
               themeColor={theme.TEXT800}
               onPress={logoutModalOpen}
             />
+
             {/* 임시 테스트 페이지 */}
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() => navigation.navigate('WebViewTest')}
               style={{paddingVertical: 30}}>
               <Text>webViewTest</Text>
@@ -141,7 +156,7 @@ const MyPage = () => {
               onPress={() => navigation.navigate('APITest')}
               style={{paddingVertical: 30}}>
               <Text>apiTest</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
       </ScrollView>
