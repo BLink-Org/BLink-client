@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
-import {type FolderButtonProps} from '@/types/folder';
 import {AddIcon} from '@/assets/icons/common';
 import {useBottomButtonSizeStore} from '@/store/useBottomButtonSizeStore';
 import {type ITheme} from '@/types';
@@ -16,7 +15,7 @@ import CustomBottomButton from '@/components/common/CustomBottomButton';
 import BottomSheet from '@/components/modal/BottomSheet';
 import FolderContent from '@/components/folder/FolderContent';
 import FolderList from '@/components/folder/FolderList';
-import dummyFolderData from '@/constants/dummy-data/dummy-folder-list.json';
+import FolderButton from '../folder/FolderButton';
 
 interface FolderMoveContentProps {
   toggleBottomSheet: () => void;
@@ -26,7 +25,7 @@ const FolderMoveContent = ({toggleBottomSheet}: FolderMoveContentProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
-  const [selectedFolderId, setSelectedFolderId] = useState<number[] | null>([]);
+  const [selectedFolderId, setSelectedFolderId] = useState<number[]>([]);
   const [isReadyToSave, setIsReadyToSave] = useState<boolean>(true);
   const [isFolderBottomSheetVisible, setIsFolderBottomSheetVisible] =
     useState(false);
@@ -58,11 +57,21 @@ const FolderMoveContent = ({toggleBottomSheet}: FolderMoveContentProps) => {
             <AddIcon stroke={theme.BACKGROUND} fill={theme.MAIN400} />
           </TouchableOpacity>
         </View>
-        <FolderList
-          folders={dummyFolderData as FolderButtonProps[]}
-          multipleSelection={true}
-          {...{selectedFolderId, setSelectedFolderId}}
-        />
+        <View style={styles.folderView}>
+          <FolderList
+            isMultipleSelection={true}
+            {...{selectedFolderId, setSelectedFolderId}}
+          />
+          <View style={styles.stroke}></View>
+          <View style={styles.lastFolderview}>
+            <FolderButton
+              id={0}
+              name="폴더 없는 링크"
+              variants={selectedFolderId?.includes(0) ? 'pressed' : 'default'}
+              onPress={() => setSelectedFolderId([0])}
+            />
+          </View>
+        </View>
       </SafeAreaView>
       <CustomBottomButton
         title="저장"
@@ -102,19 +111,19 @@ const createStyles = (theme: ITheme) =>
       color: theme.TEXT700,
       ...FONTS.BODY1_SEMIBOLD,
     },
-    folderList: {
+    folderView: {
       flex: 1,
       paddingVertical: 12,
-      marginBottom: 43,
+      marginBottom: 35,
+    },
+    lastFolderview: {
+      flex: 1,
     },
     stroke: {
       borderWidth: 1,
       borderColor: theme.TEXT200,
-      marginBottom: 8,
+      marginVertical: 8,
       width: '100%',
-    },
-    separator: {
-      height: 8,
     },
   });
 

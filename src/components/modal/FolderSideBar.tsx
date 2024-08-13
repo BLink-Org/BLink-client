@@ -14,19 +14,20 @@ import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {BackIcon, ForwardIcon} from '@/assets/icons/modal';
 import {AddIcon} from '@/assets/icons/common';
-import {type FolderButtonProps, type ITheme} from '@/types';
+import {type ITheme} from '@/types';
 import BottomSheet from '@/components/modal/BottomSheet';
 import FolderContent from '@/components/folder/FolderContent';
 import useToast from '@/hooks/useToast';
 import {TOAST_MESSAGE} from '@/constants/toast';
-import dummyFolderListRaw from '@/constants/dummy-data/dummy-folder-list.json';
 import FolderList from '@/components/folder/FolderList';
+import FolderButton from '../folder/FolderButton';
 
 interface FolderSideBarProps {
   isSideBarVisible: boolean;
   toggleSideBar: () => void;
-  selectedFolderId: number[] | null;
-  setSelectedFolderId: (v: number[] | null) => void;
+  selectedFolderId: number[];
+  setSelectedFolderId: React.Dispatch<React.SetStateAction<number[]>>;
+  setSelectedFolderName: (v: string) => void;
 }
 
 const FolderSideBar = ({
@@ -34,6 +35,7 @@ const FolderSideBar = ({
   toggleSideBar,
   selectedFolderId,
   setSelectedFolderId,
+  setSelectedFolderName,
 }: FolderSideBarProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
@@ -116,7 +118,7 @@ const FolderSideBar = ({
           <TouchableOpacity
             style={styles.totalButton}
             onPress={() => {
-              setSelectedFolderId(null);
+              setSelectedFolderId([0]);
               toggleSideBar();
             }}>
             <Text style={styles.totalButtonText}>전체보기</Text>
@@ -124,12 +126,41 @@ const FolderSideBar = ({
           </TouchableOpacity>
         </View>
 
-        <FolderList
-          folders={dummyFolderListRaw as FolderButtonProps[]}
-          multipleSelection={false}
+        {/* <FolderList
+          isMultipleSelection={false}
           onFolderPress={toggleSideBar}
-          {...{selectedFolderId, setSelectedFolderId, handleSelect, showToast}}
-        />
+          {...{
+            selectedFolderId,
+            setSelectedFolderId,
+            handleSelect,
+            showToast,
+          }}
+        /> */}
+        {/* {true && ( // 폴더 없는 링크 있으면
+          <FolderButton
+            id={0}
+            name="폴더 없는 링크"
+            variants={selectedFolderId?.includes(0) ? 'pressed' : 'default'}
+            handleSelect={handleSelect}
+            onPress={toggleSideBar}
+          />
+        )} */}
+
+        <View style={styles.folderView}>
+          <FolderList
+            isMultipleSelection={false}
+            {...{selectedFolderId, setSelectedFolderId}}
+          />
+          <View style={styles.stroke}></View>
+          <View style={styles.lastFolderview}>
+            <FolderButton
+              id={0}
+              name="폴더 없는 링크"
+              variants={selectedFolderId?.includes(0) ? 'pressed' : 'default'}
+              onPress={() => setSelectedFolderId([0])}
+            />
+          </View>
+        </View>
 
         <View style={styles.tabBar}>
           <TouchableOpacity
@@ -219,6 +250,20 @@ const createStyles = (theme: ITheme) =>
       justifyContent: 'flex-end',
       alignItems: 'flex-end',
       paddingBottom: 22,
+    },
+    folderView: {
+      flex: 1,
+      paddingVertical: 12,
+      marginBottom: 35,
+    },
+    lastFolderview: {
+      flex: 1,
+    },
+    stroke: {
+      borderWidth: 1,
+      borderColor: theme.TEXT200,
+      marginVertical: 8,
+      width: '100%',
     },
     addFolderButton: {
       height: 45,
