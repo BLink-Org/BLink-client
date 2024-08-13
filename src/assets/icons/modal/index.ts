@@ -4,5 +4,14 @@ import EditIcon from './edit.svg';
 import RoundDeleteIcon from './round-delete.svg';
 import UpIcon from './up.svg';
 import DownIcon from './down.svg';
+import CheckIcon from './check.svg';
 
-export {BackIcon, ForwardIcon, EditIcon, RoundDeleteIcon, UpIcon, DownIcon};
+export {
+  BackIcon,
+  ForwardIcon,
+  EditIcon,
+  RoundDeleteIcon,
+  UpIcon,
+  DownIcon,
+  CheckIcon,
+};

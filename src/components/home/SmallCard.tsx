@@ -12,21 +12,21 @@ import {useThemeStore} from '@/store/useThemeStore';
 import {PinnedSelectedIcon, PinnedUnselectedIcon} from '@/assets/icons/common';
 import {FONTS} from '@/constants';
 import {MoveIcon, ShareIcon, ThreeDotIcon} from '@/assets/icons/home';
-import {type IFileList} from '@/types/home';
 import {DeleteIcon, PencilIcon} from '@/assets/icons/mypage';
 import DropDownModal from '@/components/modal/DropDownModal';
 import {useModalStore} from '@/store/useModalStore';
 import AlertModal from '@/components/modal/AlertModal';
-import {type ITheme} from '@/types';
+import {type ILinkDtos, type ITheme} from '@/types';
 import BottomSheet from '@/components/modal/BottomSheet';
 import TitleContent from '@/components/link/TitleContent';
 import FolderMoveContent from '@/components/link/FolderMoveContent';
 import {TOAST_MESSAGE} from '@/constants/toast';
+import {useDeleteLink, useRecoverLink} from '@/api/hooks/useLink';
 
 const screenWidth = Dimensions.get('screen').width - 36;
 
 interface SmallCardProps {
-  content: IFileList;
+  content: ILinkDtos;
   isTrash?: boolean;
   showToast?: (text: string) => void;
 }
@@ -80,11 +80,9 @@ const SmallCard = ({
   const handleConfirmSelect = (label: string) => {
     const modalId = `trashOption-${label}`;
     if (label === '영구삭제') {
-      // 영구 삭제 api 연동
       console.log('영구 삭제');
     }
     if (label === '복원') {
-      // 복원 api 연동
       console.log('복원');
     }
     closeModal(modalId);
@@ -172,7 +170,7 @@ const SmallCard = ({
     <>
       <View style={styles.container}>
         <View style={styles.dotPosition}>
-          <Text style={styles.folderText}>{content.folder}</Text>
+          <Text style={styles.folderText}>{content.folderName}</Text>
           <TouchableOpacity ref={buttonRef} onPress={toggleDropdown}>
             <ThreeDotIcon fill={theme.TEXT300} />
           </TouchableOpacity>
@@ -199,7 +197,7 @@ const SmallCard = ({
               style={styles.descriptionText}
               numberOfLines={content.title.length > 30 ? 1 : 2}
               ellipsizeMode="tail">
-              {content.description}
+              {content.contents}
             </Text>
           </View>
           <View style={styles.cardImageContainer}>
@@ -218,25 +216,27 @@ const SmallCard = ({
         </View>
         <View style={styles.footer}>
           <View style={styles.footerFront}>
-            <Text style={styles.footerText}>{content.saveDay}</Text>
-            <Text style={styles.footerText}>{content.hostname}</Text>
+            <Text style={styles.footerText}>{content.createdAt}</Text>
+            <Text style={styles.footerText}>{content.url}</Text>
           </View>
-          <TouchableOpacity onPress={toggleBookmark}>
-            {isBookmarked ? (
-              <PinnedSelectedIcon
-                width={20}
-                height={20}
-                fill={theme.MAIN400}
-                stroke={theme.MAIN400}
-              />
-            ) : (
-              <PinnedUnselectedIcon
-                width={20}
-                height={20}
-                stroke={theme.TEXT400}
-              />
-            )}
-          </TouchableOpacity>
+          {!isTrash ? (
+            <TouchableOpacity onPress={toggleBookmark}>
+              {isBookmarked ? (
+                <PinnedSelectedIcon
+                  width={20}
+                  height={20}
+                  fill={theme.MAIN400}
+                  stroke={theme.MAIN400}
+                />
+              ) : (
+                <PinnedUnselectedIcon
+                  width={20}
+                  height={20}
+                  stroke={theme.TEXT400}
+                />
+              )}
+            </TouchableOpacity>
+          ) : null}
         </View>
 
         {/* alertModal 처리 */}

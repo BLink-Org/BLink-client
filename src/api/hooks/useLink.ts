@@ -1,4 +1,10 @@
-import {useQuery, useMutation} from '@tanstack/react-query';
+import {useEffect, useState} from 'react';
+import {
+  useQuery,
+  useMutation,
+  useInfiniteQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import {API_ENDPOINTS} from '@/api/endpoints';
 import apiClient from '@/api/client';
 import {
@@ -6,6 +12,8 @@ import {
   type CreateLinkArgs,
   type MoveLinkArgs,
   type UpdateLinkTitleArgs,
+  type GetLinkInfoArgs,
+  type UseLinkInfoArgs,
 } from '@/types';
 
 // 링크 목록 조회 GET
@@ -108,15 +116,74 @@ export const useViewLink = (options = {}) => {
   });
 };
 
-// 링크 복구 PATCH
+// 휴지통 링크 목록 조회 GET
+const getTrashLinks = async (
+  payload: GetLinkInfoArgs,
+): Promise<GetLinksSchema> => {
+  const {page, size, sortBy} = payload;
+  const {data} = await apiClient.get(API_ENDPOINTS.LINKS.GET_TRASH, {
+    params: {
+      sortBy,
+      page,
+      size,
+    },
+  });
+  // 3초 지연
+  await new Promise(resolve => setTimeout(resolve, 3000));
+  return data.result;
+};
+
+export const useTrashLinks = ({size, sortBy}: UseLinkInfoArgs) => {
+  // linkCount를 상태로 관리하여 업데이트가 있을 때만 변경될 수 있도록
+  const [linkCount, setLinkCount] = useState<number | null>(null);
+
+  const query = useInfiniteQuery({
+    queryKey: ['trashLinks', size, sortBy],
+    queryFn: async ({pageParam = 0}) => {
+      const result = await getTrashLinks({page: pageParam, size, sortBy});
+      return result;
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      const maxPages = Math.ceil(lastPage.linkCount / size);
+      const nextPage = allPages.length;
+      return nextPage < maxPages ? nextPage : undefined;
+    },
+    initialPageParam: 0,
+  });
+
+  useEffect(() => {
+    const newLinkCount = query.data?.pages[0]?.linkCount;
+    if (newLinkCount !== undefined && newLinkCount !== linkCount) {
+      setLinkCount(newLinkCount);
+    }
+  }, [query.data, linkCount]);
+
+  return {...query, linkCount};
+};
+
+// 링크 휴지통 복구 PATCH
 const recoverLink = async (linkId: string) => {
   const endpoint = API_ENDPOINTS.LINKS.TRASH_RECOVER.replace(':linkId', linkId);
   await apiClient.patch(endpoint);
 };
 
 export const useRecoverLink = (options = {}) => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: recoverLink,
+    onSuccess: (_, linkId) => {
+      console.log('Recover Link success:', linkId);
+      // 복구 후 캐시 업데이트
+      queryClient.setQueryData(['trashLinks'], oldData => {
+        if (!oldData) return oldData;
+        const newPages = oldData.pages.map(page => ({
+          ...page,
+          linkDtos: page.linkDtos.filter(link => link.id !== linkId),
+        }));
+        return {...oldData, pages: newPages};
+      });
+    },
     onError: (error: string) => {
       console.warn('Recover Link error:', error);
     },

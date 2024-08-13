@@ -27,3 +27,14 @@ export interface AppleLoginArgs {
   identityToken: string;
   email: string;
 }
+
+export interface GetLinkInfoArgs {
+  page: number;
+  size: number;
+  sortBy: string;
+}
+
+export interface UseLinkInfoArgs {
+  size: number;
+  sortBy: string;
+}
