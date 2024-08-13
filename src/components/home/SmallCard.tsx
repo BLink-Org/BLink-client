@@ -16,12 +16,13 @@ import {DeleteIcon, PencilIcon} from '@/assets/icons/mypage';
 import DropDownModal from '@/components/modal/DropDownModal';
 import {useModalStore} from '@/store/useModalStore';
 import AlertModal from '@/components/modal/AlertModal';
-import {type ILinkDtos, type ITheme} from '@/types';
+import {type UseLinkInfoArgs, type ILinkDtos, type ITheme} from '@/types';
 import BottomSheet from '@/components/modal/BottomSheet';
 import TitleContent from '@/components/link/TitleContent';
 import FolderMoveContent from '@/components/link/FolderMoveContent';
 import {TOAST_MESSAGE} from '@/constants/toast';
 import {useDeleteLink, useRecoverLink} from '@/api/hooks/useLink';
+import {extractHostname} from '@/utils/url-utils';
 
 const screenWidth = Dimensions.get('screen').width - 36;
 
@@ -29,16 +30,23 @@ interface SmallCardProps {
   content: ILinkDtos;
   isTrash?: boolean;
   showToast?: (text: string) => void;
+  linkInfoArgs: UseLinkInfoArgs;
 }
 
 const SmallCard = ({
   content,
   isTrash,
   showToast = () => {},
+  linkInfoArgs,
 }: SmallCardProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const {showModal, closeModal} = useModalStore();
+
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+
+  const {mutate: deleteLink} = useDeleteLink(linkInfoArgs);
+  const {mutate: recoverLink} = useRecoverLink(linkInfoArgs);
 
   const CardImage = useMemo(() => {
     return theme.SMALL_CARD_IMAGE;
@@ -66,24 +74,32 @@ const SmallCard = ({
   const buttonRef = useRef<TouchableOpacity>(null);
 
   const toggleDropdown = () => {
-    buttonRef.current?.measure((x, y, width, height, pageX, pageY) => {
-      setIsDropdownOpen(true);
-      setAnchorPosition({x: pageX, y: pageY + height});
-    });
+    if (!isDropdownOpen) {
+      buttonRef.current?.measure((x, y, width, height, pageX, pageY) => {
+        setIsDropdownOpen(true);
+        setAnchorPosition({x: pageX, y: pageY + height});
+      });
+      setSelectedId(content.id); // 모달이 열릴 때만 설정
+    } else {
+      setIsDropdownOpen(false);
+      // 모달이 닫힐 때는 selectedId를 변경하지 않음
+    }
   };
 
+  const getModalId = (baseId: string) => `${baseId}-${selectedId}`;
+
   const handleSelect = (label: string) => {
-    const modalId = `trashOption-${label}`;
+    const modalId = getModalId(`trashOption-${label}`);
     showModal(modalId);
   };
 
   const handleConfirmSelect = (label: string) => {
-    const modalId = `trashOption-${label}`;
+    const modalId = getModalId(`trashOption-${label}`);
     if (label === '영구삭제') {
-      console.log('영구 삭제');
+      deleteLink(String(selectedId));
     }
     if (label === '복원') {
-      console.log('복원');
+      recoverLink(String(content.id));
     }
     closeModal(modalId);
   };
@@ -217,7 +233,9 @@ const SmallCard = ({
         <View style={styles.footer}>
           <View style={styles.footerFront}>
             <Text style={styles.footerText}>{content.createdAt}</Text>
-            <Text style={styles.footerText}>{content.url}</Text>
+            <Text style={styles.footerText}>
+              {extractHostname(content.url ?? '')}
+            </Text>
           </View>
           {!isTrash ? (
             <TouchableOpacity onPress={toggleBookmark}>
@@ -241,20 +259,20 @@ const SmallCard = ({
 
         {/* alertModal 처리 */}
         <AlertModal
-          modalId={`trashOption-복원`}
+          modalId={getModalId('trashOption-복원')}
           headerText={`링크를 복원하시겠어요?`}
           bodyText={'마지막에 저장되어있던 위치로 돌아가요'}
           leftText="취소"
           rightText="복원"
-          rightOnPress={() => handleConfirmSelect(`복원`)}
+          rightOnPress={() => handleConfirmSelect('복원')}
         />
         <AlertModal
-          modalId={`trashOption-영구삭제`}
+          modalId={getModalId('trashOption-영구삭제')}
           headerText={`영구 삭제 하시겠어요? `}
           bodyText={`휴지통에서 삭제된 링크는 복원할 수 없어요`}
           leftText="취소"
           rightText="삭제"
-          rightOnPress={() => handleConfirmSelect(`영구삭제`)}
+          rightOnPress={() => handleConfirmSelect('영구삭제')}
         />
       </View>
       <BottomSheet

@@ -4,6 +4,7 @@ import {
   useMutation,
   useInfiniteQuery,
   useQueryClient,
+  type InfiniteData,
 } from '@tanstack/react-query';
 import {API_ENDPOINTS} from '@/api/endpoints';
 import apiClient from '@/api/client';
@@ -65,22 +66,6 @@ export const useMoveLink = (options = {}) => {
   });
 };
 
-// 링크 삭제 DELETE
-const deleteLink = async (linkId: string) => {
-  const endpoint = API_ENDPOINTS.LINKS.DELETE.replace(':linkId', linkId);
-  await apiClient.delete(endpoint);
-};
-
-export const useDeleteLink = (options = {}) => {
-  return useMutation({
-    mutationFn: deleteLink,
-    onError: (error: string) => {
-      console.warn('Delete Link error:', error);
-    },
-    ...options,
-  });
-};
-
 // 링크 제목 수정 PATCH
 const updateLinkTitle = async (payload: UpdateLinkTitleArgs) => {
   const endpoint = API_ENDPOINTS.LINKS.UPDATE_TITLE.replace(
@@ -128,14 +113,14 @@ const getTrashLinks = async (
       size,
     },
   });
-  // 3초 지연
-  await new Promise(resolve => setTimeout(resolve, 3000));
+  //  3초 지연
+  // await new Promise(resolve => setTimeout(resolve, 3000));
   return data.result;
 };
 
 export const useTrashLinks = ({size, sortBy}: UseLinkInfoArgs) => {
   // linkCount를 상태로 관리하여 업데이트가 있을 때만 변경될 수 있도록
-  const [linkCount, setLinkCount] = useState<number | null>(null);
+  const [linkCount, setLinkCount] = useState<number | null>(0);
 
   const query = useInfiniteQuery({
     queryKey: ['trashLinks', size, sortBy],
@@ -167,27 +152,74 @@ const recoverLink = async (linkId: string) => {
   await apiClient.patch(endpoint);
 };
 
-export const useRecoverLink = (options = {}) => {
+export const useRecoverLink = ({size, sortBy}: UseLinkInfoArgs) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: recoverLink,
     onSuccess: (_, linkId) => {
-      console.log('Recover Link success:', linkId);
-      // 복구 후 캐시 업데이트
-      queryClient.setQueryData(['trashLinks'], oldData => {
-        if (!oldData) return oldData;
-        const newPages = oldData.pages.map(page => ({
-          ...page,
-          linkDtos: page.linkDtos.filter(link => link.id !== linkId),
-        }));
-        return {...oldData, pages: newPages};
-      });
+      const cacheKey = ['trashLinks', size, sortBy];
+      queryClient.setQueryData<InfiniteData<GetLinksSchema>>(
+        cacheKey,
+        oldData => {
+          if (!oldData) {
+            console.log('No oldData found');
+            return oldData;
+          }
+          const newPages = oldData.pages.map(page => ({
+            ...page,
+            linkDtos: page.linkDtos.filter(link => String(link.id) !== linkId),
+            linkCount: page.linkCount - 1,
+          }));
+          return {
+            ...oldData,
+            pages: newPages,
+          };
+        },
+      );
     },
     onError: (error: string) => {
       console.warn('Recover Link error:', error);
     },
-    ...options,
+  });
+};
+
+// 휴지통에서 링크 영구 삭제 DELETE
+const deleteLink = async (linkId: string) => {
+  const endpoint = API_ENDPOINTS.LINKS.DELETE.replace(':linkId', linkId);
+  await apiClient.delete(endpoint);
+};
+
+// useDeleteLink 훅 정의
+export const useDeleteLink = ({size, sortBy}: UseLinkInfoArgs) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteLink,
+    onSuccess: (_, linkId) => {
+      const cacheKey = ['trashLinks', size, sortBy];
+      queryClient.setQueryData<InfiniteData<GetLinksSchema>>(
+        cacheKey,
+        oldData => {
+          if (!oldData) {
+            console.log('No oldData found');
+            return oldData;
+          }
+          const newPages = oldData.pages.map(page => ({
+            ...page,
+            linkDtos: page.linkDtos.filter(link => String(link.id) !== linkId),
+            linkCount: page.linkCount - 1,
+          }));
+          return {
+            ...oldData,
+            pages: newPages,
+          };
+        },
+      );
+    },
+    onError: (error: Error) => {
+      console.warn('Delete Link error:', error);
+    },
   });
 };
 
@@ -221,19 +253,6 @@ export const useToggleLinkPin = (options = {}) => {
       console.warn('Toggle Link Pin error:', error);
     },
     ...options,
-  });
-};
-
-// 휴지통 링크 목록 조회 GET
-const getTrashLinks = async (): Promise<GetLinksSchema> => {
-  const {data} = await apiClient.get(API_ENDPOINTS.LINKS.GET_TRASH);
-  return data.result;
-};
-
-export const useTrashLinks = () => {
-  return useQuery({
-    queryKey: ['trashLinks'],
-    queryFn: getTrashLinks,
   });
 };
 

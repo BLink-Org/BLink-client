@@ -1,4 +1,4 @@
-export const LINKINFOS = [
+export const LINK_INFOS = [
   {
     id: 'guide',
     title: '이용 가이드 보기',

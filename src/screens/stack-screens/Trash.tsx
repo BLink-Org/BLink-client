@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import {useThemeStore} from '@/store/useThemeStore';
 import SmallCard from '@/components/home/SmallCard';
@@ -29,21 +29,22 @@ const Trash = () => {
     sortingOptions[0],
   );
 
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isLoading,
-    isFetchingNextPage,
-    refetch,
-    linkCount,
-  } = useTrashLinks({
+  const linkInfoArgsOptions = {
     size: 10,
     sortBy:
       selectedSortingOption === '최근 삭제순'
         ? 'trashMovedDate_desc'
         : 'trashMovedDate_asc',
-  });
+  };
+
+  const {
+    data: linkData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+    linkCount,
+  } = useTrashLinks(linkInfoArgsOptions);
 
   const handleSelection = (selected: string) => {
     setSelectedSortingOption(selected);
@@ -58,6 +59,7 @@ const Trash = () => {
   }, [refetch]);
 
   const {translateY, handleScroll} = useStickyAnimation(refreshing);
+  const insets = useSafeAreaInsets();
 
   const handleGoBack = () => {
     navigation.goBack();
@@ -66,64 +68,73 @@ const Trash = () => {
   const renderItem: ListRenderItem<ILinkDtos> = useCallback(
     ({item, index}) => (
       <View>
-        <SmallCard content={item} isTrash={true} />
+        <SmallCard
+          content={item}
+          isTrash={true}
+          linkInfoArgs={linkInfoArgsOptions}
+        />
         {index !==
-          (data?.pages.flatMap(page => page.linkDtos).length ?? 0) - 1 && (
+          (linkData?.pages.flatMap(page => page.linkDtos).length ?? 0) - 1 && (
           <View style={styles.separator} />
         )}
       </View>
     ),
-    [data, styles.separator],
+    [linkData, styles.separator],
   );
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <ThemeBackground />
-      <View style={styles.mainContainer}>
-        <AnimatedHeader
-          translateY={translateY}
-          handleGoBack={handleGoBack}
-          themeBackground={theme.BACKGROUND}
-          arrowColor={theme.TEXT900}
-        />
-        <FlatList
-          data={data?.pages.flatMap(page => page.linkDtos)}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => index.toString()}
-          ListHeaderComponent={
-            <ListHeader
-              linkCount={linkCount}
-              sortingOptions={sortingOptions}
-              selectedSortingOption={selectedSortingOption}
-              handleSelection={handleSelection}
-              theme={theme}
-            />
-          }
-          contentContainerStyle={styles.contentContainer}
-          initialNumToRender={10}
-          onScroll={handleScroll}
-          windowSize={10}
-          onEndReached={() => {
-            if (hasNextPage) {
-              fetchNextPage();
+    <>
+      <SafeAreaView style={styles.container} edges={['top']}>
+        <ThemeBackground />
+        <View style={styles.mainContainer}>
+          <AnimatedHeader
+            translateY={translateY}
+            handleGoBack={handleGoBack}
+            themeBackground={theme.BACKGROUND}
+            arrowColor={theme.TEXT900}
+          />
+          <FlatList
+            data={linkData?.pages.flatMap(page => page.linkDtos)}
+            renderItem={renderItem}
+            keyExtractor={(item, index) => index.toString()}
+            ListHeaderComponent={
+              <ListHeader
+                linkCount={linkCount}
+                sortingOptions={sortingOptions}
+                selectedSortingOption={selectedSortingOption}
+                handleSelection={handleSelection}
+                theme={theme}
+              />
             }
-          }}
-          onEndReachedThreshold={0.5}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              progressViewOffset={60}
-            />
-          }
-          ListFooterComponent={() =>
-            isFetchingNextPage ? (
-              <ActivityIndicator size="small" color="#6D96FF" />
-            ) : null
-          }
-        />
-      </View>
-    </SafeAreaView>
+            contentContainerStyle={[
+              styles.contentContainer,
+              {paddingBottom: insets.bottom},
+            ]}
+            initialNumToRender={10}
+            onScroll={handleScroll}
+            windowSize={10}
+            onEndReached={() => {
+              if (hasNextPage) {
+                fetchNextPage();
+              }
+            }}
+            onEndReachedThreshold={0.5}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                progressViewOffset={60}
+              />
+            }
+            ListFooterComponent={() =>
+              isFetchingNextPage ? (
+                <ActivityIndicator size="small" color="#6D96FF" />
+              ) : null
+            }
+          />
+        </View>
+      </SafeAreaView>
+    </>
   );
 };
 
