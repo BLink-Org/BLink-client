@@ -8,28 +8,26 @@ import {
   View,
   SafeAreaView,
   RefreshControl,
-  type ListRenderItem,
-  Animated,
   Platform,
+  ActivityIndicator,
+  type ListRenderItem,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {FONTS} from '@/constants';
 import ThemeBackground from '@/components/common/ThemeBackground';
-import ScreenHeader from '@/components/home/ScreenHeader';
 import {useThemeStore} from '@/store/useThemeStore';
 import {LargeCardIcon, SmallCardIcon} from '@/assets/icons/home';
 import LargeCard from '@/components/home/LargeCard';
 import SmallCard from '@/components/home/SmallCard';
 import DropdownFilter from '@/components/home/DropDownFilter';
-import dummyFileData from '@/constants/dummy-data/dummy-file-list.json';
-import useSortedData from '@/hooks/useSortedData';
-import {type IFileList} from '@/types/home';
 import useStickyAnimation from '@/hooks/useStickyAnimation';
 import FolderSideBar from '@/components/modal/FolderSideBar';
 import {useBottomButtonSizeStore} from '@/store/useBottomButtonSizeStore';
-import {type ITheme} from '@/types';
+import {type ILinkDtos, type ITheme} from '@/types';
 import useToast from '@/hooks/useToast';
 import SmallCardPlaceHolder from '@/components/home/SmallCardPlaceHolder';
+import {useLinks} from '@/api/hooks/useLink';
+import AnimatedLogoHeader from '@/components/common/AnimatedLogoHeader';
 
 const Home = () => {
   const {t} = useTranslation();
@@ -52,6 +50,22 @@ const Home = () => {
   const [selectedFolderId, setSelectedFolderId] = useState<number[]>([]);
   const [selectedFolderName, setSelectedFolderName] = useState<string>('전체');
 
+  // util folder로 이동
+  const getSortByValue = (selectedOption: string) => {
+    switch (selectedOption) {
+      case t('최근 저장순'):
+        return 'createdAt_desc';
+      case t('과거 저장순'):
+        return 'createdAt_asc';
+      case t('제목순 (A-ㅎ)'):
+        return 'title_asc';
+      case t('제목순 (ㅎ-A)'):
+        return 'title_desc';
+      default:
+        return 'createdAt_desc';
+    }
+  };
+
   const sortingOptions = [
     t('최근 저장순'),
     t('과거 저장순'),
@@ -66,11 +80,24 @@ const Home = () => {
     setSelectedSortingOption(selected);
   };
 
-  // sort 커스텀 훅
-  const sortedData = useSortedData(dummyFileData, selectedSortingOption);
+  const linkInfoArgsOptions = {
+    folderId: selectedFolderId[0],
+    size: 10,
+    sortBy: getSortByValue(selectedSortingOption),
+  };
+
+  const {
+    data: linkData,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+    linkCount,
+  } = useLinks(linkInfoArgsOptions);
 
   // 카드 사이즈 조절
-  const [isLargeCard, setIsLargeCard] = useState(true);
+  const [isLargeCard, setIsLargeCard] = useState(false);
   const toggleCardSize = () => {
     setIsLargeCard(prevState => !prevState);
   };
@@ -79,13 +106,9 @@ const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    // 여기서 데이터를 새로 고침
-    // 추후 API 호출로 변경
-    // 예시로 1초 후 새로고침 완료
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1000);
-  }, []);
+    refetch();
+    setRefreshing(false);
+  }, [refetch]);
 
   // sticky header 애니메이션
   const {translateY, handleScroll} = useStickyAnimation(refreshing);
@@ -98,7 +121,7 @@ const Home = () => {
           <Text style={styles.title}>{selectedFolderName}</Text>
         </View>
         <View style={styles.filterContainer}>
-          <Text style={styles.linkCount}>123 Links</Text>
+          <Text style={styles.linkCount}>{linkCount} Links</Text>
           <View style={styles.filterContainer}>
             <DropdownFilter
               options={sortingOptions}
@@ -121,18 +144,36 @@ const Home = () => {
   };
 
   // FlatList 사용 최적화
-  const renderItem: ListRenderItem<IFileList> = useCallback(
-    ({item, index}) => (
-      <View>
-        {isLargeCard ? (
-          <LargeCard content={item} {...{showToast}} />
+  const renderItem: ListRenderItem<ILinkDtos> = useCallback(
+    ({item, index}) => {
+      const isLastItem =
+        index ===
+        (linkData?.pages.flatMap(page => page.linkDtos).length ?? 0) - 1;
+
+      if (isLoading) {
+        return isLargeCard ? (
+          // <LargeCardPlaceHolder />
+          <SmallCardPlaceHolder />
         ) : (
-          <SmallCard content={item} {...{showToast}} />
-        )}
-        {index !== sortedData.length - 1 && <View style={styles.separator} />}
-      </View>
-    ),
-    [isLargeCard, sortedData, styles.separator],
+          <SmallCardPlaceHolder />
+        );
+      }
+
+      // 로딩이 완료되면 카드 렌더링
+      const CardComponent = isLargeCard ? LargeCard : SmallCard;
+      return (
+        <View>
+          <CardComponent
+            content={item}
+            showToast={showToast}
+            linkInfoArgs={linkInfoArgsOptions}
+          />
+
+          {!isLastItem && <View style={styles.separator} />}
+        </View>
+      );
+    },
+    [isLoading, isLargeCard, linkData, showToast],
   );
 
   useEffect(() => {
@@ -144,33 +185,29 @@ const Home = () => {
     <SafeAreaView style={styles.container}>
       <ThemeBackground />
       <View style={styles.mainContainer}>
-        <FolderSideBar
-          {...{
-            isSideBarVisible,
-            toggleSideBar,
-            selectedFolderId,
-            setSelectedFolderId,
-            setSelectedFolderName,
-          }}
+        <AnimatedLogoHeader
+          translateY={translateY}
+          toggleSideBar={toggleSideBar}
+          backgroundThemeColor={theme.BACKGROUND}
         />
-        <Animated.View
-          style={[
-            styles.header,
-            {
-              transform: [{translateY}],
-            },
-          ]}>
-          <ScreenHeader toggleSideBar={toggleSideBar} />
-        </Animated.View>
-
         <FlatList
-          data={sortedData}
+          data={
+            isLoading
+              ? Array(10).fill({})
+              : linkData?.pages.flatMap(page => page.linkDtos)
+          }
           renderItem={renderItem}
           keyExtractor={(item, index) => index.toString()}
           ListHeaderComponent={ListHeaderComponent}
           contentContainerStyle={styles.contentContainer}
           initialNumToRender={10}
           windowSize={10}
+          onEndReached={() => {
+            if (hasNextPage && !isLoading) {
+              fetchNextPage();
+            }
+          }}
+          onEndReachedThreshold={0.5}
           onScroll={handleScroll}
           refreshControl={
             <RefreshControl
@@ -179,9 +216,24 @@ const Home = () => {
               progressViewOffset={60}
             />
           }
+          ListFooterComponent={() =>
+            isFetchingNextPage ? (
+              <ActivityIndicator size="small" color="#6D96FF" />
+            ) : null
+          }
         />
       </View>
 
+      {/* 폴더 사이드바 */}
+      <FolderSideBar
+        {...{
+          isSideBarVisible,
+          toggleSideBar,
+          selectedFolderId,
+          setSelectedFolderId,
+          setSelectedFolderName,
+        }}
+      />
       {/* 삭제 토스트 메세지 처리 */}
       {renderToast()}
     </SafeAreaView>

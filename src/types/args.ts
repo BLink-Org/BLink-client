@@ -29,12 +29,14 @@ export interface AppleLoginArgs {
 }
 
 export interface GetLinkInfoArgs {
+  folderId?: number | null;
   page: number;
   size: number;
   sortBy: string;
 }
 
 export interface UseLinkInfoArgs {
+  folderId?: number | null;
   size: number;
   sortBy: string;
 }

@@ -6,6 +6,8 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
+  type TextLayoutEventData,
+  type NativeSyntheticEvent,
 } from 'react-native';
 import {useThemeStore} from '@/store/useThemeStore';
 import {PinnedSelectedIcon, PinnedUnselectedIcon} from '@/assets/icons/common';
@@ -179,11 +181,25 @@ const SmallCard = ({
     );
   };
 
+  // 제목 라인 수에 따라 본문 라인 수 조절
+  const [contentLines, setContentLines] = useState(1);
+  const handleTitleLayout = (
+    event: NativeSyntheticEvent<TextLayoutEventData>,
+  ) => {
+    const lineCount = event.nativeEvent.lines.length;
+    if (lineCount === 2) {
+      setContentLines(1);
+    }
+  };
+
+  <Text>text contents</Text>;
   return (
     <>
       <View style={styles.container}>
         <View style={styles.dotPosition}>
-          <Text style={styles.folderText}>{content.folderName}</Text>
+          <Text style={styles.folderText}>
+            {content.folderName ?? '폴더 없이 저장'}
+          </Text>
           <TouchableOpacity ref={buttonRef} onPress={toggleDropdown}>
             <ThreeDotIcon fill={theme.TEXT300} />
           </TouchableOpacity>
@@ -202,15 +218,16 @@ const SmallCard = ({
             <Text
               style={styles.titleText}
               numberOfLines={2}
-              ellipsizeMode="tail">
-              {content.title}
+              ellipsizeMode="tail"
+              onTextLayout={handleTitleLayout}>
+              {content.title === '' ? '제목 없음' : content.title}
             </Text>
             <View style={styles.descriptionTop} />
             <Text
               style={styles.descriptionText}
-              numberOfLines={content.title.length > 30 ? 1 : 2}
+              numberOfLines={contentLines}
               ellipsizeMode="tail">
-              {content.contents}
+              {content.contents === '' ? '내용 없음' : content.contents}
             </Text>
           </View>
           <View style={styles.cardImageContainer}>

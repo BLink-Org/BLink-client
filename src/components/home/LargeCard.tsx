@@ -12,25 +12,30 @@ import {useThemeStore} from '@/store/useThemeStore';
 import {PinnedSelectedIcon, PinnedUnselectedIcon} from '@/assets/icons/common';
 import {FONTS} from '@/constants';
 import {MoveIcon, ShareIcon, ThreeDotIcon} from '@/assets/icons/home';
-import {type IFileList} from '@/types/home';
-import {type ITheme} from '@/types';
+import {type UseLinkInfoArgs, type ITheme, type ILinkDtos} from '@/types';
 import {DeleteIcon, PencilIcon} from '@/assets/icons/mypage';
 import DropDownModal from '@/components/modal/DropDownModal';
 import BottomSheet from '@/components/modal/BottomSheet';
 import TitleContent from '@/components/link/TitleContent';
 import FolderMoveContent from '@/components/link/FolderMoveContent';
 import {TOAST_MESSAGE} from '@/constants/toast';
+import {extractHostname} from '@/utils/url-utils';
 
 const screenWidth = Dimensions.get('screen').width - 36;
 const aspectRatio = 339 / 140; // 카드 비율
 const cardHeight = screenWidth / aspectRatio;
 
 interface LargeCardProps {
-  content: IFileList;
+  content: ILinkDtos;
   showToast?: (text: string) => void;
+  linkInfoArgs: UseLinkInfoArgs;
 }
 
-const LargeCard = ({content, showToast = () => {}}: LargeCardProps) => {
+const LargeCard = ({
+  content,
+  showToast = () => {},
+  linkInfoArgs,
+}: LargeCardProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
@@ -151,16 +156,20 @@ const LargeCard = ({content, showToast = () => {}}: LargeCardProps) => {
           )}
         </View>
         <View style={styles.folderTop} />
-        <Text style={styles.folderText}>{content.folder}</Text>
+        <Text style={styles.folderText}>
+          {content.folderName ?? '폴더 없이 저장'}
+        </Text>
         <View style={styles.titleTop} />
         <Text style={styles.titleText} numberOfLines={1} ellipsizeMode="tail">
-          {content.title}
+          {content.title === '' ? '제목 없음' : content.title}
         </Text>
         <View style={styles.footerTop} />
         <View style={styles.footer}>
           <View style={styles.footerFront}>
-            <Text style={styles.footerText}>{content.saveDay}</Text>
-            <Text style={styles.footerText}>{content.hostname}</Text>
+            <Text style={styles.footerText}>{content.createdAt}</Text>
+            <Text style={styles.footerText}>
+              {extractHostname(content.url ?? '')}
+            </Text>
           </View>
           <TouchableOpacity onPress={toggleBookmark}>
             {isBookmarked ? (

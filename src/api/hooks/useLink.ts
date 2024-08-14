@@ -18,17 +18,47 @@ import {
 } from '@/types';
 
 // 링크 목록 조회 GET
-// TODO: 추후 query에 따른 데이터 필터링 및 페이지네이션 추가 필요
-const getLinks = async (): Promise<GetLinksSchema> => {
-  const {data} = await apiClient.get(API_ENDPOINTS.LINKS.FETCH);
+const getLinks = async (payload: GetLinkInfoArgs): Promise<GetLinksSchema> => {
+  const {folderId, page, size, sortBy} = payload;
+  const {data} = await apiClient.get(API_ENDPOINTS.LINKS.FETCH, {
+    params: {
+      folderId,
+      sortBy,
+      page,
+      size,
+    },
+  });
+  // 3초 지연
+  await new Promise(resolve => setTimeout(resolve, 2500));
   return data.result;
 };
 
-export const useLinks = () => {
-  return useQuery({
-    queryKey: ['links'],
-    queryFn: getLinks,
+export const useLinks = ({folderId, size, sortBy}: UseLinkInfoArgs) => {
+  // linkCount를 상태로 관리하여 업데이트가 있을 때만 변경될 수 있도록
+  const [linkCount, setLinkCount] = useState<number | null>(0);
+
+  const query = useInfiniteQuery({
+    queryKey: ['links', size, sortBy, folderId],
+    queryFn: async ({pageParam = 0}) => {
+      const result = await getLinks({page: pageParam, size, sortBy, folderId});
+      return result;
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      const maxPages = Math.ceil(lastPage.linkCount / size);
+      const nextPage = allPages.length;
+      return nextPage < maxPages ? nextPage : undefined;
+    },
+    initialPageParam: 0,
   });
+
+  useEffect(() => {
+    const newLinkCount = query.data?.pages[0]?.linkCount;
+    if (newLinkCount !== undefined && newLinkCount !== linkCount) {
+      setLinkCount(newLinkCount);
+    }
+  }, [query.data, linkCount]);
+
+  return {...query, linkCount};
 };
 
 // 링크 저장 POST
@@ -114,7 +144,7 @@ const getTrashLinks = async (
     },
   });
   //  3초 지연
-  await new Promise(resolve => setTimeout(resolve, 2500));
+  // await new Promise(resolve => setTimeout(resolve, 2500));
   return data.result;
 };
 
@@ -202,7 +232,6 @@ export const useDeleteLink = ({size, sortBy}: UseLinkInfoArgs) => {
         cacheKey,
         oldData => {
           if (!oldData) {
-            console.log('No oldData found');
             return oldData;
           }
           const newPages = oldData.pages.map(page => ({
