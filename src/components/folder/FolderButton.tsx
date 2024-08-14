@@ -20,6 +20,8 @@ interface FolderButtonProps {
   onPress: () => void;
   showToast?: (label: string) => void;
   handleSelect?: (label: string) => void;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
 }
 
 const FolderButton = ({
@@ -30,6 +32,8 @@ const FolderButton = ({
   onPress,
   showToast = () => {},
   handleSelect = () => {},
+  onMoveUp,
+  onMoveDown,
 }: FolderButtonProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
@@ -79,7 +83,7 @@ const FolderButton = ({
         icon: <UpIcon />,
         onSelect: () => {
           closeDropdown();
-          handleSelect('위로 이동');
+          onMoveUp && onMoveUp();
         },
       },
       {
@@ -87,7 +91,7 @@ const FolderButton = ({
         icon: <DownIcon />,
         onSelect: () => {
           closeDropdown();
-          handleSelect('아래로 이동');
+          onMoveDown && onMoveDown();
         },
       },
       {

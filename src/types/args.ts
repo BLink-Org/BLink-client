@@ -4,7 +4,7 @@ export interface UpdateFolderTitleArgs {
 }
 
 export interface MoveFolderArgs {
-  folderId: string;
+  folderId: number;
   direction: 'up' | 'down';
 }
 

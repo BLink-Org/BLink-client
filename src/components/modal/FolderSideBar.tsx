@@ -157,7 +157,7 @@ const FolderSideBar = ({
         </View>
         <View style={styles.detailContainer}>
           <Text style={styles.linkCount}>
-            {useFolderData?.linkTotalCount ?? 0 + ' Links'}
+            {(useFolderData?.linkTotalCount ?? 0) + ' Links'}
           </Text>
           <TouchableOpacity
             style={styles.totalButton}
