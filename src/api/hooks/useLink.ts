@@ -30,6 +30,7 @@ const getLinks = async (payload: GetLinkInfoArgs): Promise<GetLinksSchema> => {
   });
   // 3초 지연
   await new Promise(resolve => setTimeout(resolve, 2500));
+  console.log('getLinks data:');
   return data.result;
 };
 
@@ -61,6 +62,48 @@ export const useLinks = ({folderId, size, sortBy}: UseLinkInfoArgs) => {
   return {...query, linkCount};
 };
 
+// 링크 휴지통 이동 PATCH
+const moveLinkToTrash = async (linkId: string) => {
+  const endpoint = API_ENDPOINTS.LINKS.TRASH_MOVE.replace(':linkId', linkId);
+  const {data} = await apiClient.patch(endpoint);
+  return data.result;
+};
+
+export const useMoveLinkToTrash = ({
+  size,
+  sortBy,
+  folderId,
+}: UseLinkInfoArgs) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: moveLinkToTrash,
+    onSuccess: (_, linkId) => {
+      const cacheKey = ['links', size, sortBy, folderId];
+      queryClient.setQueryData<InfiniteData<GetLinksSchema>>(
+        cacheKey,
+        oldData => {
+          if (!oldData) {
+            return oldData;
+          }
+          const newPages = oldData.pages.map(page => ({
+            ...page,
+            linkDtos: page.linkDtos.filter(link => String(link.id) !== linkId),
+            linkCount: page.linkCount - 1,
+          }));
+          return {
+            ...oldData,
+            pages: newPages,
+          };
+        },
+      );
+    },
+    onError: (error: Error) => {
+      console.warn('Move Link to Trash error:', error);
+    },
+  });
+};
+
 // 링크 저장 POST
 const createLink = async (payload: CreateLinkArgs) => {
   const {data} = await apiClient.post(API_ENDPOINTS.LINKS.CREATE, payload);
@@ -77,7 +120,7 @@ export const useCreateLink = (options = {}) => {
   });
 };
 
-// // 링크 저장 폴더 변경 POST
+// 링크 저장 폴더 변경 POST
 const moveLink = async (payload: MoveLinkArgs) => {
   const endpoint = API_ENDPOINTS.LINKS.MOVE.replace(':linkId', payload.linkId);
   const {data} = await apiClient.post(endpoint, {
@@ -249,23 +292,6 @@ export const useDeleteLink = ({size, sortBy}: UseLinkInfoArgs) => {
     onError: (error: Error) => {
       console.warn('Delete Link error:', error);
     },
-  });
-};
-
-// 링크 휴지통 이동 PATCH
-const moveLinkToTrash = async (linkId: string) => {
-  const endpoint = API_ENDPOINTS.LINKS.TRASH_MOVE.replace(':linkId', linkId);
-  const {data} = await apiClient.patch(endpoint);
-  return data.result;
-};
-
-export const useMoveLinkToTrash = (options = {}) => {
-  return useMutation({
-    mutationFn: moveLinkToTrash,
-    onError: (error: string) => {
-      console.warn('Move Link to Trash error:', error);
-    },
-    ...options,
   });
 };
 

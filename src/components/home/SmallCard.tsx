@@ -22,8 +22,12 @@ import BottomSheet from '@/components/modal/BottomSheet';
 import TitleContent from '@/components/link/TitleContent';
 import FolderMoveContent from '@/components/link/FolderMoveContent';
 import {TOAST_MESSAGE} from '@/constants/toast';
-import {useDeleteLink, useRecoverLink} from '@/api/hooks/useLink';
-import {extractHostname, shareUrl, shareUrlHome} from '@/utils/url-utils';
+import {
+  useDeleteLink,
+  useMoveLinkToTrash,
+  useRecoverLink,
+} from '@/api/hooks/useLink';
+import {extractHostname, shareUrl} from '@/utils/url-utils';
 
 interface SmallCardProps {
   content: ILinkDtos;
@@ -44,7 +48,11 @@ const SmallCard = ({
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
+  // 휴지통으로 이동
+  const {mutate: moveLinkToTrash} = useMoveLinkToTrash(linkInfoArgs);
+  // 휴지통에서 영구삭제
   const {mutate: deleteLink} = useDeleteLink(linkInfoArgs);
+  // 휴지통에서 복원
   const {mutate: recoverLink} = useRecoverLink(linkInfoArgs);
 
   const CardImage = useMemo(() => {
@@ -98,7 +106,7 @@ const SmallCard = ({
       deleteLink(String(selectedId));
     }
     if (label === '복원') {
-      recoverLink(String(content.id));
+      recoverLink(String(selectedId));
     }
     closeModal(modalId);
   };
@@ -134,6 +142,7 @@ const SmallCard = ({
         label: '삭제',
         icon: <DeleteIcon />,
         onSelect: () => {
+          moveLinkToTrash(String(content.id));
           showToast(TOAST_MESSAGE.DELETE_SUCCESS);
           closeDropdown();
         },
