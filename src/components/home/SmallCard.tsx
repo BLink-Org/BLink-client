@@ -23,7 +23,7 @@ import TitleContent from '@/components/link/TitleContent';
 import FolderMoveContent from '@/components/link/FolderMoveContent';
 import {TOAST_MESSAGE} from '@/constants/toast';
 import {useDeleteLink, useRecoverLink} from '@/api/hooks/useLink';
-import {extractHostname} from '@/utils/url-utils';
+import {extractHostname, shareUrl, shareUrlHome} from '@/utils/url-utils';
 
 interface SmallCardProps {
   content: ILinkDtos;
@@ -125,9 +125,11 @@ const SmallCard = ({
         label: '공유',
         icon: <ShareIcon />,
         onSelect: () => {
-          closeDropdown();
+          const currentUrl = content.url ?? '';
+          shareUrl(currentUrl);
         },
       },
+
       {
         label: '삭제',
         icon: <DeleteIcon />,
