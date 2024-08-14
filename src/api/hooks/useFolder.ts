@@ -1,4 +1,4 @@
-import {useQuery, useMutation} from '@tanstack/react-query';
+import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
 import {API_ENDPOINTS} from '@/api/endpoints';
 import apiClient from '@/api/client';
 import {
@@ -37,8 +37,11 @@ export const useCreateFolder = (options = {}) => {
 };
 
 // 폴더 삭제 delete
-const deleteFolder = async (folderId: string) => {
-  const endpoint = API_ENDPOINTS.FOLDER.DELETE.replace(':folderId', folderId);
+const deleteFolder = async (folderId: number) => {
+  const endpoint = API_ENDPOINTS.FOLDER.DELETE.replace(
+    ':folderId',
+    `${folderId}`,
+  );
   await apiClient.delete(endpoint);
 };
 
@@ -56,7 +59,7 @@ export const useDeleteFolder = (options = {}) => {
 const updateFolderTitle = async (payload: UpdateFolderTitleArgs) => {
   const endpoint = API_ENDPOINTS.FOLDER.UPDATE_TITLE.replace(
     ':folderId',
-    payload.folderId,
+    `${payload.folderId}`,
   );
   await apiClient.patch(endpoint, {title: payload.title});
 };

@@ -4,7 +4,7 @@ const LogoHeader = () => {
   return (
     <View style={styles.container}>
       <Image
-        source={require('@/assets/images/blue-logo.png')}
+        source={require('@/assets/images/img-linksaving_wordmark-blue.png')}
         style={styles.logoImage}
       />
     </View>

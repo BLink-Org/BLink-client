@@ -1,5 +1,6 @@
 import {useMemo, useRef, useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {useQueryClient} from '@tanstack/react-query';
 import {DownIcon, EditIcon, UpIcon} from '@/assets/icons/modal';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
@@ -9,6 +10,7 @@ import DropDownModal from '@/components/modal/DropDownModal';
 import {useModalStore} from '@/store/useModalStore';
 import AlertModal from '@/components/modal/AlertModal';
 import {TOAST_MESSAGE} from '@/constants/toast';
+import {useDeleteFolder} from '@/api/hooks/useFolder';
 
 interface FolderButtonProps {
   id: number;
@@ -41,6 +43,15 @@ const FolderButton = ({
   const {showModal, closeModal} = useModalStore();
   const modalId = `folderDelete-${id}`;
 
+  // 폴더 삭제
+  const queryClient = useQueryClient();
+  const {mutate: deleteFolder} = useDeleteFolder({
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['folders']});
+      showToast(TOAST_MESSAGE.DELETE_SUCCESS);
+    },
+  });
+
   const toggleDropdown = () => {
     buttonRef.current?.measure((x, y, width, height, pageX, pageY) => {
       setIsDropdownOpen(true);
@@ -50,7 +61,7 @@ const FolderButton = ({
 
   const handleConfirmSelect = () => {
     closeModal(modalId);
-    showToast(TOAST_MESSAGE.DELETE_SUCCESS);
+    deleteFolder(id);
   };
 
   const folderOptions = useMemo(
@@ -125,7 +136,7 @@ const FolderButton = ({
         onPress={onPress}>
         <View style={styles.infoContainer}>
           <Text style={styles.nameText}>{name ?? '폴더 없는 링크'}</Text>
-          {number && (
+          {number !== undefined ? (
             <View style={styles.detailContainer}>
               <Text style={styles.numberText}>{number}</Text>
               <TouchableOpacity
@@ -143,6 +154,8 @@ const FolderButton = ({
                 />
               )}
             </View>
+          ) : (
+            <></>
           )}
         </View>
       </TouchableOpacity>
@@ -168,7 +181,7 @@ const createStyles = (theme: ITheme) =>
       borderRadius: 8,
       justifyContent: 'center',
       paddingVertical: 16,
-      paddingHorizontal: 20,
+      paddingLeft: 20,
     },
     infoContainer: {
       flexDirection: 'row',
@@ -187,6 +200,7 @@ const createStyles = (theme: ITheme) =>
     },
     editIcon: {
       paddingLeft: 16,
+      paddingRight: 20,
     },
     numberText: {
       color: theme.TEXT700,

@@ -1,5 +1,5 @@
 export interface UpdateFolderTitleArgs {
-  folderId: string;
+  folderId: number;
   title: string;
 }
 

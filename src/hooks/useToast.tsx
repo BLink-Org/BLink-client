@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState, useMemo} from 'react';
+import {useEffect, useRef, useState, useMemo, useCallback} from 'react';
 import {Animated, Dimensions, StyleSheet, Text} from 'react-native';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
@@ -13,16 +13,19 @@ const toastWidth = screenWidth - 36;
 
 export default function useToast({marginBottom}: ToastProps) {
   const {theme} = useThemeStore();
-  const styles = useMemo(() => createStyles(theme, compareTheme), [theme]);
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-
-  const [toastMessage, setToastMessage] = useState('');
-  const [isToastVisible, setIsToastVisible] = useState(false);
-
   const compareTheme: boolean = useMemo(() => {
     if (theme === THEMES[1]) return true;
     return false;
   }, [theme]);
+
+  const styles = useMemo(
+    () => createStyles(theme, compareTheme),
+    [theme, compareTheme],
+  );
+
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const [toastMessage, setToastMessage] = useState('');
+  const [isToastVisible, setIsToastVisible] = useState(false);
 
   function showToast(text: string) {
     setToastMessage(text);
@@ -54,7 +57,7 @@ export default function useToast({marginBottom}: ToastProps) {
     }
   }, [isToastVisible, fadeAnim, setIsToastVisible]);
 
-  const Toast = () => {
+  const renderToast = useCallback(() => {
     return (
       isToastVisible && (
         <Animated.View
@@ -70,9 +73,9 @@ export default function useToast({marginBottom}: ToastProps) {
         </Animated.View>
       )
     );
-  };
+  }, [isToastVisible, toastMessage]);
 
-  return {Toast, showToast};
+  return {renderToast, showToast};
 }
 
 const createStyles = (theme: ITheme, compareTheme: boolean) =>

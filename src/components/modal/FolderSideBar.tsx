@@ -8,25 +8,32 @@ import {
   Animated,
   Dimensions,
   TouchableWithoutFeedback,
+  Image,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useQueryClient} from '@tanstack/react-query';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {BackIcon, ForwardIcon} from '@/assets/icons/modal';
 import {AddIcon} from '@/assets/icons/common';
-import {type FolderButtonProps, type ITheme} from '@/types';
+import {type IFolderDtos, type ITheme} from '@/types';
 import BottomSheet from '@/components/modal/BottomSheet';
 import FolderContent from '@/components/folder/FolderContent';
 import useToast from '@/hooks/useToast';
 import {TOAST_MESSAGE} from '@/constants/toast';
-import dummyFolderListRaw from '@/constants/dummy-data/dummy-folder-list.json';
 import FolderList from '@/components/folder/FolderList';
+import {
+  useCreateFolder,
+  useFolders,
+  useUpdateFolderTitle,
+} from '@/api/hooks/useFolder';
 
 interface FolderSideBarProps {
   isSideBarVisible: boolean;
   toggleSideBar: () => void;
-  selectedFolderId: number[] | null;
-  setSelectedFolderId: (v: number[] | null) => void;
+  selectedFolderId: number[];
+  setSelectedFolderId: React.Dispatch<React.SetStateAction<number[]>>;
+  setSelectedFolderName: (v: string) => void;
 }
 
 const FolderSideBar = ({
@@ -34,26 +41,45 @@ const FolderSideBar = ({
   toggleSideBar,
   selectedFolderId,
   setSelectedFolderId,
+  setSelectedFolderName,
 }: FolderSideBarProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
-
   const insets = useSafeAreaInsets();
-  const {Toast, showToast} = useToast({
+  const {renderToast, showToast} = useToast({
     marginBottom: 128,
   });
 
-  const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
-  const [folderToEdit, setFolderToEdit] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+  const {data: useFolderData} = useFolders();
+  // 폴더 생성 API
+  const {mutate: createFolder} = useCreateFolder({
+    onSuccess: () => {
+      setIsBottomSheetVisible(!isBottomSheetVisible);
+      queryClient.invalidateQueries({queryKey: ['folders']});
+      showToast(TOAST_MESSAGE.CREATE_SUCCESS);
+    },
+  });
+  // 폴더 이름 수정 API
+  const {mutate: updateFolderTitle} = useUpdateFolderTitle({
+    onSuccess: () => {
+      setIsBottomSheetVisible(!isBottomSheetVisible);
+      queryClient.invalidateQueries({queryKey: ['folders']});
+      showToast(TOAST_MESSAGE.EDIT_SUCCESS);
+    },
+  });
 
-  const handleSelect = (label: string, folderName?: string) => {
-    switch (label) {
-      case '폴더명 수정':
-        toggleBottomSheet(folderName);
-        break;
-      default:
+  const onSaveFolder = (textInput: string) => {
+    if (isCreate) {
+      createFolder({title: textInput});
+    } else {
+      updateFolderTitle({folderId: folderToEdit.id, title: textInput});
     }
   };
+
+  const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+  const [folderToEdit, setFolderToEdit] = useState<IFolderDtos | null>(null);
+  const isCreate = !folderToEdit;
 
   const [visible, setVisible] = useState(isSideBarVisible);
 
@@ -61,10 +87,25 @@ const FolderSideBar = ({
     new Animated.Value(-Dimensions.get('window').width),
   ).current;
 
-  const toggleBottomSheet = (folderName: string | null = null) => {
-    setFolderToEdit(folderName);
+  const toggleBottomSheet = (folderData: IFolderDtos | null) => {
+    setFolderToEdit(folderData);
     setIsBottomSheetVisible(!isBottomSheetVisible);
   };
+
+  // 폴더 id 변경 시 홈 화면 폴더 이름 변경
+  useEffect(() => {
+    const findFolderName = () => {
+      if (!useFolderData || selectedFolderId.length === 0) return '전체';
+      if (selectedFolderId[0] === 0) return '폴더 없는 링크';
+
+      const selectedFolder = useFolderData.folderDtos.find(
+        item => item.id === selectedFolderId[0],
+      );
+      return selectedFolder?.title ?? '';
+    };
+
+    setSelectedFolderName(findFolderName());
+  }, [selectedFolderId]);
 
   useEffect(() => {
     if (isSideBarVisible) {
@@ -97,6 +138,9 @@ const FolderSideBar = ({
       <TouchableWithoutFeedback onPress={toggleSideBar}>
         <View style={styles.overlay} />
       </TouchableWithoutFeedback>
+
+      {renderToast()}
+
       <Animated.View
         style={[
           styles.modalContent,
@@ -112,11 +156,13 @@ const FolderSideBar = ({
           <Text style={styles.title}>폴더</Text>
         </View>
         <View style={styles.detailContainer}>
-          <Text style={styles.linkCount}>123 Links</Text>
+          <Text style={styles.linkCount}>
+            {useFolderData?.linkTotalCount ?? 0 + ' Links'}
+          </Text>
           <TouchableOpacity
             style={styles.totalButton}
             onPress={() => {
-              setSelectedFolderId(null);
+              setSelectedFolderId([]);
               toggleSideBar();
             }}>
             <Text style={styles.totalButtonText}>전체보기</Text>
@@ -124,18 +170,38 @@ const FolderSideBar = ({
           </TouchableOpacity>
         </View>
 
-        <FolderList
-          folders={dummyFolderListRaw as FolderButtonProps[]}
-          multipleSelection={false}
-          onFolderPress={toggleSideBar}
-          {...{selectedFolderId, setSelectedFolderId, handleSelect, showToast}}
-        />
+        <View style={styles.folderView}>
+          {useFolderData &&
+          (useFolderData?.folderDtos.length > 0 ||
+            useFolderData?.noFolderLinkCount > 0) ? (
+            <FolderList
+              isMultipleSelection={false}
+              handleSelect={toggleBottomSheet}
+              onFolderPress={() => {
+                toggleSideBar();
+              }}
+              {...{
+                selectedFolderId,
+                setSelectedFolderId,
+                showToast,
+                useFolderData,
+              }}
+            />
+          ) : (
+            <View style={styles.emptyView}>
+              <Image source={theme.EMPTY_IMAGE} style={styles.emptyImage} />
+              <Text style={styles.emptyText}>
+                생성한 폴더가 있으면 여기에 보여요
+              </Text>
+            </View>
+          )}
+        </View>
 
         <View style={styles.tabBar}>
           <TouchableOpacity
             style={styles.addFolderButton}
             onPress={() => {
-              toggleBottomSheet();
+              toggleBottomSheet(null);
             }}>
             <AddIcon
               stroke={theme.BACKGROUND}
@@ -146,20 +212,17 @@ const FolderSideBar = ({
           </TouchableOpacity>
         </View>
       </Animated.View>
-      <Toast />
+
       <BottomSheet
-        modalTitle={folderToEdit ? '폴더 수정' : '폴더 생성'}
-        {...{isBottomSheetVisible, toggleBottomSheet}}>
+        modalTitle={isCreate ? '폴더 생성' : '폴더 수정'}
+        toggleBottomSheet={() => setIsBottomSheetVisible(!isBottomSheetVisible)}
+        {...{isBottomSheetVisible}}>
         <FolderContent
-          defaultText={folderToEdit ?? undefined}
-          toggleBottomSheet={() => {
-            toggleBottomSheet(folderToEdit);
-            showToast(
-              folderToEdit
-                ? TOAST_MESSAGE.EDIT_SUCCESS
-                : TOAST_MESSAGE.CREATE_SUCCESS,
-            );
-          }}
+          defaultText={folderToEdit?.title ?? undefined}
+          folderTitles={
+            useFolderData?.folderDtos.map(folder => folder.title) ?? []
+          }
+          {...{onSaveFolder}}
         />
       </BottomSheet>
     </RNModal>
@@ -219,6 +282,31 @@ const createStyles = (theme: ITheme) =>
       justifyContent: 'flex-end',
       alignItems: 'flex-end',
       paddingBottom: 22,
+    },
+    folderView: {
+      flex: 1,
+      marginVertical: 20,
+    },
+    stroke: {
+      borderWidth: 1,
+      borderColor: theme.TEXT200,
+      marginVertical: 8,
+      width: '100%',
+    },
+    emptyView: {
+      flex: 1,
+      gap: 12,
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    emptyImage: {
+      width: 180,
+      height: 180,
+    },
+    emptyText: {
+      color: theme.TEXT500,
+      ...FONTS.BODY2_MEDIUM,
     },
     addFolderButton: {
       height: 45,

@@ -22,7 +22,6 @@ import LargeCard from '@/components/home/LargeCard';
 import SmallCard from '@/components/home/SmallCard';
 import DropdownFilter from '@/components/home/DropDownFilter';
 import dummyFileData from '@/constants/dummy-data/dummy-file-list.json';
-import dummyFolderData from '@/constants/dummy-data/dummy-folder-list.json';
 import useSortedData from '@/hooks/useSortedData';
 import {type IFileList} from '@/types/home';
 import useStickyAnimation from '@/hooks/useStickyAnimation';
@@ -40,7 +39,7 @@ const Home = () => {
   const {bottom} = useSafeAreaInsets();
   const isHomeIndicatorPresent = Platform.OS === 'ios' && bottom > 0;
   const {setButtonHeight} = useBottomButtonSizeStore();
-  const {Toast, showToast} = useToast({marginBottom: 44});
+  const {renderToast, showToast} = useToast({marginBottom: 44});
 
   // 폴더 사이드바 토글
   const [isSideBarVisible, setIsSideBarVisible] = useState(false);
@@ -49,9 +48,8 @@ const Home = () => {
   };
 
   // 홈 화면 제목 - 선택한 폴더 아이디 (null: 전체)
-  const [selectedFolderId, setSelectedFolderId] = useState<number[] | null>(
-    null,
-  );
+  const [selectedFolderId, setSelectedFolderId] = useState<number[]>([]);
+  const [selectedFolderName, setSelectedFolderName] = useState<string>('전체');
 
   const sortingOptions = [
     t('최근 저장순'),
@@ -96,11 +94,7 @@ const Home = () => {
     return (
       <>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>
-            {selectedFolderId
-              ? dummyFolderData[selectedFolderId[0] - 1].name
-              : '전체'}
-          </Text>
+          <Text style={styles.title}>{selectedFolderName}</Text>
         </View>
         <View style={styles.filterContainer}>
           <Text style={styles.linkCount}>123 Links</Text>
@@ -155,6 +149,7 @@ const Home = () => {
             toggleSideBar,
             selectedFolderId,
             setSelectedFolderId,
+            setSelectedFolderName,
           }}
         />
         <Animated.View
@@ -187,7 +182,7 @@ const Home = () => {
       </View>
 
       {/* 삭제 토스트 메세지 처리 */}
-      <Toast />
+      {renderToast()}
     </SafeAreaView>
   );
 };

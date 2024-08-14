@@ -6,11 +6,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import dummyFolderListRaw from '@/constants/dummy-data/dummy-link-list.json';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {isValidUrl} from '@/utils/url-utils';
-import {type FolderButtonProps} from '@/types/folder';
 import {AddIcon} from '@/assets/icons/common';
 import {useBottomButtonSizeStore} from '@/store/useBottomButtonSizeStore';
 import {type ITheme} from '@/types';
@@ -19,6 +17,8 @@ import CustomBottomButton from '@/components/common/CustomBottomButton';
 import BottomSheet from '@/components/modal/BottomSheet';
 import FolderContent from '@/components/folder/FolderContent';
 import FolderList from '@/components/folder/FolderList';
+import {useFolders} from '@/api/hooks/useFolder';
+import FolderButton from '../folder/FolderButton';
 
 interface FolderSideBarProps {
   defaultURL?: string;
@@ -28,17 +28,15 @@ interface FolderSideBarProps {
 const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {data: useFolderData} = useFolders();
 
   const [textInput, setTextInput] = useState<string | undefined>(defaultURL);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [selectedFolderId, setSelectedFolderId] = useState<number[] | null>([]);
+  const [selectedFolderId, setSelectedFolderId] = useState<number[]>([0]);
   const [isReadyToSave, setIsReadyToSave] = useState<boolean>(!!defaultURL);
   const [isFolderBottomSheetVisible, setIsFolderBottomSheetVisible] =
     useState(false);
   const {buttonHeight} = useBottomButtonSizeStore();
-
-  const folderList: FolderButtonProps[] =
-    dummyFolderListRaw as FolderButtonProps[];
 
   const toggleFolderBottomSheet = () => {
     setIsFolderBottomSheetVisible(!isFolderBottomSheetVisible);
@@ -63,6 +61,9 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
         isBottomSheetVisible={isFolderBottomSheetVisible}
         toggleBottomSheet={toggleFolderBottomSheet}>
         <FolderContent
+          folderTitles={
+            useFolderData?.folderDtos.map(folder => folder.title) ?? []
+          }
           toggleBottomSheet={() => {
             toggleFolderBottomSheet();
           }}
@@ -83,12 +84,12 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
             <AddIcon stroke={theme.BACKGROUND} fill={theme.MAIN400} />
           </TouchableOpacity>
         </View>
-        <FolderList
-          folders={folderList}
-          multipleSelection={true}
-          selectedFolderId={selectedFolderId}
-          setSelectedFolderId={setSelectedFolderId}
-        />
+        <View style={styles.folderView}>
+          <FolderList
+            isMultipleSelection={true}
+            {...{selectedFolderId, setSelectedFolderId, useFolderData}}
+          />
+        </View>
       </SafeAreaView>
       <CustomBottomButton
         title="저장"
@@ -129,7 +130,7 @@ const createStyles = (theme: ITheme) =>
       color: theme.TEXT700,
       ...FONTS.BODY1_SEMIBOLD,
     },
-    folderList: {
+    folderView: {
       flex: 1,
       paddingVertical: 12,
       marginBottom: 35,
@@ -137,11 +138,8 @@ const createStyles = (theme: ITheme) =>
     stroke: {
       borderWidth: 1,
       borderColor: theme.TEXT200,
-      marginBottom: 8,
+      marginVertical: 8,
       width: '100%',
-    },
-    separator: {
-      height: 8,
     },
   });
 

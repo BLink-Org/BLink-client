@@ -1,6 +1,7 @@
 import React, {useEffect, useState, useMemo} from 'react';
 import {
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -8,7 +9,6 @@ import {
 } from 'react-native';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
-import {type FolderButtonProps} from '@/types/folder';
 import {AddIcon} from '@/assets/icons/common';
 import {useBottomButtonSizeStore} from '@/store/useBottomButtonSizeStore';
 import {type ITheme} from '@/types';
@@ -16,7 +16,8 @@ import CustomBottomButton from '@/components/common/CustomBottomButton';
 import BottomSheet from '@/components/modal/BottomSheet';
 import FolderContent from '@/components/folder/FolderContent';
 import FolderList from '@/components/folder/FolderList';
-import dummyFolderData from '@/constants/dummy-data/dummy-folder-list.json';
+import {useFolders} from '@/api/hooks/useFolder';
+import FolderButton from '../folder/FolderButton';
 
 interface FolderMoveContentProps {
   toggleBottomSheet: () => void;
@@ -25,8 +26,9 @@ interface FolderMoveContentProps {
 const FolderMoveContent = ({toggleBottomSheet}: FolderMoveContentProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {data: useFolderData} = useFolders();
 
-  const [selectedFolderId, setSelectedFolderId] = useState<number[] | null>([]);
+  const [selectedFolderId, setSelectedFolderId] = useState<number[]>([]);
   const [isReadyToSave, setIsReadyToSave] = useState<boolean>(true);
   const [isFolderBottomSheetVisible, setIsFolderBottomSheetVisible] =
     useState(false);
@@ -46,7 +48,12 @@ const FolderMoveContent = ({toggleBottomSheet}: FolderMoveContentProps) => {
         modalTitle="폴더 생성"
         isBottomSheetVisible={isFolderBottomSheetVisible}
         toggleBottomSheet={toggleFolderBottomSheet}>
-        <FolderContent toggleBottomSheet={toggleFolderBottomSheet} />
+        <FolderContent
+          folderTitles={
+            useFolderData?.folderDtos.map(folder => folder.title) ?? []
+          }
+          toggleBottomSheet={toggleFolderBottomSheet}
+        />
       </BottomSheet>
       <SafeAreaView
         style={[styles.contentContainer, {marginBottom: buttonHeight}]}>
@@ -58,11 +65,12 @@ const FolderMoveContent = ({toggleBottomSheet}: FolderMoveContentProps) => {
             <AddIcon stroke={theme.BACKGROUND} fill={theme.MAIN400} />
           </TouchableOpacity>
         </View>
-        <FolderList
-          folders={dummyFolderData as FolderButtonProps[]}
-          multipleSelection={true}
-          {...{selectedFolderId, setSelectedFolderId}}
-        />
+        <View style={[styles.folderView]}>
+          <FolderList
+            isMultipleSelection={true}
+            {...{selectedFolderId, setSelectedFolderId, useFolderData}}
+          />
+        </View>
       </SafeAreaView>
       <CustomBottomButton
         title="저장"
@@ -102,19 +110,19 @@ const createStyles = (theme: ITheme) =>
       color: theme.TEXT700,
       ...FONTS.BODY1_SEMIBOLD,
     },
-    folderList: {
+    folderView: {
       flex: 1,
       paddingVertical: 12,
-      marginBottom: 43,
+      marginBottom: 58,
+    },
+    lastFolderview: {
+      flex: 1,
     },
     stroke: {
       borderWidth: 1,
       borderColor: theme.TEXT200,
-      marginBottom: 8,
+      marginVertical: 8,
       width: '100%',
-    },
-    separator: {
-      height: 8,
     },
   });
 
