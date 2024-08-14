@@ -29,6 +29,7 @@ import FolderSideBar from '@/components/modal/FolderSideBar';
 import {useBottomButtonSizeStore} from '@/store/useBottomButtonSizeStore';
 import {type ITheme} from '@/types';
 import useToast from '@/hooks/useToast';
+import SmallCardPlaceHolder from '@/components/home/SmallCardPlaceHolder';
 
 const Home = () => {
   const {t} = useTranslation();
