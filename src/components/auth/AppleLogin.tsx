@@ -1,23 +1,35 @@
+import {useState} from 'react';
 import {appleAuth} from '@invertase/react-native-apple-authentication';
 import {Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {jwtDecode} from 'jwt-decode';
+import * as amplitude from '@amplitude/analytics-react-native';
+import {AMPLITUDE_API_KEY} from '@env';
 import {AppleLogoIcon} from '@/assets/icons/onboarding';
 import {FONTS} from '@/constants';
+import {useAppleLogin} from '@/api/hooks/useAuth';
+import {type TokensSchema} from '@/types';
+import {useUserStore} from '@/store/useUserStore';
+import {trackEvent} from '@/utils/amplitude-utils';
 
 const AppleLogin = () => {
+  const {setTokens} = useUserStore();
+  const [userEmail, setUserEmail] = useState<string>('');
+
+  const {mutate: appleLoginMutation} = useAppleLogin({
+    onSuccess: async (data: TokensSchema) => {
+      const {accessToken, refreshToken} = data;
+      await setTokens(accessToken, refreshToken);
+      amplitude.init(AMPLITUDE_API_KEY, userEmail);
+      trackEvent('Login Success', {method: 'Apple'});
+    },
+  });
+
   const handleSignInApple = async () => {
     try {
       const appleAuthRequestResponse = await appleAuth.performRequest({
         requestedOperation: appleAuth.Operation.LOGIN,
         requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
       });
-      console.log(
-        '🚀 ~ file: AppleLogin.tsx:13 ~ handleSignInApple ~ appleAuthRequestResponse:',
-        appleAuthRequestResponse,
-      );
-      const email = appleAuthRequestResponse.email; // 가상 이메일 주소
-      console.log('User Email:', email);
-
       // 사용자에 대한 현재 인증 상태
       const credentialState = await appleAuth.getCredentialStateForUser(
         appleAuthRequestResponse.user,
@@ -25,18 +37,13 @@ const AppleLogin = () => {
 
       // 사용자가 인증되었다면,
       if (credentialState === appleAuth.State.AUTHORIZED) {
-        console.log('Apple Login -> Authorized');
-
         // identityToken 반환
         const identityToken = appleAuthRequestResponse.identityToken;
-        if (identityToken) {
-          console.log('Apple Login -> Identity Token:', identityToken);
-          console.log(
-            'Apple Login -> decoded Identity Token:',
-            jwtDecode(identityToken),
-          );
 
-          // TODO: 서버에 identityToken을 보내고 자체 발급 토큰을 요청 로직 추가
+        if (identityToken) {
+          const userInfo: {email: string} = jwtDecode(identityToken);
+          setUserEmail(userInfo.email);
+          appleLoginMutation({email: userInfo.email, identityToken});
         }
       }
     } catch (error: any) {

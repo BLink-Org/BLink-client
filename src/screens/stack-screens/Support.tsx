@@ -5,7 +5,7 @@ import NavigationInfo from '@/components/mypage/NavigationInfo';
 import BackHeader from '@/components/common/BackHeader';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import ModalWebView from '@/components/mypage/ModalWebview';
-import {LINKINFOS} from '@/constants/links';
+import {LINK_INFOS} from '@/constants/links';
 
 const Support = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -22,7 +22,7 @@ const Support = () => {
       <ThemeBackground />
       <BackHeader title="지원" themeColor={theme.TEXT900} />
       <View style={styles.contentContainer}>
-        {LINKINFOS.map(link => (
+        {LINK_INFOS.map(link => (
           <NavigationInfo
             key={link.id}
             title={link.title}

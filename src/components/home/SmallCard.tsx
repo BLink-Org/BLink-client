@@ -1,6 +1,5 @@
 import {useState, useMemo, useRef} from 'react';
 import {
-  Dimensions,
   StyleSheet,
   Text,
   View,
@@ -12,33 +11,39 @@ import {useThemeStore} from '@/store/useThemeStore';
 import {PinnedSelectedIcon, PinnedUnselectedIcon} from '@/assets/icons/common';
 import {FONTS} from '@/constants';
 import {MoveIcon, ShareIcon, ThreeDotIcon} from '@/assets/icons/home';
-import {type IFileList} from '@/types/home';
 import {DeleteIcon, PencilIcon} from '@/assets/icons/mypage';
 import DropDownModal from '@/components/modal/DropDownModal';
 import {useModalStore} from '@/store/useModalStore';
 import AlertModal from '@/components/modal/AlertModal';
-import {type ITheme} from '@/types';
+import {type UseLinkInfoArgs, type ILinkDtos, type ITheme} from '@/types';
 import BottomSheet from '@/components/modal/BottomSheet';
 import TitleContent from '@/components/link/TitleContent';
 import FolderMoveContent from '@/components/link/FolderMoveContent';
 import {TOAST_MESSAGE} from '@/constants/toast';
-
-const screenWidth = Dimensions.get('screen').width - 36;
+import {useDeleteLink, useRecoverLink} from '@/api/hooks/useLink';
+import {extractHostname} from '@/utils/url-utils';
 
 interface SmallCardProps {
-  content: IFileList;
+  content: ILinkDtos;
   isTrash?: boolean;
   showToast?: (text: string) => void;
+  linkInfoArgs: UseLinkInfoArgs;
 }
 
 const SmallCard = ({
   content,
   isTrash,
   showToast = () => {},
+  linkInfoArgs,
 }: SmallCardProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const {showModal, closeModal} = useModalStore();
+
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+
+  const {mutate: deleteLink} = useDeleteLink(linkInfoArgs);
+  const {mutate: recoverLink} = useRecoverLink(linkInfoArgs);
 
   const CardImage = useMemo(() => {
     return theme.SMALL_CARD_IMAGE;
@@ -66,26 +71,32 @@ const SmallCard = ({
   const buttonRef = useRef<TouchableOpacity>(null);
 
   const toggleDropdown = () => {
-    buttonRef.current?.measure((x, y, width, height, pageX, pageY) => {
-      setIsDropdownOpen(true);
-      setAnchorPosition({x: pageX, y: pageY + height});
-    });
+    if (!isDropdownOpen) {
+      buttonRef.current?.measure((x, y, width, height, pageX, pageY) => {
+        setIsDropdownOpen(true);
+        setAnchorPosition({x: pageX, y: pageY + height});
+      });
+      setSelectedId(content.id); // 모달이 열릴 때만 설정
+    } else {
+      setIsDropdownOpen(false);
+      // 모달이 닫힐 때는 selectedId를 변경하지 않음
+    }
   };
 
+  const getModalId = (baseId: string) => `${baseId}-${selectedId}`;
+
   const handleSelect = (label: string) => {
-    const modalId = `trashOption-${label}`;
+    const modalId = getModalId(`trashOption-${label}`);
     showModal(modalId);
   };
 
   const handleConfirmSelect = (label: string) => {
-    const modalId = `trashOption-${label}`;
+    const modalId = getModalId(`trashOption-${label}`);
     if (label === '영구삭제') {
-      // 영구 삭제 api 연동
-      console.log('영구 삭제');
+      deleteLink(String(selectedId));
     }
     if (label === '복원') {
-      // 복원 api 연동
-      console.log('복원');
+      recoverLink(String(content.id));
     }
     closeModal(modalId);
   };
@@ -172,7 +183,7 @@ const SmallCard = ({
     <>
       <View style={styles.container}>
         <View style={styles.dotPosition}>
-          <Text style={styles.folderText}>{content.folder}</Text>
+          <Text style={styles.folderText}>{content.folderName}</Text>
           <TouchableOpacity ref={buttonRef} onPress={toggleDropdown}>
             <ThreeDotIcon fill={theme.TEXT300} />
           </TouchableOpacity>
@@ -199,7 +210,7 @@ const SmallCard = ({
               style={styles.descriptionText}
               numberOfLines={content.title.length > 30 ? 1 : 2}
               ellipsizeMode="tail">
-              {content.description}
+              {content.contents}
             </Text>
           </View>
           <View style={styles.cardImageContainer}>
@@ -218,43 +229,47 @@ const SmallCard = ({
         </View>
         <View style={styles.footer}>
           <View style={styles.footerFront}>
-            <Text style={styles.footerText}>{content.saveDay}</Text>
-            <Text style={styles.footerText}>{content.hostname}</Text>
+            <Text style={styles.footerText}>{content.createdAt}</Text>
+            <Text style={styles.footerText}>
+              {extractHostname(content.url ?? '')}
+            </Text>
           </View>
-          <TouchableOpacity onPress={toggleBookmark}>
-            {isBookmarked ? (
-              <PinnedSelectedIcon
-                width={20}
-                height={20}
-                fill={theme.MAIN400}
-                stroke={theme.MAIN400}
-              />
-            ) : (
-              <PinnedUnselectedIcon
-                width={20}
-                height={20}
-                stroke={theme.TEXT400}
-              />
-            )}
-          </TouchableOpacity>
+          {!isTrash ? (
+            <TouchableOpacity onPress={toggleBookmark}>
+              {isBookmarked ? (
+                <PinnedSelectedIcon
+                  width={20}
+                  height={20}
+                  fill={theme.MAIN400}
+                  stroke={theme.MAIN400}
+                />
+              ) : (
+                <PinnedUnselectedIcon
+                  width={20}
+                  height={20}
+                  stroke={theme.TEXT400}
+                />
+              )}
+            </TouchableOpacity>
+          ) : null}
         </View>
 
         {/* alertModal 처리 */}
         <AlertModal
-          modalId={`trashOption-복원`}
+          modalId={getModalId('trashOption-복원')}
           headerText={`링크를 복원하시겠어요?`}
           bodyText={'마지막에 저장되어있던 위치로 돌아가요'}
           leftText="취소"
           rightText="복원"
-          rightOnPress={() => handleConfirmSelect(`복원`)}
+          rightOnPress={() => handleConfirmSelect('복원')}
         />
         <AlertModal
-          modalId={`trashOption-영구삭제`}
+          modalId={getModalId('trashOption-영구삭제')}
           headerText={`영구 삭제 하시겠어요? `}
           bodyText={`휴지통에서 삭제된 링크는 복원할 수 없어요`}
           leftText="취소"
           rightText="삭제"
-          rightOnPress={() => handleConfirmSelect(`영구삭제`)}
+          rightOnPress={() => handleConfirmSelect('영구삭제')}
         />
       </View>
       <BottomSheet
@@ -281,7 +296,7 @@ export default SmallCard;
 const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     container: {
-      width: screenWidth,
+      height: 169,
       paddingVertical: 16,
       gap: 8,
     },

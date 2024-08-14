@@ -9,7 +9,6 @@ import {
   RefreshIcon,
   SaveIcon,
   ShareIcon,
-  PinnedSelectedIcon,
   ContentBackIcon,
   ContentFrontIcon,
   PinnedUnselectedIcon,

@@ -1,10 +1,11 @@
-import {useState, useRef, useMemo} from 'react';
+import React, {useState, useRef, useMemo} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import Modal from 'react-native-modal';
 import {ArrowDownIcon} from '@/assets/icons/home';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {type ITheme} from '@/types';
+import {CheckIcon} from '@/assets/icons/modal';
 
 interface DropdownProps {
   options: string[];
@@ -68,7 +69,12 @@ const DropdownFilter = ({options, selectedOption, onSelect}: DropdownProps) => {
                 {borderBottomColor: theme.TEXT200},
                 {borderBottomWidth: index === options.length - 1 ? 0 : 1},
               ]}>
-              <Text style={styles.optionText}>{option}</Text>
+              <View style={styles.optionContainer}>
+                <Text style={styles.optionText}>{option}</Text>
+                {option === selectedOption && (
+                  <CheckIcon fill={theme.TEXT700} />
+                )}
+              </View>
             </TouchableOpacity>
           ))}
         </View>
@@ -107,6 +113,11 @@ const createStyles = (theme: ITheme) =>
       paddingVertical: 12,
       paddingHorizontal: 16,
       borderBottomWidth: 1,
+    },
+    optionContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
     },
     optionText: {
       ...FONTS.BODY2_MEDIUM,
