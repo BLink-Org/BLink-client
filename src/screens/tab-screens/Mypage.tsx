@@ -52,6 +52,13 @@ const MyPage = () => {
     navigation.setParams({toastState: null});
   }, [route.params?.toastState]);
 
+  // 애플 이메일 제공 x 유저 -> 이메일 정보 분기 처리
+
+  const email = userInfoData?.email;
+  const displayEmail = email?.endsWith('@privaterelay.appleid.com')
+    ? '애플 가상 이메일입니다'
+    : email;
+
   // 로그아웃 post
   const logout = useLogout();
   const {showModal, closeModal} = useModalStore();
@@ -87,7 +94,7 @@ const MyPage = () => {
             <Text style={styles.titleText}>계정</Text>
           </View>
           <View style={styles.userInfo}>
-            <Text style={styles.emailText}>{userInfoData?.email}</Text>
+            <Text style={styles.emailText}>{displayEmail}</Text>
             <TouchableOpacity onPress={handleAccountManage}>
               <Text style={styles.accountManageText}>계정 관리</Text>
             </TouchableOpacity>

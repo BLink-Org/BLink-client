@@ -17,10 +17,6 @@ import {trackEvent} from '@/utils/amplitude-utils';
 const GoogleLogin = () => {
   const {setTokens} = useUserStore();
   const [userEmail, setUserEmail] = useState<string>('');
-  console.log(
-    '🚀 ~ file: GoogleLogin.tsx:20 ~ GoogleLogin ~ userEmail:',
-    userEmail,
-  );
 
   const {mutate: googleLoginMutation} = useGoogleLogin({
     onSuccess: async (data: TokensSchema) => {

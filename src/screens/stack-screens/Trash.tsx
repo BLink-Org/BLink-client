@@ -17,6 +17,7 @@ import {type ILinkDtos, type ITheme} from '@/types';
 import {useTrashLinks} from '@/api/hooks/useLink';
 import ListHeader from '@/components/common/ListHeaderComponent';
 import AnimatedHeader from '@/components/mypage/AnimatedHeader';
+import SmallCardPlaceHolder from '@/components/home/SmallCardPlaceHolder';
 
 const Trash = () => {
   const {theme} = useThemeStore();
@@ -39,6 +40,7 @@ const Trash = () => {
 
   const {
     data: linkData,
+    isLoading,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
@@ -68,18 +70,22 @@ const Trash = () => {
   const renderItem: ListRenderItem<ILinkDtos> = useCallback(
     ({item, index}) => (
       <View>
-        <SmallCard
-          content={item}
-          isTrash={true}
-          linkInfoArgs={linkInfoArgsOptions}
-        />
-        {index !==
-          (linkData?.pages.flatMap(page => page.linkDtos).length ?? 0) - 1 && (
-          <View style={styles.separator} />
+        {isLoading ? (
+          <SmallCardPlaceHolder />
+        ) : (
+          <SmallCard
+            content={item}
+            isTrash={true}
+            linkInfoArgs={linkInfoArgsOptions}
+          />
         )}
+        {!isLoading &&
+          index !==
+            (linkData?.pages.flatMap(page => page.linkDtos).length ?? 0) -
+              1 && <View style={styles.separator} />}
       </View>
     ),
-    [linkData, styles.separator],
+    [isLoading, linkData, styles.separator],
   );
 
   return (
@@ -94,7 +100,11 @@ const Trash = () => {
             arrowColor={theme.TEXT900}
           />
           <FlatList
-            data={linkData?.pages.flatMap(page => page.linkDtos)}
+            data={
+              isLoading
+                ? Array(10).fill({})
+                : linkData?.pages.flatMap(page => page.linkDtos)
+            }
             renderItem={renderItem}
             keyExtractor={(item, index) => index.toString()}
             ListHeaderComponent={
@@ -114,7 +124,7 @@ const Trash = () => {
             onScroll={handleScroll}
             windowSize={10}
             onEndReached={() => {
-              if (hasNextPage) {
+              if (hasNextPage && !isLoading) {
                 fetchNextPage();
               }
             }}
@@ -152,7 +162,6 @@ const createStyles = (theme: ITheme) =>
     contentContainer: {
       paddingHorizontal: 18,
     },
-
     separator: {
       height: 1,
       marginHorizontal: -18,

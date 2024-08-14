@@ -1,6 +1,5 @@
 import {useState, useMemo, useRef} from 'react';
 import {
-  Dimensions,
   StyleSheet,
   Text,
   View,
@@ -23,8 +22,6 @@ import FolderMoveContent from '@/components/link/FolderMoveContent';
 import {TOAST_MESSAGE} from '@/constants/toast';
 import {useDeleteLink, useRecoverLink} from '@/api/hooks/useLink';
 import {extractHostname} from '@/utils/url-utils';
-
-const screenWidth = Dimensions.get('screen').width - 36;
 
 interface SmallCardProps {
   content: ILinkDtos;
@@ -299,7 +296,7 @@ export default SmallCard;
 const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     container: {
-      width: screenWidth,
+      height: 169,
       paddingVertical: 16,
       gap: 8,
     },

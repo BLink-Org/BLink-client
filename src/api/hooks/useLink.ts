@@ -114,7 +114,7 @@ const getTrashLinks = async (
     },
   });
   //  3초 지연
-  // await new Promise(resolve => setTimeout(resolve, 3000));
+  await new Promise(resolve => setTimeout(resolve, 2500));
   return data.result;
 };
 
