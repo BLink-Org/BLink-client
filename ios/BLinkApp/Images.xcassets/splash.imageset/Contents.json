@@ -1,15 +1,17 @@
 {
   "images" : [
     {
+      "filename" : "BLINK_character 9.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "BLINK_character 8.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "BLINK_character 5.png",
+      "filename" : "BLINK_character 7.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
