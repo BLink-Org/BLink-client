@@ -12,31 +12,47 @@ import {useThemeStore} from '@/store/useThemeStore';
 import {PinnedSelectedIcon, PinnedUnselectedIcon} from '@/assets/icons/common';
 import {FONTS} from '@/constants';
 import {MoveIcon, ShareIcon, ThreeDotIcon} from '@/assets/icons/home';
-import {type IFileList} from '@/types/home';
-import {type ITheme} from '@/types';
+import {type UseLinkInfoArgs, type ITheme, type ILinkDtos} from '@/types';
 import {DeleteIcon, PencilIcon} from '@/assets/icons/mypage';
 import DropDownModal from '@/components/modal/DropDownModal';
 import BottomSheet from '@/components/modal/BottomSheet';
 import TitleContent from '@/components/link/TitleContent';
 import FolderMoveContent from '@/components/link/FolderMoveContent';
 import {TOAST_MESSAGE} from '@/constants/toast';
+import {extractHostname, shareUrl} from '@/utils/url-utils';
+import {
+  useMoveLinkToTrash,
+  useToggleLinkPin,
+  useUpdateLinkTitle,
+} from '@/api/hooks/useLink';
 
 const screenWidth = Dimensions.get('screen').width - 36;
 const aspectRatio = 339 / 140; // 카드 비율
 const cardHeight = screenWidth / aspectRatio;
 
 interface LargeCardProps {
-  content: IFileList;
+  content: ILinkDtos;
   showToast?: (text: string) => void;
+  linkInfoArgs: UseLinkInfoArgs;
 }
 
-const LargeCard = ({content, showToast = () => {}}: LargeCardProps) => {
+const LargeCard = ({
+  content,
+  showToast = () => {},
+  linkInfoArgs,
+}: LargeCardProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
   const CardImage = useMemo(() => {
     return theme.BIG_CARD_IMAGE;
   }, [theme]);
+
+  // 핀 기능 핸들러 추가
+  const {mutate: togglePin} = useToggleLinkPin(linkInfoArgs);
+  const {mutate: moveLinkToTrash} = useMoveLinkToTrash(linkInfoArgs);
+
+  const {mutate: updateTitle} = useUpdateLinkTitle(linkInfoArgs);
 
   // 제목 수정 바텀시트 모달 관리
   const [isTitleBottomSheetVisible, setIsTitleBottomSheetVisible] =
@@ -87,13 +103,15 @@ const LargeCard = ({content, showToast = () => {}}: LargeCardProps) => {
         label: '공유',
         icon: <ShareIcon />,
         onSelect: () => {
-          closeDropdown();
+          const currentUrl = content.url ?? '';
+          shareUrl(currentUrl);
         },
       },
       {
         label: '삭제',
         icon: <DeleteIcon />,
         onSelect: () => {
+          moveLinkToTrash(String(content.id));
           showToast(TOAST_MESSAGE.DELETE_SUCCESS);
           closeDropdown();
         },
@@ -102,10 +120,9 @@ const LargeCard = ({content, showToast = () => {}}: LargeCardProps) => {
     [closeDropdown, toggleTitleBottomSheet, toggleFolderBottomSheet],
   );
 
-  // 토글 상태 관리
-  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
-  const toggleBookmark = () => {
-    setIsBookmarked(!isBookmarked);
+  // 핀 on/off 핸들러
+  const handlePinToggle = () => {
+    togglePin(String(content.id));
   };
 
   // 이미지 로딩 처리
@@ -151,19 +168,23 @@ const LargeCard = ({content, showToast = () => {}}: LargeCardProps) => {
           )}
         </View>
         <View style={styles.folderTop} />
-        <Text style={styles.folderText}>{content.folder}</Text>
+        <Text style={styles.folderText}>
+          {content.folderName ?? '폴더 없이 저장'}
+        </Text>
         <View style={styles.titleTop} />
         <Text style={styles.titleText} numberOfLines={1} ellipsizeMode="tail">
-          {content.title}
+          {content.title === '' ? '제목 없음' : content.title}
         </Text>
         <View style={styles.footerTop} />
         <View style={styles.footer}>
           <View style={styles.footerFront}>
-            <Text style={styles.footerText}>{content.saveDay}</Text>
-            <Text style={styles.footerText}>{content.hostname}</Text>
+            <Text style={styles.footerText}>{content.createdAt}</Text>
+            <Text style={styles.footerText}>
+              {extractHostname(content.url ?? '')}
+            </Text>
           </View>
-          <TouchableOpacity onPress={toggleBookmark}>
-            {isBookmarked ? (
+          <TouchableOpacity onPress={handlePinToggle}>
+            {content.pinned ? (
               <PinnedSelectedIcon
                 width={20}
                 height={20}
@@ -187,13 +208,18 @@ const LargeCard = ({content, showToast = () => {}}: LargeCardProps) => {
         <TitleContent
           defaultText={content.title}
           toggleBottomSheet={toggleTitleBottomSheet}
+          updateTitle={updateTitle}
+          linkId={content.id}
         />
       </BottomSheet>
       <BottomSheet
         modalTitle="폴더 이동"
         isBottomSheetVisible={isFolderBottomSheetVisible}
         toggleBottomSheet={toggleFolderBottomSheet}>
-        <FolderMoveContent toggleBottomSheet={toggleFolderBottomSheet} />
+        <FolderMoveContent
+          toggleBottomSheet={toggleFolderBottomSheet}
+          linkId={content.id}
+        />
       </BottomSheet>
     </>
   );

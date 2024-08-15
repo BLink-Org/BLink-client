@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {useQueryClient} from '@tanstack/react-query';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {isValidUrl} from '@/utils/url-utils';
@@ -17,8 +18,7 @@ import CustomBottomButton from '@/components/common/CustomBottomButton';
 import BottomSheet from '@/components/modal/BottomSheet';
 import FolderContent from '@/components/folder/FolderContent';
 import FolderList from '@/components/folder/FolderList';
-import {useFolders} from '@/api/hooks/useFolder';
-import FolderButton from '../folder/FolderButton';
+import {useCreateFolder, useFolders} from '@/api/hooks/useFolder';
 
 interface FolderSideBarProps {
   defaultURL?: string;
@@ -40,6 +40,17 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
 
   const toggleFolderBottomSheet = () => {
     setIsFolderBottomSheetVisible(!isFolderBottomSheetVisible);
+  };
+  const queryClient = useQueryClient();
+  const {mutate: createFolder} = useCreateFolder({
+    onSuccess: () => {
+      toggleFolderBottomSheet();
+      queryClient.invalidateQueries({queryKey: ['folders']});
+    },
+  });
+
+  const onSaveFolder = (title: string) => {
+    createFolder({title});
   };
 
   useEffect(() => {
@@ -64,9 +75,7 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
           folderTitles={
             useFolderData?.folderDtos.map(folder => folder.title) ?? []
           }
-          toggleBottomSheet={() => {
-            toggleFolderBottomSheet();
-          }}
+          {...{onSaveFolder}}
         />
       </BottomSheet>
       <SafeAreaView

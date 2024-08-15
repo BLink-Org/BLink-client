@@ -68,24 +68,25 @@ const Trash = () => {
   };
 
   const renderItem: ListRenderItem<ILinkDtos> = useCallback(
-    ({item, index}) => (
-      <View>
-        {isLoading ? (
-          <SmallCardPlaceHolder />
-        ) : (
+    ({item, index}) => {
+      const isLastItem =
+        index ===
+        (linkData?.pages.flatMap(page => page.linkDtos).length ?? 0) - 1;
+      if (isLoading) {
+        return <SmallCardPlaceHolder />;
+      }
+      return (
+        <View>
           <SmallCard
             content={item}
             isTrash={true}
             linkInfoArgs={linkInfoArgsOptions}
           />
-        )}
-        {!isLoading &&
-          index !==
-            (linkData?.pages.flatMap(page => page.linkDtos).length ?? 0) -
-              1 && <View style={styles.separator} />}
-      </View>
-    ),
-    [isLoading, linkData, styles.separator],
+          {!isLastItem && <View style={styles.separator} />}
+        </View>
+      );
+    },
+    [isLoading, linkData],
   );
 
   return (

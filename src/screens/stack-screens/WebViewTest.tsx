@@ -14,7 +14,7 @@ import {
   PinnedUnselectedIcon,
 } from '@/assets/icons/webview';
 import {FONTS} from '@/constants';
-import {extractHostname} from '@/utils/url-utils';
+import {extractHostname, shareUrl} from '@/utils/url-utils';
 import NavigationButton from '@/components/webview/NavigationButton';
 import {type ITheme} from '@/types';
 import {useThemeStore} from '@/store/useThemeStore';
@@ -88,14 +88,15 @@ const WebViewList = () => {
     console.log('북마크 저장');
   };
 
-  const shareUrl = () => {
-    Share.share({
-      message: `Check out this website: ${currentUrl}`,
-      url: currentUrl,
-    }).catch(error => {
-      console.error('Error sharing: ', error.message);
-    });
-  };
+  // TODO: 문구 수정 필요
+  // const shareUrl = () => {
+  //   Share.share({
+  //     message: `Check out this website: ${currentUrl}`,
+  //     url: currentUrl,
+  //   }).catch(error => {
+  //     console.error('Error sharing: ', error.message);
+  //   });
+  // };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -148,7 +149,7 @@ const WebViewList = () => {
             )}
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={shareUrl}>
+          <TouchableOpacity onPress={() => shareUrl(currentUrl)}>
             <ShareIcon fill={theme.TEXT900} />
           </TouchableOpacity>
           <TouchableOpacity onPress={saveBookmark}>
