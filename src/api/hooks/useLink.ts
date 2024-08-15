@@ -29,8 +29,7 @@ const getLinks = async (payload: GetLinkInfoArgs): Promise<GetLinksSchema> => {
     },
   });
   // 3초 지연
-  await new Promise(resolve => setTimeout(resolve, 2500));
-  console.log('getLinks data:');
+  await new Promise(resolve => setTimeout(resolve, 1500));
   return data.result;
 };
 
@@ -104,19 +103,54 @@ export const useMoveLinkToTrash = ({
   });
 };
 
-// 링크 저장 POST
-const createLink = async (payload: CreateLinkArgs) => {
-  const {data} = await apiClient.post(API_ENDPOINTS.LINKS.CREATE, payload);
-  return data.result;
+// 링크 제목 수정 PATCH
+const updateLinkTitle = async (payload: UpdateLinkTitleArgs) => {
+  const endpoint = API_ENDPOINTS.LINKS.UPDATE_TITLE.replace(
+    ':linkId',
+    payload.linkId,
+  );
+  await apiClient.patch(endpoint, {title: payload.title});
 };
 
-export const useCreateLink = (options = {}) => {
+export const useUpdateLinkTitle = ({
+  size,
+  sortBy,
+  folderId,
+}: UseLinkInfoArgs) => {
+  const queryClient = useQueryClient();
+
   return useMutation({
-    mutationFn: createLink,
-    onError: (error: string) => {
-      console.warn('Create Link error:', error);
+    mutationFn: updateLinkTitle,
+    onSuccess: (_, payload) => {
+      const cacheKey = ['links', size, sortBy, folderId];
+
+      queryClient.setQueryData<InfiniteData<GetLinksSchema>>(
+        cacheKey,
+        oldData => {
+          if (!oldData) {
+            return oldData;
+          }
+
+          const newPages = oldData.pages.map(page => ({
+            ...page,
+            linkDtos: page.linkDtos.map(link =>
+              String(link.id) === payload.linkId
+                ? {...link, title: payload.title}
+                : link,
+            ),
+          }));
+
+          return {
+            ...oldData,
+            pages: newPages,
+          };
+        },
+      );
+      // console.log('Update Link Title success:', payload);
     },
-    ...options,
+    onError: (error: string) => {
+      console.warn('Update Link Title error:', error);
+    },
   });
 };
 
@@ -129,30 +163,25 @@ const moveLink = async (payload: MoveLinkArgs) => {
   return data.result;
 };
 
-export const useMoveLink = (options = {}) => {
   return useMutation({
     mutationFn: moveLink,
     onError: (error: string) => {
       console.warn('Move Link error:', error);
     },
-    ...options,
   });
 };
 
-// 링크 제목 수정 PATCH
-const updateLinkTitle = async (payload: UpdateLinkTitleArgs) => {
-  const endpoint = API_ENDPOINTS.LINKS.UPDATE_TITLE.replace(
-    ':linkId',
-    payload.linkId,
-  );
-  await apiClient.patch(endpoint, {title: payload.title});
+// 링크 저장 POST
+const createLink = async (payload: CreateLinkArgs) => {
+  const {data} = await apiClient.post(API_ENDPOINTS.LINKS.CREATE, payload);
+  return data.result;
 };
 
-export const useUpdateLinkTitle = (options = {}) => {
+export const useCreateLink = (options = {}) => {
   return useMutation({
-    mutationFn: updateLinkTitle,
+    mutationFn: createLink,
     onError: (error: string) => {
-      console.warn('Update Link Title error:', error);
+      console.warn('Create Link error:', error);
     },
     ...options,
   });

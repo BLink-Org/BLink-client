@@ -26,6 +26,7 @@ import {
   useDeleteLink,
   useMoveLinkToTrash,
   useRecoverLink,
+  useUpdateLinkTitle,
 } from '@/api/hooks/useLink';
 import {extractHostname, shareUrl} from '@/utils/url-utils';
 
@@ -54,6 +55,8 @@ const SmallCard = ({
   const {mutate: deleteLink} = useDeleteLink(linkInfoArgs);
   // 휴지통에서 복원
   const {mutate: recoverLink} = useRecoverLink(linkInfoArgs);
+  // 링크 제목 수정
+  const {mutate: updateTitle} = useUpdateLinkTitle(linkInfoArgs);
 
   const CardImage = useMemo(() => {
     return theme.SMALL_CARD_IMAGE;
@@ -307,6 +310,8 @@ const SmallCard = ({
         <TitleContent
           defaultText={content.title}
           toggleBottomSheet={toggleTitleBottomSheet}
+          updateTitle={updateTitle}
+          linkId={content.id}
         />
       </BottomSheet>
       <BottomSheet

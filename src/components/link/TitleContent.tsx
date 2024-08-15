@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {Linking, StyleSheet, View} from 'react-native';
 import {calculateByteLength} from '@/utils/link-utils';
 import TextInputGroup from '@/components/common/TextInputGroup';
 import CustomBottomButton from '@/components/common/CustomBottomButton';
@@ -7,17 +7,24 @@ import CustomBottomButton from '@/components/common/CustomBottomButton';
 interface TitleContentProps {
   defaultText: string;
   toggleBottomSheet: () => void;
+  updateTitle: (payload: {linkId: string; title: string}) => void;
+  linkId: number;
 }
 
 // 제목 수정 case
-const TitleContent = ({defaultText, toggleBottomSheet}: TitleContentProps) => {
+const TitleContent = ({
+  defaultText,
+  toggleBottomSheet,
+  updateTitle,
+  linkId,
+}: TitleContentProps) => {
   const [textInput, setTextInput] = useState<string | undefined>(defaultText);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isByteCountVisible, setIsByteCountVisible] = useState<boolean>(true);
   const [isReadyToSave, setIsReadyToSave] = useState<boolean>(!!defaultText);
 
   useEffect(() => {
-    if (calculateByteLength(textInput) > 30) {
+    if (calculateByteLength(textInput) > 300) {
       setErrorMessage('');
       setIsByteCountVisible(true);
       setIsReadyToSave(false);
@@ -28,18 +35,26 @@ const TitleContent = ({defaultText, toggleBottomSheet}: TitleContentProps) => {
     }
   }, [textInput]);
 
+  const handleSave = () => {
+    if (textInput) {
+      updateTitle({linkId: String(linkId), title: textInput});
+      toggleBottomSheet(); // 바텀 시트 닫기
+    }
+  };
+
   return (
     <>
       <View style={styles.contentContainer}>
         <TextInputGroup
           inputTitle="제목"
           placeholder="제목을 입력해주세요"
+          isUpdateTitle={true}
           {...{textInput, setTextInput, errorMessage, isByteCountVisible}}
         />
       </View>
       <CustomBottomButton
         title="저장"
-        onPress={toggleBottomSheet}
+        onPress={handleSave}
         isDisabled={!isReadyToSave}
       />
     </>
