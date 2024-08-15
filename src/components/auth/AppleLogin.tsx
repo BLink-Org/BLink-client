@@ -79,8 +79,17 @@ const AppleLogin = () => {
   return (
     <TouchableOpacity onPress={handleLoginPress}>
       <View style={styles.logo}>
-        <AppleLogoIcon />
-        <Text style={styles.logoText}>Apple로 시작하기</Text>
+        {locale === 'KO' ? (
+          <Image
+            source={require('@/assets/images/img-apple-ko.png')}
+            style={styles.logoImage}
+          />
+        ) : (
+          <Image
+            source={require('@/assets/images/img-apple-en.png')}
+            style={styles.logoImageEn}
+          />
+        )}
       </View>
     </TouchableOpacity>
   );

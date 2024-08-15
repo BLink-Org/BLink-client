@@ -70,8 +70,17 @@ const GoogleLogin = () => {
   return (
     <TouchableOpacity onPress={handleLoginPress}>
       <View style={styles.logo}>
-        <GoogleLogoIcon />
-        <Text style={styles.logoText}>Google로 시작하기</Text>
+        {locale === 'KO' ? (
+          <Image
+            source={require('@/assets/images/img-google-ko.png')}
+            style={styles.logoImage}
+          />
+        ) : (
+          <Image
+            source={require('@/assets/images/img-google-en.png')}
+            style={styles.logoImageEn}
+          />
+        )}
       </View>
     </TouchableOpacity>
   );

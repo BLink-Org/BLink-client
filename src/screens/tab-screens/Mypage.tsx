@@ -60,7 +60,7 @@ const MyPage = () => {
     : email;
 
   // 로그아웃 post
-  const logout = useLogout();
+  const {mutate: logout} = useLogout();
   const {showModal, closeModal} = useModalStore();
 
   // Navigation Handlers
@@ -74,7 +74,7 @@ const MyPage = () => {
   const handleConfirmLogout = () => {
     closeModal('logoutConfirm');
     if (refreshToken) {
-      logout.mutate(refreshToken);
+      logout(refreshToken);
       trackEvent('Logout');
     }
     signOut();

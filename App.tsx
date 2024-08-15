@@ -23,6 +23,10 @@ export default function App(props: AppProps) {
   const restoreTheme = useThemeStore(state => state.restoreTheme);
   const {ShareMenu} = NativeModules;
   const isAuthenticated = useUserStore(state => state.isAuthenticated);
+  console.log(
+    '🚀 ~ file: App.tsx:26 ~ App ~ isAuthenticated:',
+    isAuthenticated,
+  );
   const loadTokens = useUserStore(state => state.loadTokens);
 
   useEffect(() => {
@@ -68,6 +72,10 @@ export default function App(props: AppProps) {
 
     initializeApp(); // 초기화 함수 호출
   }, []);
+
+  if (isAuthenticated === null) {
+    return null;
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
