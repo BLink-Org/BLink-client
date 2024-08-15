@@ -19,7 +19,7 @@ import BottomSheet from '@/components/modal/BottomSheet';
 import FolderContent from '@/components/folder/FolderContent';
 import FolderList from '@/components/folder/FolderList';
 import {useCreateFolder, useFolders} from '@/api/hooks/useFolder';
-import FolderButton from '../folder/FolderButton';
+import {useCreateLink} from '@/api/hooks/useLink';
 
 interface FolderSideBarProps {
   defaultURL?: string;
@@ -45,6 +45,13 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
     onSuccess: () => {
       toggleFolderBottomSheet();
       queryClient.invalidateQueries({queryKey: ['folders']});
+    },
+  });
+
+  const {mutate: createLink} = useCreateLink({
+    onSuccess: () => {
+      toggleBottomSheet();
+      queryClient.invalidateQueries({queryKey: ['links']});
     },
   });
 
@@ -105,7 +112,10 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
       </SafeAreaView>
       <CustomBottomButton
         title="저장"
-        onPress={toggleBottomSheet}
+        onPress={() => {
+          textInput &&
+            createLink({url: textInput, folderIdList: selectedFolderId});
+        }}
         isDisabled={!isReadyToSave}
       />
     </>

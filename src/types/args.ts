@@ -14,7 +14,7 @@ export interface CreateLinkArgs {
 }
 
 export interface MoveLinkArgs {
-  linkId: string;
+  linkId: number;
   folderIdList: number[];
 }
 
