@@ -19,7 +19,12 @@ import BottomSheet from '@/components/modal/BottomSheet';
 import TitleContent from '@/components/link/TitleContent';
 import FolderMoveContent from '@/components/link/FolderMoveContent';
 import {TOAST_MESSAGE} from '@/constants/toast';
-import {extractHostname} from '@/utils/url-utils';
+import {extractHostname, shareUrl} from '@/utils/url-utils';
+import {
+  useMoveLinkToTrash,
+  useToggleLinkPin,
+  useUpdateLinkTitle,
+} from '@/api/hooks/useLink';
 
 const screenWidth = Dimensions.get('screen').width - 36;
 const aspectRatio = 339 / 140; // 카드 비율
@@ -42,6 +47,12 @@ const LargeCard = ({
   const CardImage = useMemo(() => {
     return theme.BIG_CARD_IMAGE;
   }, [theme]);
+
+  // 핀 기능 핸들러 추가
+  const {mutate: togglePin} = useToggleLinkPin(linkInfoArgs);
+  const {mutate: moveLinkToTrash} = useMoveLinkToTrash(linkInfoArgs);
+
+  const {mutate: updateTitle} = useUpdateLinkTitle(linkInfoArgs);
 
   // 제목 수정 바텀시트 모달 관리
   const [isTitleBottomSheetVisible, setIsTitleBottomSheetVisible] =
@@ -92,13 +103,15 @@ const LargeCard = ({
         label: '공유',
         icon: <ShareIcon />,
         onSelect: () => {
-          closeDropdown();
+          const currentUrl = content.url ?? '';
+          shareUrl(currentUrl);
         },
       },
       {
         label: '삭제',
         icon: <DeleteIcon />,
         onSelect: () => {
+          moveLinkToTrash(String(content.id));
           showToast(TOAST_MESSAGE.DELETE_SUCCESS);
           closeDropdown();
         },
@@ -107,10 +120,9 @@ const LargeCard = ({
     [closeDropdown, toggleTitleBottomSheet, toggleFolderBottomSheet],
   );
 
-  // 토글 상태 관리
-  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
-  const toggleBookmark = () => {
-    setIsBookmarked(!isBookmarked);
+  // 핀 on/off 핸들러
+  const handlePinToggle = () => {
+    togglePin(String(content.id));
   };
 
   // 이미지 로딩 처리
@@ -171,8 +183,8 @@ const LargeCard = ({
               {extractHostname(content.url ?? '')}
             </Text>
           </View>
-          <TouchableOpacity onPress={toggleBookmark}>
-            {isBookmarked ? (
+          <TouchableOpacity onPress={handlePinToggle}>
+            {content.pinned ? (
               <PinnedSelectedIcon
                 width={20}
                 height={20}
@@ -196,13 +208,18 @@ const LargeCard = ({
         <TitleContent
           defaultText={content.title}
           toggleBottomSheet={toggleTitleBottomSheet}
+          updateTitle={updateTitle}
+          linkId={content.id}
         />
       </BottomSheet>
       <BottomSheet
         modalTitle="폴더 이동"
         isBottomSheetVisible={isFolderBottomSheetVisible}
         toggleBottomSheet={toggleFolderBottomSheet}>
-        <FolderMoveContent toggleBottomSheet={toggleFolderBottomSheet} />
+        <FolderMoveContent
+          toggleBottomSheet={toggleFolderBottomSheet}
+          linkId={content.id}
+        />
       </BottomSheet>
     </>
   );

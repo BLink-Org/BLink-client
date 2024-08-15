@@ -153,18 +153,61 @@ export const useUpdateLinkTitle = ({
     },
   });
 };
+
+// 특정 링크가 저장 되어 있는 폴더 목록 GET
+const getLinkFolder = async (linkId: string) => {
+  const endpoint = API_ENDPOINTS.LINKS.FETCH_FOLDER.replace(':linkId', linkId);
+  const {data} = await apiClient.get(endpoint);
+  return data.result;
+};
+export const useLinkFolder = (linkId: string) => {
+  return useQuery({
+    queryKey: ['linkFolder', linkId],
+    queryFn: async () => await getLinkFolder(linkId),
+    enabled: false, // 쿼리를 수동으로 호출하기 위해 비활성화
+  });
+};
+
 // 링크 저장 폴더 변경 POST
 const moveLink = async (payload: MoveLinkArgs) => {
   const endpoint = API_ENDPOINTS.LINKS.MOVE.replace(':linkId', payload.linkId);
+
   // folderIdList가 비어 있을 수 있음을 처리
   const {data} = await apiClient.post(endpoint, {
-    folderIdList: payload.folderIdList,
+    folderIdList: payload.folderIdList || [],
   });
+
   return data.result;
 };
 
+export const useMoveLink = ({size, sortBy, folderId}: UseLinkInfoArgs) => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: moveLink,
+    onSuccess: (_, payload) => {
+      const cacheKey = ['links', size, sortBy, folderId];
+      queryClient.setQueryData<InfiniteData<GetLinksSchema>>(
+        cacheKey,
+        oldData => {
+          if (!oldData) {
+            return oldData;
+          }
+          const newPages = oldData.pages.map(page => ({
+            ...page,
+            linkDtos: page.linkDtos.map(link =>
+              String(link.id) === payload.linkId
+                ? {...link, folderIdList: payload.folderIdList}
+                : link,
+            ),
+          }));
+          return {
+            ...oldData,
+            pages: newPages,
+          };
+        },
+      );
+    },
     onError: (error: string) => {
       console.warn('Move Link error:', error);
     },
@@ -339,6 +382,8 @@ export const useRecoverLink = ({size, sortBy}: UseLinkInfoArgs) => {
           };
         },
       );
+
+      queryClient.invalidateQueries({queryKey: ['links']});
     },
     onError: (error: string) => {
       console.warn('Recover Link error:', error);

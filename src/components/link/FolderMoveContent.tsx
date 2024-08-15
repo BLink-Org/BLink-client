@@ -1,12 +1,12 @@
 import React, {useEffect, useState, useMemo} from 'react';
 import {
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import {useQueryClient} from '@tanstack/react-query';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {AddIcon} from '@/assets/icons/common';
@@ -16,23 +16,43 @@ import CustomBottomButton from '@/components/common/CustomBottomButton';
 import BottomSheet from '@/components/modal/BottomSheet';
 import FolderContent from '@/components/folder/FolderContent';
 import FolderList from '@/components/folder/FolderList';
-import {useFolders} from '@/api/hooks/useFolder';
-import FolderButton from '../folder/FolderButton';
+import {useCreateFolder, useFolders} from '@/api/hooks/useFolder';
+import {useLinkFolder} from '@/api/hooks/useLink';
 
 interface FolderMoveContentProps {
   toggleBottomSheet: () => void;
+  linkId: number;
 }
 
-const FolderMoveContent = ({toggleBottomSheet}: FolderMoveContentProps) => {
+const FolderMoveContent = ({
+  toggleBottomSheet,
+  linkId,
+}: FolderMoveContentProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const {data: useFolderData} = useFolders();
+  // 특정 링크의 폴더 정보 가져오기
+  // const {data: selectedFoldersData} = useLinkFolder(linkId);
+  console.log('linkId', linkId);
 
   const [selectedFolderId, setSelectedFolderId] = useState<number[]>([]);
+
   const [isReadyToSave, setIsReadyToSave] = useState<boolean>(true);
   const [isFolderBottomSheetVisible, setIsFolderBottomSheetVisible] =
     useState(false);
   const {buttonHeight} = useBottomButtonSizeStore();
+
+  const queryClient = useQueryClient();
+  const {mutate: createFolder} = useCreateFolder({
+    onSuccess: () => {
+      toggleFolderBottomSheet();
+      queryClient.invalidateQueries({queryKey: ['folders']});
+    },
+  });
+
+  const onSaveFolder = (title: string) => {
+    createFolder({title});
+  };
 
   const toggleFolderBottomSheet = () => {
     setIsFolderBottomSheetVisible(!isFolderBottomSheetVisible);
@@ -52,7 +72,7 @@ const FolderMoveContent = ({toggleBottomSheet}: FolderMoveContentProps) => {
           folderTitles={
             useFolderData?.folderDtos.map(folder => folder.title) ?? []
           }
-          toggleBottomSheet={toggleFolderBottomSheet}
+          {...{onSaveFolder}}
         />
       </BottomSheet>
       <SafeAreaView
@@ -115,7 +135,7 @@ const createStyles = (theme: ITheme) =>
       paddingVertical: 12,
       marginBottom: 58,
     },
-    lastFolderview: {
+    lastFolderView: {
       flex: 1,
     },
     stroke: {

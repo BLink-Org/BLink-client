@@ -319,7 +319,10 @@ const SmallCard = ({
         modalTitle="폴더 이동"
         isBottomSheetVisible={isFolderBottomSheetVisible}
         toggleBottomSheet={toggleFolderBottomSheet}>
-        <FolderMoveContent toggleBottomSheet={toggleFolderBottomSheet} />
+        <FolderMoveContent
+          toggleBottomSheet={toggleFolderBottomSheet}
+          linkId={content.id}
+        />
       </BottomSheet>
     </>
   );
