@@ -17,23 +17,31 @@ import BottomSheet from '@/components/modal/BottomSheet';
 import FolderContent from '@/components/folder/FolderContent';
 import FolderList from '@/components/folder/FolderList';
 import {useCreateFolder, useFolders} from '@/api/hooks/useFolder';
+import {useLinkFolder} from '@/api/hooks/useLink';
 
 interface FolderMoveContentProps {
   toggleBottomSheet: () => void;
+  linkId: number;
 }
 
-const FolderMoveContent = ({toggleBottomSheet}: FolderMoveContentProps) => {
+const FolderMoveContent = ({
+  toggleBottomSheet,
+  linkId,
+}: FolderMoveContentProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const {data: useFolderData} = useFolders();
+  // 특정 링크의 폴더 정보 가져오기
+  // const {data: selectedFoldersData} = useLinkFolder(linkId);
+  console.log('linkId', linkId);
 
   const [selectedFolderId, setSelectedFolderId] = useState<number[]>([]);
+
   const [isReadyToSave, setIsReadyToSave] = useState<boolean>(true);
   const [isFolderBottomSheetVisible, setIsFolderBottomSheetVisible] =
     useState(false);
   const {buttonHeight} = useBottomButtonSizeStore();
 
-  // 폴더 이동 모달 내 폴더 생성 API
   const queryClient = useQueryClient();
   const {mutate: createFolder} = useCreateFolder({
     onSuccess: () => {
@@ -127,7 +135,7 @@ const createStyles = (theme: ITheme) =>
       paddingVertical: 12,
       marginBottom: 58,
     },
-    lastFolderview: {
+    lastFolderView: {
       flex: 1,
     },
     stroke: {

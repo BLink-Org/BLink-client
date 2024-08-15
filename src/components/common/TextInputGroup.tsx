@@ -19,6 +19,7 @@ interface TextInputGroupProps {
   placeholder: string;
   errorMessage: string;
   isByteCountVisible?: boolean;
+  isUpdateTitle?: boolean;
 }
 
 const TextInputGroup = ({
@@ -28,10 +29,12 @@ const TextInputGroup = ({
   placeholder,
   errorMessage,
   isByteCountVisible = false,
+  isUpdateTitle = false,
 }: TextInputGroupProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
+  const byteLimit = isUpdateTitle ? 300 : 30;
   const byteLength = calculateByteLength(textInput);
 
   return (
@@ -56,9 +59,9 @@ const TextInputGroup = ({
             <Text
               style={[
                 styles.byteCount,
-                {color: byteLength <= 30 ? theme.TEXT300 : theme.ERROR},
+                {color: byteLength <= byteLimit ? theme.TEXT300 : theme.ERROR},
               ]}>
-              Byte {byteLength}/30
+              Byte {byteLength}/{byteLimit}
             </Text>
           )}
         </View>

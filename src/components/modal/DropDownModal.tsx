@@ -1,4 +1,10 @@
-import {cloneElement, type ReactElement, useMemo} from 'react';
+import {
+  cloneElement,
+  type ReactElement,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import Modal from 'react-native-modal';
 import {FONTS} from '@/constants';
@@ -27,14 +33,31 @@ const DropDownModal = ({
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
+  const [isModalVisible, setIsVisible] = useState(isVisible);
+  useEffect(() => {
+    setIsVisible(isVisible);
+  }, [isVisible]);
+
+  const handleClose = () => {
+    setIsVisible(false);
+    // 3초 timeout 끝난 후 onClose 실행
+    setTimeout(() => {
+      onClose();
+    }, 300);
+  };
+
   return (
     <Modal
-      isVisible={isVisible}
-      onBackdropPress={onClose}
-      onBackButtonPress={onClose}
+      isVisible={isModalVisible}
+      onBackdropPress={handleClose}
+      onBackButtonPress={handleClose}
       backdropColor="transparent"
       animationIn="fadeIn"
       animationOut="fadeOut"
+      animationInTiming={300}
+      animationOutTiming={300}
+      useNativeDriver={true}
+      hideModalContentWhileAnimating={true}
       style={[
         styles.modal,
         {marginTop: anchorPosition.y + 4, marginLeft: anchorPosition.x - 156},

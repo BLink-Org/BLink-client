@@ -6,6 +6,8 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
+  type TextLayoutEventData,
+  type NativeSyntheticEvent,
 } from 'react-native';
 import {useThemeStore} from '@/store/useThemeStore';
 import {PinnedSelectedIcon, PinnedUnselectedIcon} from '@/assets/icons/common';
@@ -20,8 +22,14 @@ import BottomSheet from '@/components/modal/BottomSheet';
 import TitleContent from '@/components/link/TitleContent';
 import FolderMoveContent from '@/components/link/FolderMoveContent';
 import {TOAST_MESSAGE} from '@/constants/toast';
-import {useDeleteLink, useRecoverLink} from '@/api/hooks/useLink';
-import {extractHostname} from '@/utils/url-utils';
+import {
+  useDeleteLink,
+  useMoveLinkToTrash,
+  useRecoverLink,
+  useToggleLinkPin,
+  useUpdateLinkTitle,
+} from '@/api/hooks/useLink';
+import {extractHostname, shareUrl} from '@/utils/url-utils';
 
 interface SmallCardProps {
   content: ILinkDtos;
@@ -42,8 +50,16 @@ const SmallCard = ({
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
+  // 휴지통으로 이동
+  const {mutate: moveLinkToTrash} = useMoveLinkToTrash(linkInfoArgs);
+  // 휴지통에서 영구삭제
   const {mutate: deleteLink} = useDeleteLink(linkInfoArgs);
+  // 휴지통에서 복원
   const {mutate: recoverLink} = useRecoverLink(linkInfoArgs);
+  // 링크 제목 수정
+  const {mutate: updateTitle} = useUpdateLinkTitle(linkInfoArgs);
+  // 핀 on/off
+  const {mutate: togglePin} = useToggleLinkPin(linkInfoArgs);
 
   const CardImage = useMemo(() => {
     return theme.SMALL_CARD_IMAGE;
@@ -76,11 +92,15 @@ const SmallCard = ({
         setIsDropdownOpen(true);
         setAnchorPosition({x: pageX, y: pageY + height});
       });
-      setSelectedId(content.id); // 모달이 열릴 때만 설정
+      setSelectedId(content.id);
     } else {
       setIsDropdownOpen(false);
-      // 모달이 닫힐 때는 selectedId를 변경하지 않음
     }
+  };
+
+  // 핀 on/off
+  const handlePinToggle = () => {
+    togglePin(String(content.id));
   };
 
   const getModalId = (baseId: string) => `${baseId}-${selectedId}`;
@@ -96,7 +116,7 @@ const SmallCard = ({
       deleteLink(String(selectedId));
     }
     if (label === '복원') {
-      recoverLink(String(content.id));
+      recoverLink(String(selectedId));
     }
     closeModal(modalId);
   };
@@ -123,13 +143,16 @@ const SmallCard = ({
         label: '공유',
         icon: <ShareIcon />,
         onSelect: () => {
-          closeDropdown();
+          const currentUrl = content.url ?? '';
+          shareUrl(currentUrl);
         },
       },
+
       {
         label: '삭제',
         icon: <DeleteIcon />,
         onSelect: () => {
+          moveLinkToTrash(String(content.id));
           showToast(TOAST_MESSAGE.DELETE_SUCCESS);
           closeDropdown();
         },
@@ -160,12 +183,6 @@ const SmallCard = ({
     [closeDropdown, handleSelect],
   );
 
-  // 북마크 토글 상태 관리
-  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
-  const toggleBookmark = () => {
-    setIsBookmarked(!isBookmarked);
-  };
-
   // 이미지 로딩 처리
   const [imageLoading, setImageLoading] = useState<boolean>(true);
   const handleImageLoad = () => {
@@ -179,11 +196,25 @@ const SmallCard = ({
     );
   };
 
+  // 제목 라인 수에 따라 본문 라인 수 조절
+  const [contentLines, setContentLines] = useState(1);
+  const handleTitleLayout = (
+    event: NativeSyntheticEvent<TextLayoutEventData>,
+  ) => {
+    const lineCount = event.nativeEvent.lines.length;
+    if (lineCount === 2) {
+      setContentLines(1);
+    }
+  };
+
+  <Text>text contents</Text>;
   return (
     <>
       <View style={styles.container}>
         <View style={styles.dotPosition}>
-          <Text style={styles.folderText}>{content.folderName}</Text>
+          <Text style={styles.folderText}>
+            {content.folderName ?? '폴더 없이 저장'}
+          </Text>
           <TouchableOpacity ref={buttonRef} onPress={toggleDropdown}>
             <ThreeDotIcon fill={theme.TEXT300} />
           </TouchableOpacity>
@@ -202,15 +233,16 @@ const SmallCard = ({
             <Text
               style={styles.titleText}
               numberOfLines={2}
-              ellipsizeMode="tail">
-              {content.title}
+              ellipsizeMode="tail"
+              onTextLayout={handleTitleLayout}>
+              {content.title === '' ? '제목 없음' : content.title}
             </Text>
             <View style={styles.descriptionTop} />
             <Text
               style={styles.descriptionText}
-              numberOfLines={content.title.length > 30 ? 1 : 2}
+              numberOfLines={contentLines}
               ellipsizeMode="tail">
-              {content.contents}
+              {content.contents === '' ? '내용 없음' : content.contents}
             </Text>
           </View>
           <View style={styles.cardImageContainer}>
@@ -235,8 +267,8 @@ const SmallCard = ({
             </Text>
           </View>
           {!isTrash ? (
-            <TouchableOpacity onPress={toggleBookmark}>
-              {isBookmarked ? (
+            <TouchableOpacity onPress={handlePinToggle}>
+              {content.pinned ? (
                 <PinnedSelectedIcon
                   width={20}
                   height={20}
@@ -279,13 +311,18 @@ const SmallCard = ({
         <TitleContent
           defaultText={content.title}
           toggleBottomSheet={toggleTitleBottomSheet}
+          updateTitle={updateTitle}
+          linkId={content.id}
         />
       </BottomSheet>
       <BottomSheet
         modalTitle="폴더 이동"
         isBottomSheetVisible={isFolderBottomSheetVisible}
         toggleBottomSheet={toggleFolderBottomSheet}>
-        <FolderMoveContent toggleBottomSheet={toggleFolderBottomSheet} />
+        <FolderMoveContent
+          toggleBottomSheet={toggleFolderBottomSheet}
+          linkId={content.id}
+        />
       </BottomSheet>
     </>
   );
