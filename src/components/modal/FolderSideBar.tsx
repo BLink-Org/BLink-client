@@ -52,7 +52,6 @@ const FolderSideBar = ({
 
   const queryClient = useQueryClient();
   const {data: useFolderData} = useFolders();
-  // 폴더 생성 API
   const {mutate: createFolder} = useCreateFolder({
     onSuccess: () => {
       setIsBottomSheetVisible(!isBottomSheetVisible);
@@ -60,7 +59,6 @@ const FolderSideBar = ({
       showToast(TOAST_MESSAGE.CREATE_SUCCESS);
     },
   });
-  // 폴더 이름 수정 API
   const {mutate: updateFolderTitle} = useUpdateFolderTitle({
     onSuccess: () => {
       setIsBottomSheetVisible(!isBottomSheetVisible);

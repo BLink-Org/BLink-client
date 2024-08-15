@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {useQueryClient} from '@tanstack/react-query';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {isValidUrl} from '@/utils/url-utils';
@@ -17,7 +18,7 @@ import CustomBottomButton from '@/components/common/CustomBottomButton';
 import BottomSheet from '@/components/modal/BottomSheet';
 import FolderContent from '@/components/folder/FolderContent';
 import FolderList from '@/components/folder/FolderList';
-import {useFolders} from '@/api/hooks/useFolder';
+import {useCreateFolder, useFolders} from '@/api/hooks/useFolder';
 import FolderButton from '../folder/FolderButton';
 
 interface FolderSideBarProps {
@@ -37,6 +38,19 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
   const [isFolderBottomSheetVisible, setIsFolderBottomSheetVisible] =
     useState(false);
   const {buttonHeight} = useBottomButtonSizeStore();
+
+  // 링크 저장 모달 내 폴더 생성 API
+  const queryClient = useQueryClient();
+  const {mutate: createFolder} = useCreateFolder({
+    onSuccess: () => {
+      toggleFolderBottomSheet();
+      queryClient.invalidateQueries({queryKey: ['folders']});
+    },
+  });
+
+  const onSaveFolder = (textInput: string) => {
+    createFolder({title: textInput});
+  };
 
   const toggleFolderBottomSheet = () => {
     setIsFolderBottomSheetVisible(!isFolderBottomSheetVisible);
@@ -64,9 +78,7 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
           folderTitles={
             useFolderData?.folderDtos.map(folder => folder.title) ?? []
           }
-          toggleBottomSheet={() => {
-            toggleFolderBottomSheet();
-          }}
+          {...{onSaveFolder}}
         />
       </BottomSheet>
       <SafeAreaView

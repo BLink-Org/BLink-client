@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect, useMemo} from 'react';
+import React, {useState, useCallback, useEffect, useMemo, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
   FlatList,
@@ -11,6 +11,8 @@ import {
   type ListRenderItem,
   Animated,
   Platform,
+  PanResponder,
+  Dimensions,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {FONTS} from '@/constants';
@@ -29,7 +31,6 @@ import FolderSideBar from '@/components/modal/FolderSideBar';
 import {useBottomButtonSizeStore} from '@/store/useBottomButtonSizeStore';
 import {type ITheme} from '@/types';
 import useToast from '@/hooks/useToast';
-import SmallCardPlaceHolder from '@/components/home/SmallCardPlaceHolder';
 
 const Home = () => {
   const {t} = useTranslation();
@@ -90,6 +91,63 @@ const Home = () => {
   // sticky header 애니메이션
   const {translateY, handleScroll} = useStickyAnimation(refreshing);
 
+  // folder side bar 스와이프 제스쳐
+  const animation = useRef(
+    new Animated.Value(-Dimensions.get('window').width),
+  ).current;
+
+  const panResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onStartShouldSetPanResponderCapture: () => false,
+        onMoveShouldSetPanResponder: (evt, gestureState) => {
+          // 좌우로 움직임이 있을 때만 제스처를 활성화
+          return Math.abs(gestureState.dx) > 5;
+        },
+        onMoveShouldSetPanResponderCapture: () => false,
+        onPanResponderMove: (evt, gestureState) => {
+          const newX = Math.max(
+            -Dimensions.get('window').width,
+            Math.min(0, gestureState.dx),
+          );
+          animation.setValue(newX);
+        },
+        onPanResponderRelease: (evt, gestureState) => {
+          const {dx} = gestureState;
+          const screenWidth = Dimensions.get('window').width;
+
+          if (dx > screenWidth / 4) {
+            // 오른쪽으로 드래그가 일정 거리 이상일 경우 사이드바 열기
+            Animated.timing(animation, {
+              toValue: 0,
+              duration: 200,
+              useNativeDriver: true,
+            }).start(() => {
+              setIsSideBarVisible(true); // 사이드바가 열린 상태로 유지
+            });
+          } else if (dx < -screenWidth / 4) {
+            // 왼쪽으로 드래그가 일정 거리 이상일 경우 사이드바 닫기
+            Animated.timing(animation, {
+              toValue: -screenWidth,
+              duration: 200,
+              useNativeDriver: true,
+            }).start(() => {
+              setIsSideBarVisible(false); // 사이드바가 닫힌 상태로 설정
+            });
+          } else {
+            // 드래그가 작을 경우 원래 위치로 복귀
+            Animated.timing(animation, {
+              toValue: 0,
+              duration: 200,
+              useNativeDriver: true,
+            }).start();
+          }
+        },
+      }),
+    [],
+  );
+
   // FlatList Header 영역
   const ListHeaderComponent = () => {
     return (
@@ -141,7 +199,7 @@ const Home = () => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} {...panResponder.panHandlers}>
       <ThemeBackground />
       <View style={styles.mainContainer}>
         <FolderSideBar
