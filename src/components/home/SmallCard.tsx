@@ -191,23 +191,25 @@ const SmallCard = ({
   const LoadingScreen = () => {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="small" color={theme.MAIN500} />
+        <ActivityIndicator size="small" color={theme.MAIN400} />
       </View>
     );
   };
 
   // 제목 라인 수에 따라 본문 라인 수 조절
   const [contentLines, setContentLines] = useState(1);
+
   const handleTitleLayout = (
     event: NativeSyntheticEvent<TextLayoutEventData>,
   ) => {
     const lineCount = event.nativeEvent.lines.length;
-    if (lineCount === 2) {
+    if (lineCount === 1) {
+      setContentLines(2);
+    } else {
       setContentLines(1);
     }
   };
 
-  <Text>text contents</Text>;
   return (
     <>
       <View style={styles.container}>
@@ -333,7 +335,7 @@ export default SmallCard;
 const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     container: {
-      height: 169,
+      height: 180,
       paddingVertical: 16,
       gap: 8,
     },
@@ -353,8 +355,8 @@ const createStyles = (theme: ITheme) =>
       height: 8,
     },
     cardImageContainer: {
-      width: 76,
-      height: 76,
+      width: 84,
+      height: 84,
       borderRadius: 8,
       overflow: 'hidden',
     },

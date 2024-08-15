@@ -28,6 +28,7 @@ import useToast from '@/hooks/useToast';
 import SmallCardPlaceHolder from '@/components/home/SmallCardPlaceHolder';
 import {useLinks} from '@/api/hooks/useLink';
 import AnimatedLogoHeader from '@/components/common/AnimatedLogoHeader';
+import LargeCardPlaceHolder from '@/components/home/LargeCardPlaceHolder';
 
 const Home = () => {
   const {t} = useTranslation();
@@ -152,8 +153,7 @@ const Home = () => {
 
       if (isLoading) {
         return isLargeCard ? (
-          // <LargeCardPlaceHolder />
-          <SmallCardPlaceHolder />
+          <LargeCardPlaceHolder />
         ) : (
           <SmallCardPlaceHolder />
         );
