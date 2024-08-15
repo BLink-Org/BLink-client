@@ -153,10 +153,10 @@ export const useUpdateLinkTitle = ({
     },
   });
 };
-
 // 링크 저장 폴더 변경 POST
 const moveLink = async (payload: MoveLinkArgs) => {
   const endpoint = API_ENDPOINTS.LINKS.MOVE.replace(':linkId', payload.linkId);
+  // folderIdList가 비어 있을 수 있음을 처리
   const {data} = await apiClient.post(endpoint, {
     folderIdList: payload.folderIdList,
   });
@@ -168,6 +168,66 @@ const moveLink = async (payload: MoveLinkArgs) => {
     onError: (error: string) => {
       console.warn('Move Link error:', error);
     },
+  });
+};
+
+// 링크 고정/고정 해제 토글 PATCH
+const toggleLinkPin = async (linkId: string) => {
+  const endpoint = API_ENDPOINTS.LINKS.PIN_TOGGLE.replace(':linkId', linkId);
+  await apiClient.patch(endpoint); // 고정/고정 해제 토글 API 호출
+};
+
+export const useToggleLinkPin = ({size, sortBy, folderId}: UseLinkInfoArgs) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: toggleLinkPin,
+    onSuccess: (_, linkId) => {
+      const cacheKey = ['links', size, sortBy, folderId]; // 캐시 키 정의
+
+      queryClient.setQueryData<InfiniteData<GetLinksSchema>>(
+        cacheKey,
+        oldData => {
+          if (!oldData) {
+            return oldData;
+          }
+
+          const newPages = oldData.pages.map(page => ({
+            ...page,
+            linkDtos: page.linkDtos.map(link => {
+              if (String(link.id) === linkId) {
+                return {
+                  ...link,
+                  pinned: !link.pinned,
+                };
+              }
+              return link;
+            }),
+          }));
+
+          return {
+            ...oldData,
+            pages: newPages,
+          };
+        },
+      );
+    },
+    onError: (error: string) => {
+      console.warn('Toggle Link Pin error:', error);
+    },
+  });
+};
+
+// 핀 고정 링크 목록 조회 GET
+const getPinnedLinks = async (): Promise<GetLinksSchema> => {
+  const {data} = await apiClient.get(API_ENDPOINTS.LINKS.GET_PINNED);
+  return data.result;
+};
+
+export const usePinnedLinks = () => {
+  return useQuery({
+    queryKey: ['pinnedLinks'],
+    queryFn: getPinnedLinks,
   });
 };
 
@@ -321,34 +381,5 @@ export const useDeleteLink = ({size, sortBy}: UseLinkInfoArgs) => {
     onError: (error: Error) => {
       console.warn('Delete Link error:', error);
     },
-  });
-};
-
-// 링크 고정 토글 PATCH
-const toggleLinkPin = async (linkId: string) => {
-  const endpoint = API_ENDPOINTS.LINKS.PIN_TOGGLE.replace(':linkId', linkId);
-  await apiClient.patch(endpoint);
-};
-
-export const useToggleLinkPin = (options = {}) => {
-  return useMutation({
-    mutationFn: toggleLinkPin,
-    onError: (error: string) => {
-      console.warn('Toggle Link Pin error:', error);
-    },
-    ...options,
-  });
-};
-
-// 핀 고정 링크 목록 조회 GET
-const getPinnedLinks = async (): Promise<GetLinksSchema> => {
-  const {data} = await apiClient.get(API_ENDPOINTS.LINKS.GET_PINNED);
-  return data.result;
-};
-
-export const usePinnedLinks = () => {
-  return useQuery({
-    queryKey: ['pinnedLinks'],
-    queryFn: getPinnedLinks,
   });
 };

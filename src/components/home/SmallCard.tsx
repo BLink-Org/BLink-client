@@ -26,6 +26,7 @@ import {
   useDeleteLink,
   useMoveLinkToTrash,
   useRecoverLink,
+  useToggleLinkPin,
   useUpdateLinkTitle,
 } from '@/api/hooks/useLink';
 import {extractHostname, shareUrl} from '@/utils/url-utils';
@@ -57,6 +58,8 @@ const SmallCard = ({
   const {mutate: recoverLink} = useRecoverLink(linkInfoArgs);
   // 링크 제목 수정
   const {mutate: updateTitle} = useUpdateLinkTitle(linkInfoArgs);
+  // 핀 on/off
+  const {mutate: togglePin} = useToggleLinkPin(linkInfoArgs);
 
   const CardImage = useMemo(() => {
     return theme.SMALL_CARD_IMAGE;
@@ -89,11 +92,15 @@ const SmallCard = ({
         setIsDropdownOpen(true);
         setAnchorPosition({x: pageX, y: pageY + height});
       });
-      setSelectedId(content.id); // 모달이 열릴 때만 설정
+      setSelectedId(content.id);
     } else {
       setIsDropdownOpen(false);
-      // 모달이 닫힐 때는 selectedId를 변경하지 않음
     }
+  };
+
+  // 핀 on/off
+  const handlePinToggle = () => {
+    togglePin(String(content.id));
   };
 
   const getModalId = (baseId: string) => `${baseId}-${selectedId}`;
@@ -175,12 +182,6 @@ const SmallCard = ({
     ],
     [closeDropdown, handleSelect],
   );
-
-  // 북마크 토글 상태 관리
-  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
-  const toggleBookmark = () => {
-    setIsBookmarked(!isBookmarked);
-  };
 
   // 이미지 로딩 처리
   const [imageLoading, setImageLoading] = useState<boolean>(true);
@@ -266,8 +267,8 @@ const SmallCard = ({
             </Text>
           </View>
           {!isTrash ? (
-            <TouchableOpacity onPress={toggleBookmark}>
-              {isBookmarked ? (
+            <TouchableOpacity onPress={handlePinToggle}>
+              {content.pinned ? (
                 <PinnedSelectedIcon
                   width={20}
                   height={20}

@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {Linking, StyleSheet, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {calculateByteLength} from '@/utils/link-utils';
 import TextInputGroup from '@/components/common/TextInputGroup';
 import CustomBottomButton from '@/components/common/CustomBottomButton';
