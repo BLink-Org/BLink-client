@@ -33,7 +33,11 @@ export default function App(props: AppProps) {
 
         // 언어 설정 -> 시스템 언어로 변경
         const locale = RNLocalize.getLocales()[0].languageCode;
-        i18n.changeLanguage(locale);
+        if (locale === 'ko') {
+          i18n.changeLanguage(locale);
+        } else {
+          i18n.changeLanguage('en'); // 기본 언어 -> 영어
+        }
 
         // 토큰 로드
         await loadTokens();

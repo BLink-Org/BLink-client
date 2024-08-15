@@ -1,10 +1,16 @@
 import {useState} from 'react';
 import {appleAuth} from '@invertase/react-native-apple-authentication';
-import {Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Image,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {jwtDecode} from 'jwt-decode';
 import * as amplitude from '@amplitude/analytics-react-native';
+import * as RNLocalize from 'react-native-localize';
 import {AMPLITUDE_API_KEY} from '@env';
-import {AppleLogoIcon} from '@/assets/icons/onboarding';
 import {FONTS} from '@/constants';
 import {useAppleLogin} from '@/api/hooks/useAuth';
 import {type TokensSchema} from '@/types';
@@ -14,6 +20,8 @@ import {trackEvent} from '@/utils/amplitude-utils';
 const AppleLogin = () => {
   const {setTokens} = useUserStore();
   const [userEmail, setUserEmail] = useState<string>('');
+
+  const locale = RNLocalize.getLocales()[0].languageCode === 'ko' ? 'KO' : 'EN';
 
   const {mutate: appleLoginMutation} = useAppleLogin({
     onSuccess: async (data: TokensSchema) => {
@@ -43,7 +51,11 @@ const AppleLogin = () => {
         if (identityToken) {
           const userInfo: {email: string} = jwtDecode(identityToken);
           setUserEmail(userInfo.email);
-          appleLoginMutation({email: userInfo.email, identityToken});
+          appleLoginMutation({
+            language: locale,
+            email: userInfo.email,
+            identityToken,
+          });
         }
       }
     } catch (error: any) {
@@ -85,6 +97,14 @@ const styles = StyleSheet.create({
     gap: 12,
     height: 54,
     borderRadius: 100,
+  },
+  logoImage: {
+    width: 168,
+    height: 23,
+  },
+  logoImageEn: {
+    width: 180,
+    height: 23,
   },
   logoText: {
     color: '#fff',
