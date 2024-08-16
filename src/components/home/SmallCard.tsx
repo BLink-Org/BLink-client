@@ -191,31 +191,36 @@ const SmallCard = ({
   const LoadingScreen = () => {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="small" color={theme.MAIN500} />
+        <ActivityIndicator size="small" color={theme.MAIN400} />
       </View>
     );
   };
 
   // 제목 라인 수에 따라 본문 라인 수 조절
   const [contentLines, setContentLines] = useState(1);
+
   const handleTitleLayout = (
     event: NativeSyntheticEvent<TextLayoutEventData>,
   ) => {
     const lineCount = event.nativeEvent.lines.length;
-    if (lineCount === 2) {
+    if (lineCount === 1) {
+      setContentLines(2);
+    } else {
       setContentLines(1);
     }
   };
 
-  <Text>text contents</Text>;
   return (
     <>
       <View style={styles.container}>
         <View style={styles.dotPosition}>
           <Text style={styles.folderText}>
-            {content.folderName ?? '폴더 없이 저장'}
+            {content.folderName ?? '폴더 없는 링크'}
           </Text>
-          <TouchableOpacity ref={buttonRef} onPress={toggleDropdown}>
+          <TouchableOpacity
+            ref={buttonRef}
+            onPress={toggleDropdown}
+            style={styles.dotButton}>
             <ThreeDotIcon fill={theme.TEXT300} />
           </TouchableOpacity>
           {isDropdownOpen && (
@@ -255,7 +260,7 @@ const SmallCard = ({
                 onError={handleImageLoad}
               />
             ) : (
-              <CardImage width={76} height={76} />
+              <CardImage width={84} height={84} />
             )}
           </View>
         </View>
@@ -267,18 +272,20 @@ const SmallCard = ({
             </Text>
           </View>
           {!isTrash ? (
-            <TouchableOpacity onPress={handlePinToggle}>
+            <TouchableOpacity
+              onPress={handlePinToggle}
+              style={styles.pinButton}>
               {content.pinned ? (
                 <PinnedSelectedIcon
-                  width={20}
-                  height={20}
+                  width={24}
+                  height={24}
                   fill={theme.MAIN400}
                   stroke={theme.MAIN400}
                 />
               ) : (
                 <PinnedUnselectedIcon
-                  width={20}
-                  height={20}
+                  width={24}
+                  height={24}
                   stroke={theme.TEXT400}
                 />
               )}
@@ -333,7 +340,7 @@ export default SmallCard;
 const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     container: {
-      height: 169,
+      height: 180,
       paddingVertical: 16,
       gap: 8,
     },
@@ -352,9 +359,16 @@ const createStyles = (theme: ITheme) =>
     descriptionTop: {
       height: 8,
     },
+    dotButton: {
+      marginHorizontal: -16,
+      paddingHorizontal: 16,
+    },
+    pinButton: {
+      paddingLeft: 5,
+    },
     cardImageContainer: {
-      width: 76,
-      height: 76,
+      width: 84,
+      height: 84,
       borderRadius: 8,
       overflow: 'hidden',
     },
@@ -370,6 +384,7 @@ const createStyles = (theme: ITheme) =>
     footer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
+      alignItems: 'center',
     },
     footerFront: {
       flexDirection: 'row',

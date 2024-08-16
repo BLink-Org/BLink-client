@@ -23,7 +23,12 @@ export interface UpdateLinkTitleArgs {
   title: string;
 }
 
+export interface GoogleLoginArgs {
+  language: string;
+  idToken: string;
+}
 export interface AppleLoginArgs {
+  language: string;
   identityToken: string;
   email: string;
 }

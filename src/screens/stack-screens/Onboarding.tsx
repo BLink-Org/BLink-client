@@ -4,35 +4,30 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Dimensions,
+  Image,
 } from 'react-native';
 import GoogleLogin from '@/components/auth/GoogleLogin';
 import AppleLogin from '@/components/auth/AppleLogin';
 import {FONTS} from '@/constants';
-import {
-  Onboarding1Image,
-  Onboarding2Image,
-  Onboarding3Image,
-} from '@/assets/icons/onboarding';
-import Carousel from '@/components/onboarding/Carousel';
-
-const screenWidth = Dimensions.get('screen').width;
-
-const onboardingImages = [
-  {key: '1', image: <Onboarding1Image />},
-  {key: '2', image: <Onboarding2Image />},
-  {key: '3', image: <Onboarding3Image />},
-];
 
 const Onboarding = () => {
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.headerContainer} />
       <View style={styles.bodyContainer}>
-        <Carousel
-          gap={50}
-          offset={(screenWidth - 300) / 2}
-          pages={onboardingImages}
-          pageWidth={200}
+        <Text style={styles.bodyText}>
+          다시 보고 싶은 <Text style={styles.blueText}>링크</Text>를{' '}
+          <Text style={styles.blueText}>북마크</Text>
+        </Text>
+
+        <Image
+          source={require('@/assets/images/img-linksaving_wordmark-blue.png')}
+          style={styles.logoImage}
+        />
+        <View style={styles.gapImage} />
+        <Image
+          source={require('@/assets/images/img-onboarding.png')}
+          style={styles.onboardingImage}
         />
       </View>
       <View style={styles.loginContainer}>
@@ -53,10 +48,33 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffffff',
   },
-  bodyContainer: {
+  headerContainer: {
     flex: 1,
+  },
+  bodyContainer: {
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 80,
+  },
+  bodyText: {
+    paddingBottom: 12,
+    color: '#6B7684',
+    ...FONTS.BODY1_MEDIUM,
+  },
+  blueText: {
+    color: '#4A7DFF',
+    ...FONTS.BODY1_MEDIUM,
+  },
+  gapImage: {
+    height: 24,
+  },
+  logoImage: {
+    width: 200,
+    height: 67.61,
+  },
+  onboardingImage: {
+    width: 212,
+    height: 212,
   },
 
   loginContainer: {
@@ -64,7 +82,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   aroundText: {
-    color: '#ECF1F5',
+    color: '#6B7684',
     textAlign: 'center',
     textDecorationLine: 'underline',
     paddingVertical: 10,

@@ -3,8 +3,6 @@ import {useTranslation} from 'react-i18next';
 import {
   FlatList,
   StyleSheet,
-  Text,
-  TouchableOpacity,
   View,
   SafeAreaView,
   RefreshControl,
@@ -19,10 +17,8 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {FONTS} from '@/constants';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import {useThemeStore} from '@/store/useThemeStore';
-import {LargeCardIcon, SmallCardIcon} from '@/assets/icons/home';
 import LargeCard from '@/components/home/LargeCard';
 import SmallCard from '@/components/home/SmallCard';
-import DropdownFilter from '@/components/home/DropDownFilter';
 import useStickyAnimation from '@/hooks/useStickyAnimation';
 import FolderSideBar from '@/components/modal/FolderSideBar';
 import {useBottomButtonSizeStore} from '@/store/useBottomButtonSizeStore';
@@ -31,6 +27,9 @@ import useToast from '@/hooks/useToast';
 import SmallCardPlaceHolder from '@/components/home/SmallCardPlaceHolder';
 import {useLinks} from '@/api/hooks/useLink';
 import AnimatedLogoHeader from '@/components/common/AnimatedLogoHeader';
+import LargeCardPlaceHolder from '@/components/home/LargeCardPlaceHolder';
+import HomeListHeader from '@/components/home/HomeListHeader';
+import {getSortByValue, getSortingOptions} from '@/utils/sorting-utils';
 
 const Home = () => {
   const {t} = useTranslation();
@@ -53,28 +52,7 @@ const Home = () => {
   const [selectedFolderId, setSelectedFolderId] = useState<number[]>([]);
   const [selectedFolderName, setSelectedFolderName] = useState<string>('전체');
 
-  // util folder로 이동
-  const getSortByValue = (selectedOption: string) => {
-    switch (selectedOption) {
-      case t('최근 저장순'):
-        return 'createdAt_desc';
-      case t('과거 저장순'):
-        return 'createdAt_asc';
-      case t('제목순 (A-ㅎ)'):
-        return 'title_asc';
-      case t('제목순 (ㅎ-A)'):
-        return 'title_desc';
-      default:
-        return 'createdAt_desc';
-    }
-  };
-
-  const sortingOptions = [
-    t('최근 저장순'),
-    t('과거 저장순'),
-    t('제목순 (A-ㅎ)'),
-    t('제목순 (ㅎ-A)'),
-  ];
+  const sortingOptions = getSortingOptions(t);
 
   const [selectedSortingOption, setSelectedSortingOption] = useState(
     sortingOptions[0],
@@ -86,7 +64,7 @@ const Home = () => {
   const linkInfoArgsOptions = {
     folderId: selectedFolderId[0],
     size: 10,
-    sortBy: getSortByValue(selectedSortingOption),
+    sortBy: getSortByValue(t, selectedSortingOption),
   };
 
   const {
@@ -116,93 +94,6 @@ const Home = () => {
   // sticky header 애니메이션
   const {translateY, handleScroll} = useStickyAnimation(refreshing);
 
-  // folder side bar 스와이프 제스쳐
-  const animation = useRef(
-    new Animated.Value(-Dimensions.get('window').width),
-  ).current;
-
-  const panResponder = useMemo(
-    () =>
-      PanResponder.create({
-        onStartShouldSetPanResponder: () => true,
-        onStartShouldSetPanResponderCapture: () => false,
-        onMoveShouldSetPanResponder: (evt, gestureState) => {
-          // 좌우로 움직임이 있을 때만 제스처를 활성화
-          return Math.abs(gestureState.dx) > 5;
-        },
-        onMoveShouldSetPanResponderCapture: () => false,
-        onPanResponderMove: (evt, gestureState) => {
-          const newX = Math.max(
-            -Dimensions.get('window').width,
-            Math.min(0, gestureState.dx),
-          );
-          animation.setValue(newX);
-        },
-        onPanResponderRelease: (evt, gestureState) => {
-          const {dx} = gestureState;
-          const screenWidth = Dimensions.get('window').width;
-
-          if (dx > screenWidth / 4) {
-            // 오른쪽으로 드래그가 일정 거리 이상일 경우 사이드바 열기
-            Animated.timing(animation, {
-              toValue: 0,
-              duration: 200,
-              useNativeDriver: true,
-            }).start(() => {
-              setIsSideBarVisible(true); // 사이드바가 열린 상태로 유지
-            });
-          } else if (dx < -screenWidth / 4) {
-            // 왼쪽으로 드래그가 일정 거리 이상일 경우 사이드바 닫기
-            Animated.timing(animation, {
-              toValue: -screenWidth,
-              duration: 200,
-              useNativeDriver: true,
-            }).start(() => {
-              setIsSideBarVisible(false); // 사이드바가 닫힌 상태로 설정
-            });
-          } else {
-            // 드래그가 작을 경우 원래 위치로 복귀
-            Animated.timing(animation, {
-              toValue: 0,
-              duration: 200,
-              useNativeDriver: true,
-            }).start();
-          }
-        },
-      }),
-    [],
-  );
-
-  // FlatList Header 영역
-  const ListHeaderComponent = () => {
-    return (
-      <>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>{selectedFolderName}</Text>
-        </View>
-        <View style={styles.filterContainer}>
-          <Text style={styles.linkCount}>{linkCount} Links</Text>
-          <View style={styles.filterContainer}>
-            <DropdownFilter
-              options={sortingOptions}
-              selectedOption={selectedSortingOption}
-              onSelect={handleSelection}
-            />
-            <TouchableOpacity
-              style={styles.sizeIconContainer}
-              onPress={toggleCardSize}>
-              {isLargeCard ? (
-                <LargeCardIcon stroke={theme.TEXT700} />
-              ) : (
-                <SmallCardIcon stroke={theme.TEXT700} />
-              )}
-            </TouchableOpacity>
-          </View>
-        </View>
-      </>
-    );
-  };
-
   // FlatList 사용 최적화
   const renderItem: ListRenderItem<ILinkDtos> = useCallback(
     ({item, index}) => {
@@ -210,10 +101,10 @@ const Home = () => {
         index ===
         (linkData?.pages.flatMap(page => page.linkDtos).length ?? 0) - 1;
 
+      // 로딩 중이면 로딩 카드 렌더링
       if (isLoading) {
         return isLargeCard ? (
-          // <LargeCardPlaceHolder />
-          <SmallCardPlaceHolder />
+          <LargeCardPlaceHolder />
         ) : (
           <SmallCardPlaceHolder />
         );
@@ -228,7 +119,6 @@ const Home = () => {
             showToast={showToast}
             linkInfoArgs={linkInfoArgsOptions}
           />
-
           {!isLastItem && <View style={styles.separator} />}
         </View>
       );
@@ -242,7 +132,7 @@ const Home = () => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container} {...panResponder.panHandlers}>
+    <SafeAreaView style={styles.container}>
       <ThemeBackground />
       <View style={styles.mainContainer}>
         <AnimatedLogoHeader
@@ -258,7 +148,17 @@ const Home = () => {
           }
           renderItem={renderItem}
           keyExtractor={(item, index) => index.toString()}
-          ListHeaderComponent={ListHeaderComponent}
+          ListHeaderComponent={
+            <HomeListHeader
+              selectedFolderName={selectedFolderName}
+              linkCount={linkCount}
+              sortingOptions={sortingOptions}
+              selectedSortingOption={selectedSortingOption}
+              handleSelection={handleSelection}
+              isLargeCard={isLargeCard}
+              toggleCardSize={toggleCardSize}
+            />
+          }
           contentContainerStyle={styles.contentContainer}
           initialNumToRender={10}
           windowSize={10}
