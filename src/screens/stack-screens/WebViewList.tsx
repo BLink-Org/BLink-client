@@ -19,6 +19,8 @@ import {
   ContentFrontIcon,
   PinnedUnselectedIcon,
 } from '@/assets/icons/webview';
+import BottomSheet from '@/components/modal/BottomSheet';
+import LinkContent from '@/components/link/LinkContent';
 
 const WebViewList = () => {
   const navigation = useNavigation();
@@ -116,6 +118,11 @@ const WebViewList = () => {
   const openModal = () => {
     setModalVisible(true);
   };
+  // 링크 저장
+  const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+  const toggleBottomSheet = () => {
+    setIsBottomSheetVisible(!isBottomSheetVisible);
+  };
 
   const saveBookmark = () => {
     console.log('북마크 저장');
@@ -137,16 +144,15 @@ const WebViewList = () => {
         </TouchableOpacity>
       </View>
 
-      {/* currentUrl이 존재할 때만 WebView 렌더링 */}
       {currentUrl && (
         <WebView
           ref={webViewRef}
           key={webViewKey} // 키 변경 시 웹뷰 리렌더링
           source={{uri: currentUrl}}
-          onNavigationStateChange={handleNavigationStateChange} // URL 리디렉션 감지
+          style={styles.webViewContainer}
+          onNavigationStateChange={handleNavigationStateChange}
         />
       )}
-
       <View style={styles.backForwardButton}>
         <NavigationButton
           onPress={goBack}
@@ -185,17 +191,24 @@ const WebViewList = () => {
         <TouchableOpacity onPress={saveBookmark}>
           <PinnedUnselectedIcon stroke={theme.TEXT900} strokeWidth={1.5} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={openModal}>
+        <TouchableOpacity onPress={toggleBottomSheet}>
           <SaveIcon fill={theme.TEXT900} />
         </TouchableOpacity>
       </View>
-
       {/* 임시 저장모달 */}
       <TestModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         currentUrl={currentUrl ?? ''}
       />
+      <BottomSheet
+        modalTitle="링크 저장"
+        {...{isBottomSheetVisible, toggleBottomSheet}}>
+        <LinkContent
+          defaultURL={currentUrl ?? ''}
+          toggleBottomSheet={toggleBottomSheet}
+        />
+      </BottomSheet>
     </SafeAreaView>
   );
 };
@@ -215,6 +228,9 @@ const createStyles = (theme: ITheme) =>
       flexDirection: 'row',
       justifyContent: 'space-around',
       alignItems: 'center',
+    },
+    webViewContainer: {
+      flex: 1,
     },
     navigationContainer: {
       flexDirection: 'row',

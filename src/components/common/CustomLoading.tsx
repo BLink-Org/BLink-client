@@ -1,27 +1,20 @@
-import React, {useMemo} from 'react';
+import React from 'react';
 import {ActivityIndicator, SafeAreaView, StyleSheet} from 'react-native';
-import {useThemeStore} from '@/store/useThemeStore';
-import {type ITheme} from '@/types';
 
 const CustomLoading = () => {
-  const {theme} = useThemeStore();
-  const styles = useMemo(() => createStyles(theme), [theme]);
-
   return (
     <SafeAreaView style={styles.container}>
-      <ActivityIndicator size="large" color="#0000ff" />
+      <ActivityIndicator size="small" color="#6D96FF" />
     </SafeAreaView>
   );
 };
 
 export default CustomLoading;
 
-const createStyles = (theme: ITheme) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: theme.BACKGROUND,
-    },
-  });
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
