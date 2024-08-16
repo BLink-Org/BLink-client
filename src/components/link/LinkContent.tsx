@@ -51,7 +51,14 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
   const {mutate: createLink} = useCreateLink({
     onSuccess: () => {
       toggleBottomSheet();
+      queryClient.invalidateQueries({queryKey: ['folders']});
       queryClient.invalidateQueries({queryKey: ['links']});
+    },
+    onError: (error: any) => {
+      if (error.response.data.code === 2600) {
+        setErrorMessage('이미 저장된 링크입니다');
+        setIsReadyToSave(false);
+      }
     },
   });
 
@@ -114,7 +121,10 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
         title="저장"
         onPress={() => {
           textInput &&
-            createLink({url: textInput, folderIdList: selectedFolderId});
+            createLink({
+              url: textInput,
+              folderIdList: selectedFolderId[0] === 0 ? [] : selectedFolderId,
+            });
         }}
         isDisabled={!isReadyToSave}
       />

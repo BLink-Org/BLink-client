@@ -59,10 +59,12 @@ const FolderSideBar = ({
       showToast(TOAST_MESSAGE.CREATE_SUCCESS);
     },
   });
+
   const {mutate: updateFolderTitle} = useUpdateFolderTitle({
     onSuccess: () => {
       setIsBottomSheetVisible(!isBottomSheetVisible);
       queryClient.invalidateQueries({queryKey: ['folders']});
+      queryClient.invalidateQueries({queryKey: ['links']});
       showToast(TOAST_MESSAGE.EDIT_SUCCESS);
     },
   });

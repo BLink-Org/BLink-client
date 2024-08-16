@@ -34,9 +34,18 @@ const FolderMoveContent = ({
   // 특정 링크의 폴더 정보 가져오기
   const {data: selectedFoldersData} = useLinkFolder(linkId);
 
-  const [selectedFolderId, setSelectedFolderId] = useState<number[]>(
-    selectedFoldersData?.folderIdList ?? [],
-  );
+  const [selectedFolderId, setSelectedFolderId] = useState<number[]>([0]);
+
+  useEffect(() => {
+    if (
+      selectedFoldersData?.folderIdList &&
+      selectedFoldersData?.folderIdList.length > 0
+    ) {
+      setSelectedFolderId(selectedFoldersData.folderIdList);
+    } else {
+      setSelectedFolderId([0]);
+    }
+  }, [selectedFoldersData]);
 
   const [isReadyToSave, setIsReadyToSave] = useState<boolean>(true);
   const [isFolderBottomSheetVisible, setIsFolderBottomSheetVisible] =
@@ -52,10 +61,12 @@ const FolderMoveContent = ({
   });
   const {mutate: updateMoveLink} = useMoveLink();
 
+  // 폴더 생성 API
   const onSaveFolder = (textInput: string) => {
     createFolder({title: textInput});
   };
 
+  // 폴더 이동 API
   const onSaveMoveFolder = () => {
     const folderIdList = selectedFolderId[0] === 0 ? [] : selectedFolderId;
     updateMoveLink({

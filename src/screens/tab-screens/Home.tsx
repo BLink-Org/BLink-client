@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect, useMemo, useRef} from 'react';
+import React, {useState, useCallback, useEffect, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
   FlatList,
@@ -9,9 +9,6 @@ import {
   Platform,
   ActivityIndicator,
   type ListRenderItem,
-  Animated,
-  PanResponder,
-  Dimensions,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {FONTS} from '@/constants';

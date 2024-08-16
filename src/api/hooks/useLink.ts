@@ -169,7 +169,6 @@ export const useLinkFolder = (linkId: number) => {
   return useQuery({
     queryKey: ['linkFolder', linkId],
     queryFn: async () => await getLinkFolder(linkId),
-    // enabled: false, // 쿼리를 수동으로 호출하기 위해 비활성화
   });
 };
 
@@ -193,32 +192,9 @@ export const useMoveLink = () => {
 
   return useMutation({
     mutationFn: moveLink,
-    onSuccess: (_, payload) => {
-      // const cacheKey = ['links', size, sortBy, folderIdList];
+    onSuccess: () => {
       queryClient.invalidateQueries({queryKey: ['folders']});
-      queryClient.invalidateQueries({
-        queryKey: ['links', payload.folderIdList],
-      });
-      // queryClient.setQueryData<InfiniteData<GetLinksSchema>>(
-      //   cacheKey,
-      //   oldData => {
-      //     if (!oldData) {
-      //       return oldData;
-      //     }
-      //     const newPages = oldData.pages.map(page => ({
-      //       ...page,
-      //       linkDtos: page.linkDtos.map(link =>
-      //         String(link.id) === payload.linkId
-      //           ? {...link, folderIdList: payload.folderIdList}
-      //           : link,
-      //       ),
-      //     }));
-      //     return {
-      //       ...oldData,
-      //       pages: newPages,
-      //     };
-      //   },
-      // );
+      queryClient.invalidateQueries({queryKey: ['links']});
     },
     onError: (error: string) => {
       console.warn('Move Link error:', error);
@@ -295,9 +271,6 @@ const createLink = async (payload: CreateLinkArgs) => {
 export const useCreateLink = (options = {}) => {
   return useMutation({
     mutationFn: createLink,
-    onError: (error: string) => {
-      console.warn('Create Link error:', error);
-    },
     ...options,
   });
 };
