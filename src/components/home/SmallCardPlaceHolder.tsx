@@ -34,7 +34,7 @@ const SmallCardPlaceHolder = () => {
               <View style={{width: 78, height: 21}} />
               <View style={{width: 78, height: 21}} />
             </View>
-            <PinnedUnselectedIcon width={20} height={20} />
+            <PinnedUnselectedIcon width={24} height={24} />
           </View>
         </View>
       </SkeletonPlaceholder>

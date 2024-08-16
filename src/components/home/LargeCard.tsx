@@ -144,7 +144,10 @@ const LargeCard = ({
         <View style={styles.cardImageContainer}>
           {content.imageUrl && imageLoading && <LoadingScreen />}
           <TouchableOpacity style={styles.dotPosition}>
-            <TouchableOpacity ref={buttonRef} onPress={toggleDropdown}>
+            <TouchableOpacity
+              ref={buttonRef}
+              onPress={toggleDropdown}
+              style={styles.dotButton}>
               <ThreeDotIcon fill={theme.TEXT300} />
             </TouchableOpacity>
             {isDropdownOpen && (
@@ -183,18 +186,18 @@ const LargeCard = ({
               {extractHostname(content.url ?? '')}
             </Text>
           </View>
-          <TouchableOpacity onPress={handlePinToggle}>
+          <TouchableOpacity onPress={handlePinToggle} style={styles.pinButton}>
             {content.pinned ? (
               <PinnedSelectedIcon
-                width={20}
-                height={20}
+                width={24}
+                height={24}
                 fill={theme.MAIN400}
                 stroke={theme.MAIN400}
               />
             ) : (
               <PinnedUnselectedIcon
-                width={20}
-                height={20}
+                width={24}
+                height={24}
                 stroke={theme.TEXT400}
               />
             )}
@@ -241,6 +244,14 @@ const createStyles = (theme: ITheme) =>
       overflow: 'hidden',
       position: 'relative',
     },
+    dotButton: {
+      marginHorizontal: -16,
+      paddingHorizontal: 16,
+    },
+    pinButton: {
+      paddingLeft: 5,
+      paddingBottom: 5,
+    },
     dotPosition: {
       position: 'absolute',
       top: 12,
@@ -276,6 +287,7 @@ const createStyles = (theme: ITheme) =>
     footer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
+      alignItems: 'center',
     },
     footerFront: {
       flexDirection: 'row',

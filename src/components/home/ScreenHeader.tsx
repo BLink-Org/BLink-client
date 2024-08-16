@@ -11,7 +11,7 @@ const ScreenHeader = ({toggleSideBar}: ScreenHeaderProps) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={toggleSideBar}>
-        <SidebarIcon stroke={theme.TEXT900} />
+        <SidebarIcon width={30} height={30} stroke={theme.TEXT900} />
       </TouchableOpacity>
       <Image
         source={require('@/assets/images/img-linksaving_wordmark-blue.png')}
@@ -33,11 +33,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   logoImage: {
-    marginLeft: 4,
     width: 67,
     height: 24,
   },
   rightSpace: {
-    width: 26,
+    width: 30,
   },
 });

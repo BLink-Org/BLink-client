@@ -215,9 +215,12 @@ const SmallCard = ({
       <View style={styles.container}>
         <View style={styles.dotPosition}>
           <Text style={styles.folderText}>
-            {content.folderName ?? '폴더 없이 저장'}
+            {content.folderName ?? '폴더 없는 링크'}
           </Text>
-          <TouchableOpacity ref={buttonRef} onPress={toggleDropdown}>
+          <TouchableOpacity
+            ref={buttonRef}
+            onPress={toggleDropdown}
+            style={styles.dotButton}>
             <ThreeDotIcon fill={theme.TEXT300} />
           </TouchableOpacity>
           {isDropdownOpen && (
@@ -269,18 +272,20 @@ const SmallCard = ({
             </Text>
           </View>
           {!isTrash ? (
-            <TouchableOpacity onPress={handlePinToggle}>
+            <TouchableOpacity
+              onPress={handlePinToggle}
+              style={styles.pinButton}>
               {content.pinned ? (
                 <PinnedSelectedIcon
-                  width={20}
-                  height={20}
+                  width={24}
+                  height={24}
                   fill={theme.MAIN400}
                   stroke={theme.MAIN400}
                 />
               ) : (
                 <PinnedUnselectedIcon
-                  width={20}
-                  height={20}
+                  width={24}
+                  height={24}
                   stroke={theme.TEXT400}
                 />
               )}
@@ -354,6 +359,14 @@ const createStyles = (theme: ITheme) =>
     descriptionTop: {
       height: 8,
     },
+    dotButton: {
+      marginHorizontal: -16,
+      paddingHorizontal: 16,
+    },
+    pinButton: {
+      paddingLeft: 5,
+      paddingBottom: 5,
+    },
     cardImageContainer: {
       width: 84,
       height: 84,
@@ -372,6 +385,7 @@ const createStyles = (theme: ITheme) =>
     footer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
+      alignItems: 'center',
     },
     footerFront: {
       flexDirection: 'row',

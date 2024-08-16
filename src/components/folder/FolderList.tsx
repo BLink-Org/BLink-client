@@ -89,7 +89,7 @@ const FolderList = ({
           }
           ListFooterComponent={
             !isMultipleSelection ? (
-              <View style={styles.lastFolderview}>
+              <View style={styles.lastFolderView}>
                 {useFolderData.noFolderLinkCount > 0 && (
                   <>
                     <View style={styles.stroke}></View>
@@ -125,7 +125,7 @@ const createStyles = (theme: ITheme) =>
       marginVertical: 8,
       width: '100%',
     },
-    lastFolderview: {
+    lastFolderView: {
       flex: 1,
     },
   });
