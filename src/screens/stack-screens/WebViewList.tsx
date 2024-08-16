@@ -7,9 +7,8 @@ import {FONTS} from '@/constants';
 import {extractHostname, shareUrl} from '@/utils/url-utils';
 import {type ITheme} from '@/types';
 import {useThemeStore} from '@/store/useThemeStore';
-import {useLinks} from '@/api/hooks/useLink';
+import {useLinks, useToggleLinkPin} from '@/api/hooks/useLink';
 import NavigationButton from '@/components/webview/NavigationButton';
-import TestModal from '@/components/modal/TestModal';
 import {
   ArrowBackIcon,
   RefreshIcon,
@@ -17,10 +16,10 @@ import {
   ShareIcon,
   ContentBackIcon,
   ContentFrontIcon,
-  PinnedUnselectedIcon,
 } from '@/assets/icons/webview';
 import BottomSheet from '@/components/modal/BottomSheet';
 import LinkContent from '@/components/link/LinkContent';
+import {PinnedIcon} from '@/assets/icons/bottom-tab';
 
 const WebViewList = () => {
   const navigation = useNavigation();
@@ -36,37 +35,49 @@ const WebViewList = () => {
     initialIndex: number;
   };
 
+  const linkInfoArgsOptions = {
+    folderId,
+    size,
+    sortBy,
+  };
+
   const [currentIndex, setCurrentIndex] = useState<number>(initialIndex);
-  const [currentUrl, setCurrentUrl] = useState<string | null>(null);
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [currentUrl, setCurrentUrl] = useState<string | null>(null); // 현재 링크 목록
+  const [webViewKey, setWebViewKey] = useState<number>(0); // 웹뷰 리렌더링용 키
   const [canGoBack, setCanGoBack] = useState<boolean>(false);
   const [canGoForward, setCanGoForward] = useState<boolean>(false);
-  const [webViewKey, setWebViewKey] = useState<number>(0); // 웹뷰 리렌더링용 키
+  const [webViewUrl, setWebViewUrl] = useState<string | null>(null); // 웹뷰 URL
 
   const {
     data: linkData,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useLinks({
-    folderId,
-    size,
-    sortBy,
-  });
+  } = useLinks(linkInfoArgsOptions);
+
+  const {mutate: togglePin} = useToggleLinkPin(linkInfoArgsOptions);
 
   const linkList = linkData?.pages.flatMap(page => page.linkDtos) ?? [];
+  const currentLink = linkList[currentIndex];
 
-  // 첫 URL 설정
+  // 첫 URL 및 핀 상태 설정
   useEffect(() => {
-    if (linkList.length > 0 && linkList[currentIndex]?.url) {
-      setCurrentUrl(linkList[currentIndex]?.url);
+    if (linkList.length > 0 && currentLink?.url) {
+      setCurrentUrl(currentLink.url);
     }
   }, [linkList, currentIndex]);
 
-  // 뒤로가기, 앞으로가기 상태 업데이트
   const handleNavigationStateChange = (navState: WebViewNavigation) => {
+    // 뒤로가기, 앞으로가기 버튼 상태 업데이트
     setCanGoBack(navState.canGoBack);
     setCanGoForward(navState.canGoForward);
+    // 현재 URL 업데이트
+    setWebViewUrl(navState.url);
+  };
+
+  // 핀 on/off
+  const handlePinToggle = () => {
+    togglePin(String(currentLink.id));
   };
 
   // 하나의 웹 뷰 내에서 뒤로가기, 앞으로가기, 새로고침
@@ -78,7 +89,7 @@ const WebViewList = () => {
     webViewRef.current?.goForward();
   };
 
-  // 전체 링크에서 이전 링크, 다음링크로 이동
+  // 전체 링크에서 이전 링크, 다음 링크로 이동
   const goBack = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
@@ -115,17 +126,10 @@ const WebViewList = () => {
     navigation.goBack();
   };
 
-  const openModal = () => {
-    setModalVisible(true);
-  };
   // 링크 저장
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
   const toggleBottomSheet = () => {
     setIsBottomSheetVisible(!isBottomSheetVisible);
-  };
-
-  const saveBookmark = () => {
-    console.log('북마크 저장');
   };
 
   return (
@@ -171,41 +175,35 @@ const WebViewList = () => {
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={directBack} disabled={!canGoBack}>
-          {canGoBack ? (
-            <ContentBackIcon fill={theme.TEXT700} />
-          ) : (
-            <ContentBackIcon fill={theme.TEXT300} />
-          )}
+          <ContentBackIcon fill={canGoBack ? theme.TEXT700 : theme.TEXT300} />
         </TouchableOpacity>
         <TouchableOpacity onPress={directFront} disabled={!canGoForward}>
-          {canGoForward ? (
-            <ContentFrontIcon fill={theme.TEXT700} />
-          ) : (
-            <ContentFrontIcon fill={theme.TEXT300} />
-          )}
+          <ContentFrontIcon
+            fill={canGoForward ? theme.TEXT700 : theme.TEXT300}
+          />
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => shareUrl(currentUrl ?? '')}>
-          <ShareIcon fill={theme.TEXT900} />
+          <View style={styles.shareIcon} />
+          <ShareIcon width={26} height={26} fill={theme.TEXT900} />
         </TouchableOpacity>
-        <TouchableOpacity onPress={saveBookmark}>
-          <PinnedUnselectedIcon stroke={theme.TEXT900} strokeWidth={1.5} />
+        <TouchableOpacity onPress={handlePinToggle}>
+          <PinnedIcon
+            strokeWidth={1.5}
+            fill={currentLink.pinned ? theme.TEXT900 : 'transparent'}
+            stroke={theme.TEXT900}
+          />
         </TouchableOpacity>
         <TouchableOpacity onPress={toggleBottomSheet}>
           <SaveIcon fill={theme.TEXT900} />
         </TouchableOpacity>
       </View>
-      {/* 임시 저장모달 */}
-      <TestModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        currentUrl={currentUrl ?? ''}
-      />
+      {/* 링크 저장모달 */}
       <BottomSheet
         modalTitle="링크 저장"
         {...{isBottomSheetVisible, toggleBottomSheet}}>
         <LinkContent
-          defaultURL={currentUrl ?? ''}
+          defaultURL={webViewUrl ?? ''}
           toggleBottomSheet={toggleBottomSheet}
         />
       </BottomSheet>
@@ -231,6 +229,9 @@ const createStyles = (theme: ITheme) =>
     },
     webViewContainer: {
       flex: 1,
+    },
+    shareIcon: {
+      paddingVertical: 2,
     },
     navigationContainer: {
       flexDirection: 'row',
