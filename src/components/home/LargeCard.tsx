@@ -250,7 +250,6 @@ const createStyles = (theme: ITheme) =>
     },
     pinButton: {
       paddingLeft: 5,
-      paddingBottom: 5,
     },
     dotPosition: {
       position: 'absolute',

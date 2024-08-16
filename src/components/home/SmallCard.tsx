@@ -260,7 +260,7 @@ const SmallCard = ({
                 onError={handleImageLoad}
               />
             ) : (
-              <CardImage width={76} height={76} />
+              <CardImage width={84} height={84} />
             )}
           </View>
         </View>
@@ -365,7 +365,6 @@ const createStyles = (theme: ITheme) =>
     },
     pinButton: {
       paddingLeft: 5,
-      paddingBottom: 5,
     },
     cardImageContainer: {
       width: 84,

@@ -7,3 +7,5 @@ export interface IFileList {
   hostname: string;
   folder: string;
 }
+
+export type IFunction = (key: string) => string;
