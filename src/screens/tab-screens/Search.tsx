@@ -15,7 +15,6 @@ import {useThemeStore} from '@/store/useThemeStore';
 import SmallCard from '@/components/home/SmallCard';
 import SearchHeader from '@/components/search/SearchHeader';
 import {FONTS} from '@/constants';
-import RecentSearch from '@/components/search/ResentSearch';
 import {useSearchLinks} from '@/api/hooks/useLink';
 import {
   type ILinkDtos,
@@ -23,6 +22,7 @@ import {
   type SearchWebViewNavigationProp,
 } from '@/types';
 import SmallCardPlaceHolder from '@/components/home/SmallCardPlaceHolder';
+import SearchPlaceHolder from '@/components/search/SearchPlaceHolder';
 
 const SearchPage = () => {
   const {theme} = useThemeStore();
@@ -70,12 +70,9 @@ const SearchPage = () => {
       const isLastItem =
         index ===
         (linkData?.pages.flatMap(page => page.linkDtos).length ?? 0) - 1;
-
-      // 로딩 중이면 로딩 카드 렌더링
       if (isLoading) {
-        <SmallCardPlaceHolder />;
+        return <SmallCardPlaceHolder />;
       }
-
       return (
         <View>
           <TouchableOpacity onPress={() => handleCardPress(index)}>
@@ -89,16 +86,18 @@ const SearchPage = () => {
   );
 
   // 검색 결과 헤더
-  const renderHeader = useMemo(
-    () => (
+  const renderHeader = useMemo(() => {
+    if (isLoading) {
+      return <SearchPlaceHolder />;
+    }
+    return (
       <View style={styles.headerText}>
         <Text style={styles.headerTextContent}>
-          {linkData?.pages[0].linkCount} Links
+          {linkData?.pages[0].linkCount ?? 0} Links
         </Text>
       </View>
-    ),
-    [linkData],
-  );
+    );
+  }, [isLoading, linkData]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -109,36 +108,30 @@ const SearchPage = () => {
           handleSearch={handleSearch}
           handleSearchSubmit={handleSearchSubmit}
         />
-        {finalSearchQuery === '' ? (
-          <RecentSearch recentSearches={[]} />
-        ) : isLoading ? (
-          <ActivityIndicator size="large" />
-        ) : (
-          <FlatList
-            data={
-              isLoading
-                ? Array(10).fill({})
-                : linkData?.pages.flatMap(page => page.linkDtos)
+        <FlatList
+          data={
+            isLoading
+              ? Array(10).fill({})
+              : linkData?.pages.flatMap(page => page.linkDtos)
+          }
+          renderItem={renderItem}
+          keyExtractor={(item, index) => index.toString()}
+          ListHeaderComponent={renderHeader}
+          contentContainerStyle={styles.contentContainer}
+          initialNumToRender={10}
+          windowSize={10}
+          onEndReached={() => {
+            if (hasNextPage && !isLoading) {
+              fetchNextPage();
             }
-            renderItem={renderItem}
-            keyExtractor={(item, index) => index.toString()}
-            ListHeaderComponent={renderHeader}
-            contentContainerStyle={styles.contentContainer}
-            initialNumToRender={10}
-            windowSize={10}
-            onEndReached={() => {
-              if (hasNextPage && !isLoading) {
-                fetchNextPage();
-              }
-            }}
-            onEndReachedThreshold={0.5}
-            ListFooterComponent={() =>
-              isFetchingNextPage ? (
-                <ActivityIndicator size="small" color="#6D96FF" />
-              ) : null
-            }
-          />
-        )}
+          }}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={() =>
+            isFetchingNextPage ? (
+              <ActivityIndicator size="small" color="#6D96FF" />
+            ) : null
+          }
+        />
       </View>
     </SafeAreaView>
   );

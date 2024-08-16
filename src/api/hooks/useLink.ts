@@ -30,7 +30,7 @@ const getLinks = async (payload: GetLinkInfoArgs): Promise<GetLinksSchema> => {
     },
   });
   // 3초 지연
-  await new Promise(resolve => setTimeout(resolve, 1500));
+  // await new Promise(resolve => setTimeout(resolve, 1500));
   return data.result;
 };
 
@@ -445,6 +445,8 @@ const searchLinks = async (
       size,
     },
   });
+  // 1.5초 지연
+  // await new Promise(resolve => setTimeout(resolve, 1500));
   return data.result;
 };
 
