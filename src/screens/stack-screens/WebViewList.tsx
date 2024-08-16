@@ -4,11 +4,21 @@ import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {WebView, type WebViewNavigation} from 'react-native-webview';
 import {FONTS} from '@/constants';
-import {extractHostname} from '@/utils/url-utils'; // URL 도메인 추출 함수
+import {extractHostname, shareUrl} from '@/utils/url-utils';
 import {type ITheme} from '@/types';
 import {useThemeStore} from '@/store/useThemeStore';
 import {useLinks} from '@/api/hooks/useLink';
 import NavigationButton from '@/components/webview/NavigationButton';
+import TestModal from '@/components/modal/TestModal';
+import {
+  ArrowBackIcon,
+  RefreshIcon,
+  SaveIcon,
+  ShareIcon,
+  ContentBackIcon,
+  ContentFrontIcon,
+  PinnedUnselectedIcon,
+} from '@/assets/icons/webview';
 
 const WebViewList = () => {
   const navigation = useNavigation();
@@ -25,15 +35,17 @@ const WebViewList = () => {
   };
 
   const [currentIndex, setCurrentIndex] = useState<number>(initialIndex);
-  const [currentUrl, setCurrentUrl] = useState<string | null>(null); // 초기 값 null 처리
-  const [lastUrl, setLastUrl] = useState<string>(''); // 마지막 URL을 추적하기 위한 상태
+  const [currentUrl, setCurrentUrl] = useState<string | null>(null);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [canGoBack, setCanGoBack] = useState<boolean>(false);
+  const [canGoForward, setCanGoForward] = useState<boolean>(false);
+  const [webViewKey, setWebViewKey] = useState<number>(0); // 웹뷰 리렌더링용 키
 
   const {
     data: linkData,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    isLoading,
   } = useLinks({
     folderId,
     size,
@@ -42,100 +54,148 @@ const WebViewList = () => {
 
   const linkList = linkData?.pages.flatMap(page => page.linkDtos) ?? [];
 
-  // 로딩 중이거나 링크 목록이 없을 때 null을 반환
-  if (isLoading || linkList.length === 0) {
-    return (
-      <SafeAreaView>
-        <Text>Loading...</Text>
-      </SafeAreaView>
-    );
-  }
-
-  // 첫 URL을 설정
+  // 첫 URL 설정
   useEffect(() => {
     if (linkList.length > 0 && linkList[currentIndex]?.url) {
-      setCurrentUrl(linkList[currentIndex]?.url); // 링크가 존재할 때만 설정
+      setCurrentUrl(linkList[currentIndex]?.url);
     }
   }, [linkList, currentIndex]);
 
+  // 뒤로가기, 앞으로가기 상태 업데이트
   const handleNavigationStateChange = (navState: WebViewNavigation) => {
-    const newUrl: string | null = navState.url; // navState.url은 string | null 타입
-    if (!newUrl) return; // newUrl이 없으면 처리하지 않음
-
-    const originalDomain = extractHostname(currentUrl ?? '');
-    const newDomain = extractHostname(newUrl);
-
-    // 동일 도메인 또는 m. 도메인 처리
-    if (originalDomain === newDomain || newDomain.startsWith('m.')) {
-      return; // 리디렉션 URL이 동일한 도메인일 경우 상태 업데이트를 하지 않음
-    }
-
-    // 새로운 URL이 기존 URL과 다를 때만 상태 업데이트
-    if (newUrl !== lastUrl) {
-      setCurrentUrl(newUrl);
-      setLastUrl(newUrl);
-    }
+    setCanGoBack(navState.canGoBack);
+    setCanGoForward(navState.canGoForward);
   };
 
-  const goBackPage = () => {
-    navigation.goBack();
+  // 하나의 웹 뷰 내에서 뒤로가기, 앞으로가기, 새로고침
+  const directBack = () => {
+    webViewRef.current?.goBack();
   };
 
+  const directFront = () => {
+    webViewRef.current?.goForward();
+  };
+
+  // 전체 링크에서 이전 링크, 다음링크로 이동
   const goBack = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
+      setWebViewKey(prevKey => prevKey + 1);
     }
   };
 
   const goForward = async () => {
     if (currentIndex < linkList.length - 1) {
       setCurrentIndex(currentIndex + 1);
+      setWebViewKey(prevKey => prevKey + 1);
     } else if (hasNextPage) {
       const nextPageData = await fetchNextPage();
       if (nextPageData.data?.pages) {
         const newLinks = nextPageData.data.pages.flatMap(page => page.linkDtos);
         setCurrentIndex(currentIndex + 1);
         setCurrentUrl(newLinks[0]?.url ?? '');
+        setWebViewKey(prevKey => prevKey + 1);
       }
     }
+  };
+
+  const handleGoForward = () => {
+    goForward().catch(error => {
+      console.error('Error navigating forward:', error);
+    });
+  };
+
+  const reloadPage = () => {
+    webViewRef.current?.reload();
+  };
+
+  const goBackPage = () => {
+    navigation.goBack();
+  };
+
+  const openModal = () => {
+    setModalVisible(true);
+  };
+
+  const saveBookmark = () => {
+    console.log('북마크 저장');
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.navigationContainer}>
         <TouchableOpacity onPress={goBackPage}>
-          <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT700}]}>
-            Back
-          </Text>
+          <ArrowBackIcon fill={theme.TEXT900} />
         </TouchableOpacity>
         <View style={styles.urlTextHolder}>
           <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT700}]}>
             {extractHostname(currentUrl ?? '')}
           </Text>
         </View>
+        <TouchableOpacity onPress={reloadPage}>
+          <RefreshIcon fill={theme.TEXT900} />
+        </TouchableOpacity>
       </View>
 
       {/* currentUrl이 존재할 때만 WebView 렌더링 */}
       {currentUrl && (
         <WebView
           ref={webViewRef}
+          key={webViewKey} // 키 변경 시 웹뷰 리렌더링
           source={{uri: currentUrl}}
           onNavigationStateChange={handleNavigationStateChange} // URL 리디렉션 감지
         />
       )}
 
-      <View style={styles.buttonContainer}>
+      <View style={styles.backForwardButton}>
         <NavigationButton
           onPress={goBack}
           disabled={currentIndex === 0}
           label="이전 링크"
         />
         <NavigationButton
-          onPress={goForward}
-          disabled={!hasNextPage && currentIndex === linkList.length - 1}
+          onPress={handleGoForward}
+          disabled={
+            (!hasNextPage && currentIndex === linkList.length - 1) ||
+            isFetchingNextPage
+          }
           label={isFetchingNextPage ? '로딩 중...' : '다음 링크'}
         />
       </View>
+
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={directBack} disabled={!canGoBack}>
+          {canGoBack ? (
+            <ContentBackIcon fill={theme.TEXT700} />
+          ) : (
+            <ContentBackIcon fill={theme.TEXT300} />
+          )}
+        </TouchableOpacity>
+        <TouchableOpacity onPress={directFront} disabled={!canGoForward}>
+          {canGoForward ? (
+            <ContentFrontIcon fill={theme.TEXT700} />
+          ) : (
+            <ContentFrontIcon fill={theme.TEXT300} />
+          )}
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => shareUrl(currentUrl ?? '')}>
+          <ShareIcon fill={theme.TEXT900} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={saveBookmark}>
+          <PinnedUnselectedIcon stroke={theme.TEXT900} strokeWidth={1.5} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={openModal}>
+          <SaveIcon fill={theme.TEXT900} />
+        </TouchableOpacity>
+      </View>
+
+      {/* 임시 저장모달 */}
+      <TestModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        currentUrl={currentUrl ?? ''}
+      />
     </SafeAreaView>
   );
 };
@@ -149,17 +209,35 @@ const createStyles = (theme: ITheme) =>
       backgroundColor: theme.BACKGROUND,
     },
     buttonContainer: {
+      paddingTop: 8,
+      paddingBottom: 4,
+      paddingHorizontal: 4,
       flexDirection: 'row',
       justifyContent: 'space-around',
-      padding: 10,
+      alignItems: 'center',
     },
     navigationContainer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      padding: 10,
+      paddingVertical: 8,
+      paddingHorizontal: 18,
+      gap: 12,
+      alignItems: 'center',
     },
     urlTextHolder: {
       flex: 1,
+      height: 37,
+      justifyContent: 'center',
+      backgroundColor: theme.TEXT200,
+      borderRadius: 8,
+      paddingHorizontal: 16,
+    },
+    backForwardButton: {
+      paddingVertical: 8,
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      paddingRight: 18,
       alignItems: 'center',
+      gap: 16,
     },
   });
