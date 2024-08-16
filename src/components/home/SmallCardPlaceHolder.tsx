@@ -8,7 +8,7 @@ const SmallCardPlaceHolder = () => {
   const {theme} = useThemeStore();
 
   return (
-    <View>
+    <View style={styles.topContainer}>
       <SkeletonPlaceholder
         borderRadius={4}
         backgroundColor={theme.TEXT200}
@@ -25,20 +25,16 @@ const SmallCardPlaceHolder = () => {
           <View style={styles.body}>
             <View style={styles.textContainer}>
               <View style={{width: 198, height: 27}} />
-              <View style={{width: 240, height: 41}} />
+              <View style={{width: '100%', height: 41}} />
             </View>
-            <View style={{width: 76, height: 76}} />
+            <View style={{width: 84, height: 84}} />
           </View>
           <View style={styles.footer}>
             <View style={styles.footerText}>
-              <View style={{width: 73, height: 21}} />
-              <View style={{width: 73, height: 21}} />
+              <View style={{width: 78, height: 21}} />
+              <View style={{width: 78, height: 21}} />
             </View>
-            <PinnedUnselectedIcon
-              width={20}
-              height={20}
-              stroke={theme.TEXT400}
-            />
+            <PinnedUnselectedIcon width={24} height={24} />
           </View>
         </View>
       </SkeletonPlaceholder>
@@ -49,8 +45,10 @@ const SmallCardPlaceHolder = () => {
 export default SmallCardPlaceHolder;
 
 const styles = StyleSheet.create({
+  topContainer: {
+    height: 180,
+  },
   container: {
-    height: 169,
     gap: 8,
   },
   header: {
@@ -68,7 +66,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: 24,
   },
+  pinPosition: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+  },
   textContainer: {
+    flex: 1,
     gap: 8,
   },
   footer: {

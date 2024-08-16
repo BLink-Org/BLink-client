@@ -60,7 +60,7 @@ const DropDownModal = ({
       hideModalContentWhileAnimating={true}
       style={[
         styles.modal,
-        {marginTop: anchorPosition.y + 4, marginLeft: anchorPosition.x - 156},
+        {marginTop: anchorPosition.y + 4, marginLeft: anchorPosition.x - 140},
       ]}>
       <View style={styles.modalContent}>
         <View style={styles.dropdown}>

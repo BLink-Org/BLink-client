@@ -4,7 +4,7 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 interface UserState {
   accessToken: string | null;
   refreshToken: string | null;
-  isAuthenticated: boolean;
+  isAuthenticated: boolean | null;
   setTokens: (accessToken: string, refreshToken: string) => Promise<void>;
   clearTokens: () => Promise<void>;
   loadTokens: () => Promise<void>;
@@ -13,7 +13,7 @@ interface UserState {
 export const useUserStore = create<UserState>(set => ({
   accessToken: null,
   refreshToken: null,
-  isAuthenticated: false,
+  isAuthenticated: null,
 
   // 토큰 저장
   setTokens: async (accessToken: string, refreshToken: string) => {

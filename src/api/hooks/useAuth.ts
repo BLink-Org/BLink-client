@@ -1,13 +1,17 @@
 import {useMutation} from '@tanstack/react-query';
 import apiClient from '@/api/client';
 import {API_ENDPOINTS} from '@/api/endpoints';
-import {type AppleLoginArgs, type TokensSchema} from '@/types';
+import {
+  type GoogleLoginArgs,
+  type AppleLoginArgs,
+  type TokensSchema,
+} from '@/types';
 
 // 구글 로그인
-const loginWithGoogle = async (idToken: string): Promise<TokensSchema> => {
-  const {data} = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN_GOOGLE, {
-    idToken,
-  });
+const loginWithGoogle = async (
+  payload: GoogleLoginArgs,
+): Promise<TokensSchema> => {
+  const {data} = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN_GOOGLE, payload);
   return data.result;
 };
 
