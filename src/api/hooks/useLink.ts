@@ -15,6 +15,7 @@ import {
   type UpdateLinkTitleArgs,
   type GetLinkInfoArgs,
   type UseLinkInfoArgs,
+  type GetSearchLinkInfoArgs,
 } from '@/types';
 
 // 링크 목록 조회 GET
@@ -33,6 +34,7 @@ const getLinks = async (payload: GetLinkInfoArgs): Promise<GetLinksSchema> => {
   return data.result;
 };
 
+// 링크 목록 조회 GET
 export const useLinks = ({folderId, size, sortBy}: UseLinkInfoArgs) => {
   // linkCount를 상태로 관리하여 업데이트가 있을 때만 변경될 수 있도록
   const [linkCount, setLinkCount] = useState<number | null>(0);
@@ -261,6 +263,8 @@ export const useToggleLinkPin = ({size, sortBy, folderId}: UseLinkInfoArgs) => {
   });
 };
 
+//
+
 // 핀 고정 링크 목록 조회 GET
 const getPinnedLinks = async (): Promise<GetLinksSchema> => {
   const {data} = await apiClient.get(API_ENDPOINTS.LINKS.GET_PINNED);
@@ -426,5 +430,45 @@ export const useDeleteLink = ({size, sortBy}: UseLinkInfoArgs) => {
     onError: (error: Error) => {
       console.warn('Delete Link error:', error);
     },
+  });
+};
+
+// 링크 목록 검색
+const searchLinks = async (
+  payload: GetSearchLinkInfoArgs,
+): Promise<GetLinksSchema> => {
+  const {query, page, size} = payload;
+  const {data} = await apiClient.get(API_ENDPOINTS.LINKS.SEARCH, {
+    params: {
+      query,
+      page,
+      size,
+    },
+  });
+  return data.result;
+};
+
+export const useSearchLinks = ({
+  query,
+  size,
+  enabled,
+}: {
+  query: string;
+  size: number;
+  enabled: boolean;
+}) => {
+  return useInfiniteQuery({
+    queryKey: ['searchLinks', query, size],
+    queryFn: async ({pageParam = 0}) => {
+      const result = await searchLinks({query, page: pageParam, size});
+      return result;
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      const maxPages = Math.ceil(lastPage.linkCount / size);
+      const nextPage = allPages.length;
+      return nextPage < maxPages ? nextPage : undefined;
+    },
+    initialPageParam: 0,
+    enabled, // 쿼리가 실행될 조건을 제어하는 옵션
   });
 };

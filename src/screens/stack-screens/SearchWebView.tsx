@@ -7,7 +7,7 @@ import {FONTS} from '@/constants';
 import {extractHostname, shareUrl} from '@/utils/url-utils';
 import {type ITheme} from '@/types';
 import {useThemeStore} from '@/store/useThemeStore';
-import {useLinks, useToggleLinkPin} from '@/api/hooks/useLink';
+import {useSearchLinks, useToggleLinkPin} from '@/api/hooks/useLink';
 import NavigationButton from '@/components/webview/NavigationButton';
 import {
   ArrowBackIcon,
@@ -21,24 +21,23 @@ import BottomSheet from '@/components/modal/BottomSheet';
 import LinkContent from '@/components/link/LinkContent';
 import {PinnedIcon} from '@/assets/icons/bottom-tab';
 
-const WebViewList = () => {
+const SearchWebView = () => {
   const navigation = useNavigation();
   const webViewRef = useRef<WebView>(null);
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
   const route = useRoute();
-  const {folderId, sortBy, size, initialIndex} = route.params as {
-    folderId: number | null;
-    sortBy: string;
+  const {query, size, initialIndex} = route.params as {
+    query: string;
     size: number;
     initialIndex: number;
   };
 
   const linkInfoArgsOptions = {
-    folderId,
+    query,
     size,
-    sortBy,
+    enabled: true,
   };
 
   const [currentIndex, setCurrentIndex] = useState<number>(initialIndex);
@@ -53,7 +52,7 @@ const WebViewList = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useLinks(linkInfoArgsOptions);
+  } = useSearchLinks(linkInfoArgsOptions);
 
   const {mutate: togglePin} = useToggleLinkPin(linkInfoArgsOptions);
 
@@ -63,7 +62,7 @@ const WebViewList = () => {
   // 첫 URL 및 핀 상태 설정
   useEffect(() => {
     if (linkList.length > 0 && currentLink?.url) {
-      setCurrentUrl(currentLink.url);
+      setCurrentUrl(currentLink.url as string | null);
     }
   }, [linkList, currentIndex]);
 
@@ -106,7 +105,7 @@ const WebViewList = () => {
       if (nextPageData.data?.pages) {
         const newLinks = nextPageData.data.pages.flatMap(page => page.linkDtos);
         setCurrentIndex(currentIndex + 1);
-        setCurrentUrl(newLinks[0]?.url ?? '');
+        setCurrentUrl((newLinks[0]?.url as string | null) ?? '');
         setWebViewKey(prevKey => prevKey + 1);
       }
     }
@@ -212,7 +211,7 @@ const WebViewList = () => {
   );
 };
 
-export default WebViewList;
+export default SearchWebView;
 
 const createStyles = (theme: ITheme) =>
   StyleSheet.create({

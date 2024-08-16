@@ -20,7 +20,6 @@ export type MyPageRouteProp = RouteProp<BottomTabParamList, 'mypage'>;
 export interface RootStackParamList extends ParamListBase {
   Main: undefined;
   ThemeSetting: undefined;
-  WebViewTest: undefined;
   Support: undefined;
   AccountDelete: undefined;
   AccountManage: undefined;
@@ -35,6 +34,11 @@ export interface RootStackParamList extends ParamListBase {
     initialIndex: number;
     size: number;
   };
+  SearchWebView: {
+    query: string | null;
+    size: number;
+    initialIndex: number;
+  };
 }
 
 // BottomTab Screen에 대한 Navigation Object의 Type을 정의
@@ -47,4 +51,9 @@ export type RootStackNavigationProp =
 export type WebViewListNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   'WebViewList'
+>;
+
+export type SearchWebViewNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'SearchWebView'
 >;

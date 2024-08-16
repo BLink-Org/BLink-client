@@ -1,69 +1,142 @@
-import React, {useCallback, useMemo} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {
   FlatList,
   SafeAreaView,
   StyleSheet,
   Text,
   View,
+  ActivityIndicator,
   type ListRenderItem,
+  TouchableOpacity,
 } from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import {useThemeStore} from '@/store/useThemeStore';
 import SmallCard from '@/components/home/SmallCard';
-import {type IFileList} from '@/types/home';
-import dummyFileData from '@/constants/dummy-data/dummy-file-list.json';
 import SearchHeader from '@/components/search/SearchHeader';
 import {FONTS} from '@/constants';
 import RecentSearch from '@/components/search/ResentSearch';
-import dummyRecentData from '@/constants/dummy-data/dummy-recent-list.json';
-import useSearchData from '@/hooks/useSearchData';
-import {type ITheme} from '@/types';
+import {useSearchLinks} from '@/api/hooks/useLink';
+import {
+  type ILinkDtos,
+  type ITheme,
+  type SearchWebViewNavigationProp,
+} from '@/types';
+import SmallCardPlaceHolder from '@/components/home/SmallCardPlaceHolder';
 
-const Search = () => {
+const SearchPage = () => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
-  // 최근 검색 기록 더미 데이터 -> 추후 api로 받아오기
-  const recentSearches = dummyRecentData;
-  // 최근 검색 기록이 없는 경우 -> const recentSearchEmpty: [] = [];
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [finalSearchQuery, setFinalSearchQuery] = useState<string>('');
+  const isQueryEnabled = finalSearchQuery.trim().length > 0;
 
-  // 검색 필터 커스텀 훅
-  const {searchQuery, handleSearch, filteredData} =
-    useSearchData(dummyFileData);
+  const {
+    data: linkData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = useSearchLinks({
+    query: finalSearchQuery,
+    size: 10,
+    enabled: isQueryEnabled, // 검색어가 있을 때만 쿼리를 실행
+  });
 
-  const renderItem: ListRenderItem<IFileList> = useCallback(
-    ({item, index}) => (
-      <View>
-        <SmallCard content={item} />
-        {index !== filteredData.length - 1 && <View style={styles.separator} />}
-      </View>
-    ),
-    [filteredData],
+  const handleSearch = useCallback((query: string) => {
+    setSearchQuery(query);
+  }, []);
+
+  // 검색 완료 버튼 클릭 시 호출 -> 최종적으로 검색어를 적용
+  const handleSearchSubmit = useCallback(() => {
+    if (searchQuery.trim()) {
+      setFinalSearchQuery(searchQuery);
+    }
+  }, [searchQuery]);
+
+  const navigation = useNavigation<SearchWebViewNavigationProp>();
+
+  const handleCardPress = (index: number) => {
+    navigation.navigate('SearchWebView', {
+      query: finalSearchQuery,
+      size: 10,
+      initialIndex: index,
+    });
+  };
+  // FlatList 사용 최적화
+  const renderItem: ListRenderItem<ILinkDtos> = useCallback(
+    ({item, index}) => {
+      const isLastItem =
+        index ===
+        (linkData?.pages.flatMap(page => page.linkDtos).length ?? 0) - 1;
+
+      // 로딩 중이면 로딩 카드 렌더링
+      if (isLoading) {
+        <SmallCardPlaceHolder />;
+      }
+
+      return (
+        <View>
+          <TouchableOpacity onPress={() => handleCardPress(index)}>
+            <SmallCard content={item} linkInfoArgs={{size: 10}} />
+          </TouchableOpacity>
+          {!isLastItem && <View style={styles.separator} />}
+        </View>
+      );
+    },
+    [isLoading, linkData],
   );
 
-  const renderHeader = () => (
-    <View style={styles.headerText}>
-      <Text style={styles.headerTextContent}>{filteredData.length} Links</Text>
-    </View>
+  // 검색 결과 헤더
+  const renderHeader = useMemo(
+    () => (
+      <View style={styles.headerText}>
+        <Text style={styles.headerTextContent}>
+          {linkData?.pages[0].linkCount} Links
+        </Text>
+      </View>
+    ),
+    [linkData],
   );
 
   return (
     <SafeAreaView style={styles.container}>
       <ThemeBackground />
       <View style={styles.container}>
-        <SearchHeader searchQuery={searchQuery} handleSearch={handleSearch} />
-        {searchQuery === '' ? (
-          // <RecentSearch recentSearches={recentSearchEmpty} />
-          <RecentSearch recentSearches={recentSearches} />
+        <SearchHeader
+          searchQuery={searchQuery}
+          handleSearch={handleSearch}
+          handleSearchSubmit={handleSearchSubmit}
+        />
+        {finalSearchQuery === '' ? (
+          <RecentSearch recentSearches={[]} />
+        ) : isLoading ? (
+          <ActivityIndicator size="large" />
         ) : (
           <FlatList
-            data={filteredData}
+            data={
+              isLoading
+                ? Array(10).fill({})
+                : linkData?.pages.flatMap(page => page.linkDtos)
+            }
             renderItem={renderItem}
             keyExtractor={(item, index) => index.toString()}
             ListHeaderComponent={renderHeader}
             contentContainerStyle={styles.contentContainer}
             initialNumToRender={10}
             windowSize={10}
+            onEndReached={() => {
+              if (hasNextPage && !isLoading) {
+                fetchNextPage();
+              }
+            }}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={() =>
+              isFetchingNextPage ? (
+                <ActivityIndicator size="small" color="#6D96FF" />
+              ) : null
+            }
           />
         )}
       </View>
@@ -71,7 +144,7 @@ const Search = () => {
   );
 };
 
-export default Search;
+export default SearchPage;
 
 const createStyles = (theme: ITheme) =>
   StyleSheet.create({

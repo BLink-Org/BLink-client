@@ -1,5 +1,5 @@
 import {memo, useMemo} from 'react';
-import {View, TextInput, StyleSheet} from 'react-native';
+import {View, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
 import {FONTS} from '@/constants';
 import {SearchIcon} from '@/assets/icons/search';
 import {useThemeStore} from '@/store/useThemeStore';
@@ -8,27 +8,34 @@ import {type ITheme} from '@/types';
 interface SearchHeaderProps {
   searchQuery: string;
   handleSearch: (text: string) => void;
+  handleSearchSubmit: () => void; // 검색 완료 핸들러
 }
 
-const SearchHeader = memo(({searchQuery, handleSearch}: SearchHeaderProps) => {
-  const {theme} = useThemeStore();
-  const styles = useMemo(() => createStyles(theme), [theme]);
+const SearchHeader = memo(
+  ({searchQuery, handleSearch, handleSearchSubmit}: SearchHeaderProps) => {
+    const {theme} = useThemeStore();
+    const styles = useMemo(() => createStyles(theme), [theme]);
 
-  return (
-    <View style={styles.searchContainer}>
-      <TextInput
-        style={styles.searchInput}
-        onChangeText={handleSearch}
-        value={searchQuery}
-        placeholder="전체에서 검색"
-        placeholderTextColor={theme.TEXT300}
-      />
-      <View style={styles.searchIcon}>
-        <SearchIcon strokeWidth={1.5} fill={theme.TEXT900} />
+    return (
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.searchInput}
+          onChangeText={handleSearch}
+          value={searchQuery}
+          placeholder="전체에서 검색"
+          placeholderTextColor={theme.TEXT300}
+          onSubmitEditing={handleSearchSubmit}
+          returnKeyType="done" // 키보드 '완료' 버튼을 표시
+        />
+        <TouchableOpacity
+          style={styles.searchIcon}
+          onPress={handleSearchSubmit}>
+          <SearchIcon strokeWidth={1.5} fill={theme.TEXT900} />
+        </TouchableOpacity>
       </View>
-    </View>
-  );
-});
+    );
+  },
+);
 
 // display name
 SearchHeader.displayName = 'SearchHeader';
