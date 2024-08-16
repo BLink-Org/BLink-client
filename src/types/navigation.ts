@@ -29,6 +29,12 @@ export interface RootStackParamList extends ParamListBase {
   APITest: undefined;
   Onboarding: undefined;
   LinkApiText: undefined;
+  WebViewList: {
+    folderId: number | null;
+    sortBy: string;
+    initialIndex: number;
+    size: number;
+  };
 }
 
 // BottomTab Screen에 대한 Navigation Object의 Type을 정의
@@ -36,3 +42,9 @@ export type TabNavigationProp = BottomTabNavigationProp<BottomTabParamList>;
 // Stack Screen에 대한 Navigation Object의 Type을 정의
 export type RootStackNavigationProp =
   NativeStackNavigationProp<RootStackParamList>;
+
+// 웹뷰 리스트에 대한 Navigation Object의 Type을 정의
+export type WebViewListNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'WebViewList'
+>;

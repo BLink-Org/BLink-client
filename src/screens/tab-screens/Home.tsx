@@ -9,8 +9,10 @@ import {
   Platform,
   ActivityIndicator,
   type ListRenderItem,
+  TouchableOpacity,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useNavigation} from '@react-navigation/native';
 import {FONTS} from '@/constants';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import {useThemeStore} from '@/store/useThemeStore';
@@ -19,7 +21,11 @@ import SmallCard from '@/components/home/SmallCard';
 import useStickyAnimation from '@/hooks/useStickyAnimation';
 import FolderSideBar from '@/components/modal/FolderSideBar';
 import {useBottomButtonSizeStore} from '@/store/useBottomButtonSizeStore';
-import {type ILinkDtos, type ITheme} from '@/types';
+import {
+  type WebViewListNavigationProp,
+  type ILinkDtos,
+  type ITheme,
+} from '@/types';
 import useToast from '@/hooks/useToast';
 import SmallCardPlaceHolder from '@/components/home/SmallCardPlaceHolder';
 import {useLinks} from '@/api/hooks/useLink';
@@ -74,6 +80,17 @@ const Home = () => {
     linkCount,
   } = useLinks(linkInfoArgsOptions);
 
+  // 웹뷰에 전달
+  const navigation = useNavigation<WebViewListNavigationProp>();
+  const handleCardPress = (index: number) => {
+    navigation.navigate('WebViewList', {
+      folderId: selectedFolderId[0] ?? null,
+      sortBy: getSortByValue(t, selectedSortingOption),
+      initialIndex: index,
+      size: 10,
+    });
+  };
+
   // 카드 사이즈 조절
   const [isLargeCard, setIsLargeCard] = useState(false);
   const toggleCardSize = () => {
@@ -111,11 +128,13 @@ const Home = () => {
       const CardComponent = isLargeCard ? LargeCard : SmallCard;
       return (
         <View>
-          <CardComponent
-            content={item}
-            showToast={showToast}
-            linkInfoArgs={linkInfoArgsOptions}
-          />
+          <TouchableOpacity onPress={() => handleCardPress(index)}>
+            <CardComponent
+              content={item}
+              showToast={showToast}
+              linkInfoArgs={linkInfoArgsOptions}
+            />
+          </TouchableOpacity>
           {!isLastItem && <View style={styles.separator} />}
         </View>
       );
