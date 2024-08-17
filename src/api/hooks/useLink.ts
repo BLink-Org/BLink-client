@@ -4,7 +4,6 @@ import {
   useMutation,
   useInfiniteQuery,
   useQueryClient,
-  type InfiniteData,
 } from '@tanstack/react-query';
 import {API_ENDPOINTS} from '@/api/endpoints';
 import apiClient from '@/api/client';
@@ -19,7 +18,7 @@ import {
   type ILinkDtos,
   type GetLinkFolderSchema,
 } from '@/types';
-import {filterLinkCache} from './util';
+import {useHandleCacheUpdate} from '@/api/hooks/util';
 
 // 링크 목록 조회 GET
 const getLinks = async (payload: GetLinkInfoArgs): Promise<GetLinksSchema> => {
@@ -73,57 +72,19 @@ const moveLinkToTrash = async (linkId: string) => {
   return data.result;
 };
 
-// export const useMoveLinkToTrash = ({
-//   size,
-//   sortBy,
-//   folderId,
-// }: UseLinkInfoArgs) => {
-//   const queryClient = useQueryClient();
-
-//   return useMutation({
-//     mutationFn: moveLinkToTrash,
-//     onSuccess: (_, linkId) => {
-//       const cacheKey = ['links', size, sortBy, folderId];
-//       queryClient.setQueryData<InfiniteData<GetLinksSchema>>(
-//         cacheKey,
-//         oldData => {
-//           if (!oldData) {
-//             return oldData;
-//           }
-//           const newPages = oldData.pages.map(page => ({
-//             ...page,
-//             linkDtos: page.linkDtos.filter(link => String(link.id) !== linkId),
-//             linkCount: page.linkCount - 1,
-//           }));
-//           return {
-//             ...oldData,
-//             pages: newPages,
-//           };
-//         },
-//       );
-//     },
-//     onError: (error: Error) => {
-//       console.warn('Move Link to Trash error:', error);
-//     },
-//   });
-// };
-
+// 링크 휴지통 이동 훅
 export const useMoveLinkToTrash = ({
   size,
   sortBy,
   folderId,
 }: UseLinkInfoArgs) => {
-  const queryClient = useQueryClient();
+  const handleCacheUpdate = useHandleCacheUpdate();
 
   return useMutation({
     mutationFn: moveLinkToTrash,
     onSuccess: (_, linkId) => {
       const cacheKey = ['links', size, sortBy, folderId];
-
-      queryClient.setQueryData<InfiniteData<GetLinksSchema>>(
-        cacheKey,
-        oldData => filterLinkCache(oldData, linkId),
-      );
+      handleCacheUpdate(cacheKey, linkId);
     },
     onError: (error: Error) => {
       console.warn('Move Link to Trash error:', error);
@@ -140,41 +101,23 @@ const updateLinkTitle = async (payload: UpdateLinkTitleArgs) => {
   await apiClient.patch(endpoint, {title: payload.title});
 };
 
+// 링크 제목 수정 훅
 export const useUpdateLinkTitle = ({
   size,
   sortBy,
   folderId,
 }: UseLinkInfoArgs) => {
-  const queryClient = useQueryClient();
+  const handleCacheUpdate = useHandleCacheUpdate();
 
   return useMutation({
     mutationFn: updateLinkTitle,
     onSuccess: (_, payload) => {
       const cacheKey = ['links', size, sortBy, folderId];
-
-      queryClient.setQueryData<InfiniteData<GetLinksSchema>>(
-        cacheKey,
-        oldData => {
-          if (!oldData) {
-            return oldData;
-          }
-
-          const newPages = oldData.pages.map(page => ({
-            ...page,
-            linkDtos: page.linkDtos.map(link =>
-              String(link.id) === payload.linkId
-                ? {...link, title: payload.title}
-                : link,
-            ),
-          }));
-
-          return {
-            ...oldData,
-            pages: newPages,
-          };
-        },
-      );
-      // console.log('Update Link Title success:', payload);
+      const updateLinkTitleFn = (link: ILinkDtos) => ({
+        ...link,
+        title: payload.title,
+      });
+      handleCacheUpdate(cacheKey, payload.linkId, updateLinkTitleFn);
     },
     onError: (error: string) => {
       console.warn('Update Link Title error:', error);
@@ -215,7 +158,6 @@ const moveLink = async (payload: MoveLinkArgs) => {
 
 export const useMoveLink = () => {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: moveLink,
     onSuccess: () => {
@@ -231,43 +173,21 @@ export const useMoveLink = () => {
 // 링크 고정/고정 해제 토글 PATCH
 const toggleLinkPin = async (linkId: string) => {
   const endpoint = API_ENDPOINTS.LINKS.PIN_TOGGLE.replace(':linkId', linkId);
-  await apiClient.patch(endpoint); // 고정/고정 해제 토글 API 호출
+  await apiClient.patch(endpoint);
 };
 
 export const useToggleLinkPin = ({size, sortBy, folderId}: UseLinkInfoArgs) => {
-  const queryClient = useQueryClient();
-
+  const handleCacheUpdate = useHandleCacheUpdate();
   return useMutation({
     mutationFn: toggleLinkPin,
     onSuccess: (_, linkId) => {
-      const cacheKey = ['links', size, sortBy, folderId]; // 캐시 키 정의
+      const cacheKey = ['links', size, sortBy, folderId];
+      const togglePinFn = (link: ILinkDtos) => ({
+        ...link,
+        pinned: !link.pinned,
+      });
 
-      queryClient.setQueryData<InfiniteData<GetLinksSchema>>(
-        cacheKey,
-        oldData => {
-          if (!oldData) {
-            return oldData;
-          }
-
-          const newPages = oldData.pages.map(page => ({
-            ...page,
-            linkDtos: page.linkDtos.map(link => {
-              if (String(link.id) === linkId) {
-                return {
-                  ...link,
-                  pinned: !link.pinned,
-                };
-              }
-              return link;
-            }),
-          }));
-
-          return {
-            ...oldData,
-            pages: newPages,
-          };
-        },
-      );
+      handleCacheUpdate(cacheKey, linkId, togglePinFn);
     },
     onError: (error: string) => {
       console.warn('Toggle Link Pin error:', error);
@@ -353,31 +273,17 @@ const recoverLink = async (linkId: string) => {
 };
 
 export const useRecoverLink = ({size, sortBy}: UseLinkInfoArgs) => {
+  const handleCacheUpdate = useHandleCacheUpdate();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: recoverLink,
     onSuccess: (_, linkId) => {
       const cacheKey = ['trashLinks', size, sortBy];
-      queryClient.setQueryData<InfiniteData<GetLinksSchema>>(
-        cacheKey,
-        oldData => {
-          if (!oldData) {
-            console.log('No oldData found');
-            return oldData;
-          }
-          const newPages = oldData.pages.map(page => ({
-            ...page,
-            linkDtos: page.linkDtos.filter(link => String(link.id) !== linkId),
-            linkCount: page.linkCount - 1,
-          }));
-          return {
-            ...oldData,
-            pages: newPages,
-          };
-        },
-      );
 
+      handleCacheUpdate(cacheKey, linkId);
+
+      // 'links' 캐시 무효화 처리 (링크 목록 새로고침)
       queryClient.invalidateQueries({queryKey: ['links']});
     },
     onError: (error: string) => {
@@ -394,29 +300,13 @@ const deleteLink = async (linkId: string) => {
 
 // useDeleteLink 훅 정의
 export const useDeleteLink = ({size, sortBy}: UseLinkInfoArgs) => {
-  const queryClient = useQueryClient();
+  const handleCacheUpdate = useHandleCacheUpdate();
 
   return useMutation({
     mutationFn: deleteLink,
     onSuccess: (_, linkId) => {
       const cacheKey = ['trashLinks', size, sortBy];
-      queryClient.setQueryData<InfiniteData<GetLinksSchema>>(
-        cacheKey,
-        oldData => {
-          if (!oldData) {
-            return oldData;
-          }
-          const newPages = oldData.pages.map(page => ({
-            ...page,
-            linkDtos: page.linkDtos.filter(link => String(link.id) !== linkId),
-            linkCount: page.linkCount - 1,
-          }));
-          return {
-            ...oldData,
-            pages: newPages,
-          };
-        },
-      );
+      handleCacheUpdate(cacheKey, linkId);
     },
     onError: (error: Error) => {
       console.warn('Delete Link error:', error);
@@ -509,7 +399,6 @@ const excludeRecentSearch = async (linkId: string) => {
   await apiClient.patch(endpoint);
 };
 
-// Hook으로 삭제 기능 제공
 export const useDeleteRecentLink = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -517,10 +406,8 @@ export const useDeleteRecentLink = () => {
     onSuccess: (_, linkId: string) => {
       queryClient.setQueryData<ILinkDtos[]>(['recentSearch'], oldData => {
         if (!oldData) return [];
-
+        // 무한스크롤이 아니므로 util함수 사용 x
         const updatedData = oldData.filter(link => String(link.id) !== linkId);
-        console.log('업데이트된 데이터:', updatedData);
-
         return updatedData;
       });
     },
