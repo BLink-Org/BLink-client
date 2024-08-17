@@ -52,7 +52,6 @@ const FolderSideBar = ({
 
   const queryClient = useQueryClient();
   const {data: useFolderData} = useFolders();
-  // 폴더 생성 API
   const {mutate: createFolder} = useCreateFolder({
     onSuccess: () => {
       setIsBottomSheetVisible(!isBottomSheetVisible);
@@ -60,11 +59,12 @@ const FolderSideBar = ({
       showToast(TOAST_MESSAGE.CREATE_SUCCESS);
     },
   });
-  // 폴더 이름 수정 API
+
   const {mutate: updateFolderTitle} = useUpdateFolderTitle({
     onSuccess: () => {
       setIsBottomSheetVisible(!isBottomSheetVisible);
       queryClient.invalidateQueries({queryKey: ['folders']});
+      queryClient.invalidateQueries({queryKey: ['links']});
       showToast(TOAST_MESSAGE.EDIT_SUCCESS);
     },
   });
@@ -157,7 +157,7 @@ const FolderSideBar = ({
         </View>
         <View style={styles.detailContainer}>
           <Text style={styles.linkCount}>
-            {useFolderData?.linkTotalCount ?? 0 + ' Links'}
+            {(useFolderData?.linkTotalCount ?? 0) + ' Links'}
           </Text>
           <TouchableOpacity
             style={styles.totalButton}

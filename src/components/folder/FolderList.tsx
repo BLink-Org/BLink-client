@@ -1,8 +1,10 @@
-import React, {useMemo} from 'react';
-import {View, FlatList, StyleSheet} from 'react-native';
+import React, {useEffect, useMemo, useState} from 'react';
+import {View, FlatList, StyleSheet, LayoutAnimation} from 'react-native';
+import {useQueryClient} from '@tanstack/react-query';
 import FolderButton from '@/components/folder/FolderButton';
 import {type ITheme, type GetFoldersSchema, type IFolderDtos} from '@/types';
 import {useThemeStore} from '@/store/useThemeStore';
+import {useMoveFolder} from '@/api/hooks/useFolder';
 
 interface FolderListProps {
   isMultipleSelection: boolean; // 단일 선택(토글), 다중 선택
@@ -50,24 +52,68 @@ const FolderList = ({
     onFolderPress(selectedFolderId);
   };
 
+  const [, setFolders] = useState<IFolderDtos[]>(
+    useFolderData?.folderDtos ?? [],
+  );
+
+  const queryClient = useQueryClient();
+  const {mutate: moveFolderMutation} = useMoveFolder({
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['folders']}).then(() => {
+        if (useFolderData?.folderDtos) {
+          updateFolders(useFolderData.folderDtos);
+        }
+      });
+    },
+  });
+
+  useEffect(() => {
+    useFolderData && setFolders(useFolderData?.folderDtos);
+  }, [useFolderData?.folderDtos]);
+
+  const updateFolders = (newFolders: IFolderDtos[]) => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setFolders(newFolders);
+  };
+
+  const renderItem = ({item}: {item: IFolderDtos}) => (
+    <FolderButton
+      id={item.id}
+      name={item.title}
+      number={isMultipleSelection ? undefined : item.linkCount}
+      variants={selectedFolderId?.includes(item.id) ? 'pressed' : 'default'}
+      onPress={() => handlePress(item.id)}
+      showToast={showToast}
+      handleSelect={() => handleSelect(item)}
+      onMoveUp={() => moveFolderMutation({folderId: item.id, direction: 'up'})}
+      onMoveDown={() =>
+        moveFolderMutation({folderId: item.id, direction: 'down'})
+      }
+    />
+  );
+
   return (
     <>
       {useFolderData && (
         <FlatList
           data={useFolderData.folderDtos}
-          renderItem={({item, index}) => (
-            <FolderButton
-              id={item.id}
-              name={item.title}
-              number={isMultipleSelection ? undefined : item.linkCount}
-              variants={
-                selectedFolderId?.includes(item.id) ? 'pressed' : 'default'
-              }
-              onPress={() => handlePress(item.id)}
-              showToast={showToast}
-              handleSelect={() => handleSelect(item)}
-            />
-          )}
+          renderItem={({item}) =>
+            isMultipleSelection ? (
+              <FolderButton
+                id={item.id}
+                name={item.title}
+                number={isMultipleSelection ? undefined : item.linkCount}
+                variants={
+                  selectedFolderId?.includes(item.id) ? 'pressed' : 'default'
+                }
+                onPress={() => handlePress(item.id)}
+                showToast={showToast}
+                handleSelect={() => handleSelect(item)}
+              />
+            ) : (
+              renderItem({item})
+            )
+          }
           keyExtractor={item => `${item.id}`}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           showsVerticalScrollIndicator={false}

@@ -108,22 +108,22 @@ const APITest = () => {
   };
 
   const handleDeleteFolder = (folderId: number) => {
-    deleteFolderMutation.mutate(String(folderId));
+    deleteFolderMutation.mutate(folderId);
   };
 
   const handleUpdateFolderTitle = (folderId: number) => {
     updateFolderTitleMutation.mutate({
-      folderId: String(folderId),
+      folderId,
       title: 'Updated Folder Title',
     });
   };
 
   const handleMoveFolderUp = (folderId: number) => {
-    moveFolderMutation.mutate({folderId: String(folderId), direction: 'up'});
+    moveFolderMutation.mutate({folderId, direction: 'up'});
   };
 
   const handleMoveFolderDown = (folderId: number) => {
-    moveFolderMutation.mutate({folderId: String(folderId), direction: 'down'});
+    moveFolderMutation.mutate({folderId, direction: 'down'});
   };
 
   // linkApiTest로 이동

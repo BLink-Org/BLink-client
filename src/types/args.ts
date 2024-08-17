@@ -4,7 +4,7 @@ export interface UpdateFolderTitleArgs {
 }
 
 export interface MoveFolderArgs {
-  folderId: string;
+  folderId: number;
   direction: 'up' | 'down';
 }
 
@@ -14,7 +14,7 @@ export interface CreateLinkArgs {
 }
 
 export interface MoveLinkArgs {
-  linkId: string;
+  linkId: number;
   folderIdList: number[];
 }
 
