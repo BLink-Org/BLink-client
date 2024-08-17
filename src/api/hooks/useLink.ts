@@ -4,7 +4,6 @@ import {
   useMutation,
   useInfiniteQuery,
   useQueryClient,
-  QueryClient,
 } from '@tanstack/react-query';
 import {API_ENDPOINTS} from '@/api/endpoints';
 import apiClient from '@/api/client';
@@ -140,17 +139,47 @@ export const useMoveLink = () => {
   });
 };
 
-// 핀 고정 링크 목록 조회 GET
-const getPinnedLinks = async (): Promise<GetLinksSchema> => {
-  const {data} = await apiClient.get(API_ENDPOINTS.LINKS.GET_PINNED);
+// 핀 고정 링크 목록 조회 GET by 페이지네이션
+const getPinnedLinks = async (
+  payload: GetLinkInfoArgs,
+): Promise<GetLinksSchema> => {
+  const {page, size, sortBy} = payload;
+  const {data} = await apiClient.get(API_ENDPOINTS.LINKS.GET_PINNED, {
+    params: {
+      page,
+      size,
+      sortBy,
+    },
+  });
   return data.result;
 };
 
-export const usePinnedLinks = () => {
-  return useQuery({
-    queryKey: ['pinnedLinks'],
-    queryFn: getPinnedLinks,
+export const usePinnedLinks = ({size, sortBy}: UseLinkInfoArgs) => {
+  // linkCount를 상태로 관리하여 업데이트가 있을 때만 변경될 수 있도록
+  const [linkCount, setLinkCount] = useState<number | null>(0);
+
+  const query = useInfiniteQuery({
+    queryKey: ['pinnedLinks', size, sortBy],
+    queryFn: async ({pageParam = 0}) => {
+      const result = await getPinnedLinks({page: pageParam, size, sortBy});
+      return result;
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      const maxPages = Math.ceil(lastPage.linkCount / size);
+      const nextPage = allPages.length;
+      return nextPage < maxPages ? nextPage : undefined;
+    },
+    initialPageParam: 0,
   });
+
+  useEffect(() => {
+    const newLinkCount = query.data?.pages[0]?.linkCount;
+    if (newLinkCount !== undefined && newLinkCount !== linkCount) {
+      setLinkCount(newLinkCount);
+    }
+  }, [query.data, linkCount]);
+
+  return {...query, linkCount};
 };
 
 // 링크 저장 POST

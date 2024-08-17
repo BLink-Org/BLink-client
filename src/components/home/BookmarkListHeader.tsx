@@ -1,37 +1,29 @@
-import React from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import {FONTS} from '@/constants';
+import React, {useMemo} from 'react';
+import {View, Text, StyleSheet} from 'react-native';
 import DropdownFilter from '@/components/home/DropDownFilter';
-import {LargeCardIcon, SmallCardIcon} from '@/assets/icons/home';
-import {type ITheme} from '@/types';
 import {useThemeStore} from '@/store/useThemeStore';
+import {type ITheme} from '@/types';
+import {FONTS} from '@/constants';
 
 interface ListHeaderComponentProps {
-  selectedFolderName: string;
   linkCount: number;
   sortingOptions: string[];
   selectedSortingOption: string;
-  handleSelection: (selected: string) => void;
-  isLargeCard: boolean;
-  toggleCardSize: () => void;
+  handleSelection: (option: string) => void;
 }
 
-const ListHeaderComponent = ({
-  selectedFolderName,
+const BookmarkListHeader = ({
   linkCount,
   sortingOptions,
   selectedSortingOption,
   handleSelection,
-  isLargeCard,
-  toggleCardSize,
 }: ListHeaderComponentProps) => {
   const {theme} = useThemeStore();
-  const styles = createStyles(theme);
-
+  const styles = useMemo(() => createStyles(theme), [theme]);
   return (
     <>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>{selectedFolderName}</Text>
+        <Text style={styles.title}>북마크</Text>
       </View>
       <View style={styles.filterContainer}>
         <Text style={styles.linkCount}>{linkCount} Links</Text>
@@ -41,22 +33,13 @@ const ListHeaderComponent = ({
             selectedOption={selectedSortingOption}
             onSelect={handleSelection}
           />
-          <TouchableOpacity
-            style={styles.sizeIconContainer}
-            onPress={toggleCardSize}>
-            {isLargeCard ? (
-              <LargeCardIcon stroke={theme.TEXT700} />
-            ) : (
-              <SmallCardIcon stroke={theme.TEXT700} />
-            )}
-          </TouchableOpacity>
         </View>
       </View>
     </>
   );
 };
 
-export default ListHeaderComponent;
+export default BookmarkListHeader;
 
 const createStyles = (theme: ITheme) =>
   StyleSheet.create({
@@ -77,8 +60,5 @@ const createStyles = (theme: ITheme) =>
     linkCount: {
       color: theme.MAIN500,
       ...FONTS.BODY2_MEDIUM,
-    },
-    sizeIconContainer: {
-      marginLeft: 12,
     },
   });

@@ -6,12 +6,14 @@ interface AnimatedHeaderProps {
   translateY: Animated.AnimatedInterpolation<number>;
   toggleSideBar: () => void;
   backgroundThemeColor: string;
+  isBookmark?: boolean;
 }
 
 const AnimatedLogoHeader = ({
   translateY,
   toggleSideBar,
   backgroundThemeColor,
+  isBookmark,
 }: AnimatedHeaderProps) => (
   <Animated.View
     style={[
@@ -21,7 +23,7 @@ const AnimatedLogoHeader = ({
         transform: [{translateY}],
       },
     ]}>
-    <ScreenHeader toggleSideBar={toggleSideBar} />
+    <ScreenHeader toggleSideBar={toggleSideBar} isBookmark={isBookmark} />
   </Animated.View>
 );
 

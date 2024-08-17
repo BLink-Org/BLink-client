@@ -1,42 +1,41 @@
-import React, {useState, useCallback, useMemo} from 'react';
+import React, {useState, useCallback, useMemo, useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
   FlatList,
   StyleSheet,
-  Text,
-  TouchableOpacity,
   View,
   SafeAreaView,
   RefreshControl,
   type ListRenderItem,
-  Animated,
+  Platform,
+  ActivityIndicator,
 } from 'react-native';
-import {FONTS} from '@/constants';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import {useThemeStore} from '@/store/useThemeStore';
-import {LargeCardIcon, SmallCardIcon} from '@/assets/icons/home';
-import LargeCard from '@/components/home/LargeCard';
 import SmallCard from '@/components/home/SmallCard';
-import DropdownFilter from '@/components/home/DropDownFilter';
-import dummyFileData from '@/constants/dummy-data/dummy-file-list.json';
-import useSortedData from '@/hooks/useSortedData';
-import {type IFileList} from '@/types/home';
 import useStickyAnimation from '@/hooks/useStickyAnimation';
-import LogoHeader from '@/components/common/LogoHeader';
-import {type ITheme} from '@/types';
+import {type ILinkDtos, type ITheme} from '@/types';
+import {getSortByValue, getSortingOptions} from '@/utils/sorting-utils';
+import {usePinnedLinks} from '@/api/hooks/useLink';
+import SmallCardPlaceHolder from '@/components/home/SmallCardPlaceHolder';
+import {useBottomButtonSizeStore} from '@/store/useBottomButtonSizeStore';
+import useToast from '@/hooks/useToast';
+import AnimatedLogoHeader from '@/components/common/AnimatedLogoHeader';
+import BookmarkListHeader from '@/components/home/BookmarkListHeader';
 
 const Bookmark = () => {
   const {t} = useTranslation();
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
-  const sortingOptions = [
-    t('최근 저장순'),
-    t('과거 저장순'),
-    t('제목순 (A-ㅎ)'),
-    t('제목순 (ㅎ-A)'),
-  ];
+  // 하단 버튼 크기 계산 -> 전역변수 관리
+  const {bottom} = useSafeAreaInsets();
+  const isHomeIndicatorPresent = Platform.OS === 'ios' && bottom > 0;
+  const {setButtonHeight} = useBottomButtonSizeStore();
+  const {renderToast, showToast} = useToast({marginBottom: 44});
 
+  const sortingOptions = getSortingOptions(t);
   const [selectedSortingOption, setSelectedSortingOption] = useState(
     sortingOptions[0],
   );
@@ -44,97 +43,101 @@ const Bookmark = () => {
     setSelectedSortingOption(selected);
   };
 
-  // sort 커스텀 훅
-  const sortedData = useSortedData(dummyFileData, selectedSortingOption);
-
-  // 카드 사이즈 조절
-  const [isLargeCard, setIsLargeCard] = useState(true);
-  const toggleCardSize = () => {
-    setIsLargeCard(prevState => !prevState);
+  const linkInfoArgsOptions = {
+    size: 10,
+    sortBy: getSortByValue(t, selectedSortingOption),
   };
+
+  const {
+    data: linkData,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+    linkCount,
+  } = usePinnedLinks(linkInfoArgsOptions);
+  console.log('🚀 ~ file: Bookmark.tsx:47 ~ Bookmark ~ linkData:', linkData);
 
   // 새로고침 상태 관리
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    // 여기서 데이터를 새로 고침
-    // 추후 API 호출로 변경
-    // 예시로 1초 후 새로고침 완료
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1000);
-  }, []);
+    refetch();
+    setRefreshing(false);
+  }, [refetch]);
 
   // sticky header 애니메이션
   const {translateY, handleScroll} = useStickyAnimation(refreshing);
 
-  // FlatList Header 영역
-  const ListHeaderComponent = () => {
-    return (
-      <>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>북마크</Text>
-        </View>
-        <View style={styles.filterContainer}>
-          <Text style={styles.linkCount}>123 Links</Text>
-          <View style={styles.filterContainer}>
-            <DropdownFilter
-              options={sortingOptions}
-              selectedOption={selectedSortingOption}
-              onSelect={handleSelection}
-            />
-            <TouchableOpacity
-              style={styles.sizeIconContainer}
-              onPress={toggleCardSize}>
-              {isLargeCard ? (
-                <LargeCardIcon stroke={theme.TEXT700} />
-              ) : (
-                <SmallCardIcon stroke={theme.TEXT700} />
-              )}
-            </TouchableOpacity>
-          </View>
-        </View>
-      </>
-    );
-  };
-
   // FlatList 사용 최적화
-  const renderItem: ListRenderItem<IFileList> = useCallback(
-    ({item, index}) => (
-      <View>
-        {isLargeCard ? (
-          <LargeCard content={item} />
-        ) : (
-          <SmallCard content={item} />
-        )}
-        {index !== sortedData.length - 1 && <View style={styles.separator} />}
-      </View>
-    ),
-    [isLargeCard, sortedData, styles.separator],
+  const renderItem: ListRenderItem<ILinkDtos> = useCallback(
+    ({item, index}) => {
+      const isLastItem =
+        index ===
+        (linkData?.pages.flatMap(page => page.linkDtos).length ?? 0) - 1;
+
+      if (!linkData || isLoading) {
+        return <SmallCardPlaceHolder />;
+      }
+
+      // 로딩이 완료되면 카드 렌더링
+      return (
+        <View>
+          <SmallCard
+            content={item}
+            showToast={showToast}
+            linkInfoArgs={linkInfoArgsOptions}
+            page="bookmark"
+          />
+          {!isLastItem && <View style={styles.separator} />}
+        </View>
+      );
+    },
+    [isLoading, linkData, showToast],
   );
+
+  useEffect(() => {
+    const calculatedHeight = isHomeIndicatorPresent ? 80 : 58;
+    setButtonHeight(calculatedHeight);
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
       <ThemeBackground />
       <View style={styles.mainContainer}>
-        <Animated.View
-          style={[
-            styles.header,
-            {
-              transform: [{translateY}],
-            },
-          ]}>
-          <LogoHeader />
-        </Animated.View>
+        <AnimatedLogoHeader
+          translateY={translateY}
+          toggleSideBar={() => {}}
+          backgroundThemeColor={theme.BACKGROUND}
+          isBookmark
+        />
 
         <FlatList
-          data={sortedData}
+          data={
+            isLoading
+              ? Array(10).fill({})
+              : linkData?.pages.flatMap(page => page.linkDtos)
+          }
           renderItem={renderItem}
           keyExtractor={(item, index) => index.toString()}
-          ListHeaderComponent={ListHeaderComponent}
+          ListHeaderComponent={
+            <BookmarkListHeader
+              linkCount={linkCount ?? 0}
+              sortingOptions={sortingOptions}
+              selectedSortingOption={selectedSortingOption}
+              handleSelection={handleSelection}
+            />
+          }
           contentContainerStyle={styles.contentContainer}
           initialNumToRender={10}
           windowSize={10}
+          onEndReached={() => {
+            if (hasNextPage && !isLoading) {
+              fetchNextPage();
+            }
+          }}
+          onEndReachedThreshold={0.5}
           onScroll={handleScroll}
           refreshControl={
             <RefreshControl
@@ -143,8 +146,15 @@ const Bookmark = () => {
               progressViewOffset={60}
             />
           }
+          ListFooterComponent={() =>
+            isFetchingNextPage ? (
+              <ActivityIndicator size="small" color="#6D96FF" />
+            ) : null
+          }
         />
       </View>
+      {/* 삭제 토스트 메세지 처리 */}
+      {renderToast()}
     </SafeAreaView>
   );
 };
@@ -160,38 +170,10 @@ const createStyles = (theme: ITheme) =>
       flex: 1,
       overflow: 'hidden',
     },
-    header: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      zIndex: 1,
-      backgroundColor: theme.BACKGROUND,
-    },
+
     contentContainer: {
       paddingTop: 60,
       paddingHorizontal: 18,
-    },
-    titleContainer: {
-      height: 69,
-      justifyContent: 'center',
-    },
-    title: {
-      color: theme.TEXT900,
-      ...FONTS.TITLE,
-    },
-    filterContainer: {
-      height: 24,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    linkCount: {
-      color: theme.MAIN500,
-      ...FONTS.BODY2_MEDIUM,
-    },
-    sizeIconContainer: {
-      marginLeft: 12,
     },
     separator: {
       height: 1,

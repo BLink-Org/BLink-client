@@ -167,7 +167,7 @@ const Home = () => {
           ListHeaderComponent={
             <HomeListHeader
               selectedFolderName={selectedFolderName}
-              linkCount={linkCount}
+              linkCount={linkCount ?? 0}
               sortingOptions={sortingOptions}
               selectedSortingOption={selectedSortingOption}
               handleSelection={handleSelection}
