@@ -184,13 +184,12 @@ const WebViewList = () => {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => shareUrl(currentUrl ?? '')}>
-          <ShareIcon fill={theme.TEXT900} />
+          <View style={styles.shareIcon} />
+          <ShareIcon width={26} height={26} fill={theme.TEXT900} />
         </TouchableOpacity>
         <TouchableOpacity onPress={handlePinToggle}>
           <PinnedIcon
-            width={30}
-            height={30}
-            strokeWidth={1.6}
+            strokeWidth={1.5}
             fill={currentLink.pinned ? theme.TEXT900 : 'transparent'}
             stroke={theme.TEXT900}
           />
@@ -231,7 +230,9 @@ const createStyles = (theme: ITheme) =>
     webViewContainer: {
       flex: 1,
     },
-
+    shareIcon: {
+      paddingVertical: 2,
+    },
     navigationContainer: {
       flexDirection: 'row',
       justifyContent: 'space-between',

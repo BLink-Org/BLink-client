@@ -17,6 +17,7 @@ import {
   type UseLinkInfoArgs,
   type GetSearchLinkInfoArgs,
   type ILinkDtos,
+  type GetLinkFolderSchema,
 } from '@/types';
 import {filterLinkCache} from './util';
 
@@ -182,22 +183,27 @@ export const useUpdateLinkTitle = ({
 };
 
 // 특정 링크가 저장 되어 있는 폴더 목록 GET
-const getLinkFolder = async (linkId: string) => {
-  const endpoint = API_ENDPOINTS.LINKS.FETCH_FOLDER.replace(':linkId', linkId);
+const getLinkFolder = async (linkId: number): Promise<GetLinkFolderSchema> => {
+  const endpoint = API_ENDPOINTS.LINKS.FETCH_FOLDER.replace(
+    ':linkId',
+    `${linkId}`,
+  );
   const {data} = await apiClient.get(endpoint);
   return data.result;
 };
-export const useLinkFolder = (linkId: string) => {
+export const useLinkFolder = (linkId: number) => {
   return useQuery({
     queryKey: ['linkFolder', linkId],
     queryFn: async () => await getLinkFolder(linkId),
-    enabled: false, // 쿼리를 수동으로 호출하기 위해 비활성화
   });
 };
 
 // 링크 저장 폴더 변경 POST
 const moveLink = async (payload: MoveLinkArgs) => {
-  const endpoint = API_ENDPOINTS.LINKS.MOVE.replace(':linkId', payload.linkId);
+  const endpoint = API_ENDPOINTS.LINKS.MOVE.replace(
+    ':linkId',
+    `${payload.linkId}`,
+  );
 
   // folderIdList가 비어 있을 수 있음을 처리
   const {data} = await apiClient.post(endpoint, {
@@ -207,33 +213,14 @@ const moveLink = async (payload: MoveLinkArgs) => {
   return data.result;
 };
 
-export const useMoveLink = ({size, sortBy, folderId}: UseLinkInfoArgs) => {
+export const useMoveLink = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: moveLink,
-    onSuccess: (_, payload) => {
-      const cacheKey = ['links', size, sortBy, folderId];
-      queryClient.setQueryData<InfiniteData<GetLinksSchema>>(
-        cacheKey,
-        oldData => {
-          if (!oldData) {
-            return oldData;
-          }
-          const newPages = oldData.pages.map(page => ({
-            ...page,
-            linkDtos: page.linkDtos.map(link =>
-              String(link.id) === payload.linkId
-                ? {...link, folderIdList: payload.folderIdList}
-                : link,
-            ),
-          }));
-          return {
-            ...oldData,
-            pages: newPages,
-          };
-        },
-      );
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['folders']});
+      queryClient.invalidateQueries({queryKey: ['links']});
     },
     onError: (error: string) => {
       console.warn('Move Link error:', error);
@@ -310,9 +297,6 @@ const createLink = async (payload: CreateLinkArgs) => {
 export const useCreateLink = (options = {}) => {
   return useMutation({
     mutationFn: createLink,
-    onError: (error: string) => {
-      console.warn('Create Link error:', error);
-    },
     ...options,
   });
 };

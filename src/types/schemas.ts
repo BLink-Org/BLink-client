@@ -20,6 +20,10 @@ export interface GetFoldersSchema {
   noFolderLinkCount: number;
 }
 
+export interface GetLinkFolderSchema {
+  folderIdList: number[];
+}
+
 export interface GetLinksSchema {
   linkCount: number;
   linkDtos: ILinkDtos[];

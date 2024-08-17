@@ -22,7 +22,7 @@ export const API_ENDPOINTS = {
   },
   LINKS: {
     FETCH: '/api/links', // 링크 목록 조회
-    FETCH_FOLDER: '/api/links/:linkId/folder', // 링크가 저장된 폴더 목록 조회
+    FETCH_FOLDER: '/api/links/:linkId/folders', // 링크가 저장된 폴더 목록 조회
     CREATE: '/api/links', // 링크 저장
     MOVE: '/api/links/:linkId/move', // 링크 저장 폴더 변경
     DELETE: '/api/links/:linkId', // 휴지통에서 링크 영구삭제

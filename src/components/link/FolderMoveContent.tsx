@@ -17,7 +17,7 @@ import BottomSheet from '@/components/modal/BottomSheet';
 import FolderContent from '@/components/folder/FolderContent';
 import FolderList from '@/components/folder/FolderList';
 import {useCreateFolder, useFolders} from '@/api/hooks/useFolder';
-import {useLinkFolder} from '@/api/hooks/useLink';
+import {useLinkFolder, useMoveLink} from '@/api/hooks/useLink';
 
 interface FolderMoveContentProps {
   toggleBottomSheet: () => void;
@@ -32,10 +32,20 @@ const FolderMoveContent = ({
   const styles = useMemo(() => createStyles(theme), [theme]);
   const {data: useFolderData} = useFolders();
   // 특정 링크의 폴더 정보 가져오기
-  // const {data: selectedFoldersData} = useLinkFolder(linkId);
-  console.log('linkId', linkId);
+  const {data: selectedFoldersData} = useLinkFolder(linkId);
 
-  const [selectedFolderId, setSelectedFolderId] = useState<number[]>([]);
+  const [selectedFolderId, setSelectedFolderId] = useState<number[]>([0]);
+
+  useEffect(() => {
+    if (
+      selectedFoldersData?.folderIdList &&
+      selectedFoldersData?.folderIdList.length > 0
+    ) {
+      setSelectedFolderId(selectedFoldersData.folderIdList);
+    } else {
+      setSelectedFolderId([0]);
+    }
+  }, [selectedFoldersData]);
 
   const [isReadyToSave, setIsReadyToSave] = useState<boolean>(true);
   const [isFolderBottomSheetVisible, setIsFolderBottomSheetVisible] =
@@ -49,9 +59,20 @@ const FolderMoveContent = ({
       queryClient.invalidateQueries({queryKey: ['folders']});
     },
   });
+  const {mutate: updateMoveLink} = useMoveLink();
 
-  const onSaveFolder = (title: string) => {
-    createFolder({title});
+  // 폴더 생성 API
+  const onSaveFolder = (textInput: string) => {
+    createFolder({title: textInput});
+  };
+
+  // 폴더 이동 API
+  const onSaveMoveFolder = () => {
+    const folderIdList = selectedFolderId[0] === 0 ? [] : selectedFolderId;
+    updateMoveLink({
+      linkId,
+      folderIdList,
+    });
   };
 
   const toggleFolderBottomSheet = () => {
@@ -94,7 +115,10 @@ const FolderMoveContent = ({
       </SafeAreaView>
       <CustomBottomButton
         title="저장"
-        onPress={toggleBottomSheet}
+        onPress={() => {
+          toggleBottomSheet();
+          onSaveMoveFolder();
+        }}
         isDisabled={!isReadyToSave}
       />
     </>

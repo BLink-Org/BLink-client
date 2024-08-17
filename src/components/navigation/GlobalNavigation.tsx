@@ -1,5 +1,4 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {type RootStackParamList} from '@/types/navigation';
 import ThemeSetting from '@/screens/stack-screens/ThemeSetting';
 import Support from '@/screens/stack-screens/Support';
 import AccountDelete from '@/screens/stack-screens/AccountDelete';
@@ -11,6 +10,7 @@ import Onboarding from '@/screens/stack-screens/Onboarding';
 import LinkApiTest from '@/screens/stack-screens/LinkApiTest';
 import WebViewList from '@/screens/stack-screens/WebViewList';
 import SearchWebView from '@/screens/stack-screens/SearchWebView';
+import {type RootStackParamList} from '@/types/navigation';
 import BottomTabNavigation from './BottomTabNavigation';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -40,6 +40,7 @@ const GlobalNavigation = ({isAuthenticated}: {isAuthenticated: boolean}) => {
             component={WebViewList}
             options={{animation: 'slide_from_bottom'}}
           />
+
           <Stack.Screen
             name="SearchWebView"
             component={SearchWebView}

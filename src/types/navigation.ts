@@ -34,6 +34,7 @@ export interface RootStackParamList extends ParamListBase {
     initialIndex: number;
     size: number;
   };
+
   SearchWebView: {
     query: string | null;
     size: number;

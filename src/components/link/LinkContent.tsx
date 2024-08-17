@@ -19,6 +19,7 @@ import BottomSheet from '@/components/modal/BottomSheet';
 import FolderContent from '@/components/folder/FolderContent';
 import FolderList from '@/components/folder/FolderList';
 import {useCreateFolder, useFolders} from '@/api/hooks/useFolder';
+import {useCreateLink} from '@/api/hooks/useLink';
 
 interface FolderSideBarProps {
   defaultURL?: string;
@@ -38,9 +39,7 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
     useState(false);
   const {buttonHeight} = useBottomButtonSizeStore();
 
-  const toggleFolderBottomSheet = () => {
-    setIsFolderBottomSheetVisible(!isFolderBottomSheetVisible);
-  };
+  // 링크 저장 모달 내 폴더 생성 API
   const queryClient = useQueryClient();
   const {mutate: createFolder} = useCreateFolder({
     onSuccess: () => {
@@ -49,8 +48,26 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
     },
   });
 
-  const onSaveFolder = (title: string) => {
-    createFolder({title});
+  const {mutate: createLink} = useCreateLink({
+    onSuccess: () => {
+      toggleBottomSheet();
+      queryClient.invalidateQueries({queryKey: ['folders']});
+      queryClient.invalidateQueries({queryKey: ['links']});
+    },
+    onError: (error: any) => {
+      if (error.response.data.code === 2600) {
+        setErrorMessage('이미 저장된 링크입니다');
+        setIsReadyToSave(false);
+      }
+    },
+  });
+
+  const onSaveFolder = (textInput: string) => {
+    createFolder({title: textInput});
+  };
+
+  const toggleFolderBottomSheet = () => {
+    setIsFolderBottomSheetVisible(!isFolderBottomSheetVisible);
   };
 
   useEffect(() => {
@@ -102,7 +119,13 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
       </SafeAreaView>
       <CustomBottomButton
         title="저장"
-        onPress={toggleBottomSheet}
+        onPress={() => {
+          textInput &&
+            createLink({
+              url: textInput,
+              folderIdList: selectedFolderId[0] === 0 ? [] : selectedFolderId,
+            });
+        }}
         isDisabled={!isReadyToSave}
       />
     </>
