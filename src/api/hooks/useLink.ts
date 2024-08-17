@@ -18,6 +18,7 @@ import {
   type GetSearchLinkInfoArgs,
   type ILinkDtos,
 } from '@/types';
+import {filterLinkCache} from './util';
 
 // 링크 목록 조회 GET
 const getLinks = async (payload: GetLinkInfoArgs): Promise<GetLinksSchema> => {
@@ -71,6 +72,41 @@ const moveLinkToTrash = async (linkId: string) => {
   return data.result;
 };
 
+// export const useMoveLinkToTrash = ({
+//   size,
+//   sortBy,
+//   folderId,
+// }: UseLinkInfoArgs) => {
+//   const queryClient = useQueryClient();
+
+//   return useMutation({
+//     mutationFn: moveLinkToTrash,
+//     onSuccess: (_, linkId) => {
+//       const cacheKey = ['links', size, sortBy, folderId];
+//       queryClient.setQueryData<InfiniteData<GetLinksSchema>>(
+//         cacheKey,
+//         oldData => {
+//           if (!oldData) {
+//             return oldData;
+//           }
+//           const newPages = oldData.pages.map(page => ({
+//             ...page,
+//             linkDtos: page.linkDtos.filter(link => String(link.id) !== linkId),
+//             linkCount: page.linkCount - 1,
+//           }));
+//           return {
+//             ...oldData,
+//             pages: newPages,
+//           };
+//         },
+//       );
+//     },
+//     onError: (error: Error) => {
+//       console.warn('Move Link to Trash error:', error);
+//     },
+//   });
+// };
+
 export const useMoveLinkToTrash = ({
   size,
   sortBy,
@@ -82,22 +118,10 @@ export const useMoveLinkToTrash = ({
     mutationFn: moveLinkToTrash,
     onSuccess: (_, linkId) => {
       const cacheKey = ['links', size, sortBy, folderId];
+
       queryClient.setQueryData<InfiniteData<GetLinksSchema>>(
         cacheKey,
-        oldData => {
-          if (!oldData) {
-            return oldData;
-          }
-          const newPages = oldData.pages.map(page => ({
-            ...page,
-            linkDtos: page.linkDtos.filter(link => String(link.id) !== linkId),
-            linkCount: page.linkCount - 1,
-          }));
-          return {
-            ...oldData,
-            pages: newPages,
-          };
-        },
+        oldData => filterLinkCache(oldData, linkId),
       );
     },
     onError: (error: Error) => {
@@ -264,8 +288,6 @@ export const useToggleLinkPin = ({size, sortBy, folderId}: UseLinkInfoArgs) => {
   });
 };
 
-//
-
 // 핀 고정 링크 목록 조회 GET
 const getPinnedLinks = async (): Promise<GetLinksSchema> => {
   const {data} = await apiClient.get(API_ENDPOINTS.LINKS.GET_PINNED);
@@ -431,7 +453,7 @@ const searchLinks = async (
     },
   });
   // 1.5초 지연
-  await new Promise(resolve => setTimeout(resolve, 1500));
+  // await new Promise(resolve => setTimeout(resolve, 1500));
   return data.result;
 };
 
@@ -466,10 +488,8 @@ const viewLink = async (linkId: string) => {
   await apiClient.patch(endpoint);
 };
 
-// PATCH 요청 후에 캐시 무효화 또는 새로고침 로직 추가
 export const useViewLink = (options = {}) => {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: viewLink,
     onSuccess: () => {
@@ -493,5 +513,35 @@ export const useRecentSearch = () => {
   return useQuery({
     queryKey: ['recentSearch'],
     queryFn: getRecentSearch,
+  });
+};
+
+// 최근 검색어 삭제 API 호출 함수
+const excludeRecentSearch = async (linkId: string) => {
+  const endpoint = API_ENDPOINTS.LINKS.RECENT_SEARCH_EXCLUDE.replace(
+    ':linkId',
+    linkId,
+  );
+  await apiClient.patch(endpoint);
+};
+
+// Hook으로 삭제 기능 제공
+export const useDeleteRecentLink = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: excludeRecentSearch,
+    onSuccess: (_, linkId: string) => {
+      queryClient.setQueryData<ILinkDtos[]>(['recentSearch'], oldData => {
+        if (!oldData) return [];
+
+        const updatedData = oldData.filter(link => String(link.id) !== linkId);
+        console.log('업데이트된 데이터:', updatedData);
+
+        return updatedData;
+      });
+    },
+    onError: error => {
+      console.error('Error deleting link:', error);
+    },
   });
 };

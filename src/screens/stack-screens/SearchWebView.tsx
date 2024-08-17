@@ -60,11 +60,7 @@ const SearchWebView = () => {
   } = useSearchLinks(linkInfoArgsOptions);
 
   const {mutate: togglePin} = useToggleLinkPin(linkInfoArgsOptions);
-  const {mutate: viewLink} = useViewLink({
-    onSuccess: () => {
-      console.log('viewLink success');
-    },
-  });
+  const {mutate: viewLink} = useViewLink();
 
   const linkList = linkData?.pages.flatMap(page => page.linkDtos) ?? [];
   const currentLink = linkList[currentIndex];

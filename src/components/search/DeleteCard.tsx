@@ -7,9 +7,10 @@ import {type ILinkDtos, type ITheme} from '@/types';
 
 interface LargeCardProps {
   content: ILinkDtos;
+  onDelete: () => void; // 삭제를 위한 콜백 함수
 }
 
-const DeleteCard = ({content}: LargeCardProps) => {
+const DeleteCard = ({content, onDelete}: LargeCardProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
@@ -23,7 +24,7 @@ const DeleteCard = ({content}: LargeCardProps) => {
           {content.title === '' ? '제목 없음' : content.title}
         </Text>
       </View>
-      <TouchableOpacity style={styles.rightContainer}>
+      <TouchableOpacity style={styles.rightContainer} onPress={onDelete}>
         <DeleteIcon fill={theme.TEXT500} />
       </TouchableOpacity>
     </View>

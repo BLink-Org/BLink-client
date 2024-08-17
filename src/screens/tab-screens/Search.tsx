@@ -16,7 +16,11 @@ import {useThemeStore} from '@/store/useThemeStore';
 import SmallCard from '@/components/home/SmallCard';
 import SearchHeader from '@/components/search/SearchHeader';
 import {FONTS} from '@/constants';
-import {useRecentSearch, useSearchLinks} from '@/api/hooks/useLink';
+import {
+  useDeleteRecentLink,
+  useRecentSearch,
+  useSearchLinks,
+} from '@/api/hooks/useLink';
 import {
   type ILinkDtos,
   type ITheme,
@@ -31,10 +35,6 @@ const SearchPage = () => {
 
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [finalSearchQuery, setFinalSearchQuery] = useState<string>('');
-  console.log(
-    '🚀 ~ file: Search.tsx:34 ~ SearchPage ~ finalSearchQuery:',
-    finalSearchQuery,
-  );
   const isQueryEnabled = finalSearchQuery.trim().length > 0;
 
   const {
@@ -50,20 +50,23 @@ const SearchPage = () => {
   });
 
   // 최근 검색 목록 get
-  const {data: recentSearches, refetch: refetchSearches} = useRecentSearch();
+  const {data: recentSearches} = useRecentSearch();
 
   const handleSearch = useCallback(
     (query: string) => {
       setSearchQuery(query);
       if (query.trim() === '') {
-        console.log('검색어 없음');
         setFinalSearchQuery('');
-        refetchSearches();
       }
     },
     [setSearchQuery, setFinalSearchQuery],
   );
 
+  // 삭제 훅 사용
+  const {mutate: deleteLink} = useDeleteRecentLink();
+  const handleDelete = (linkId: string) => {
+    deleteLink(linkId); // 단순히 삭제 호출
+  };
   // 검색 완료 버튼 클릭 시 호출 -> 최종적으로 검색어를 적용
   const handleSearchSubmit = useCallback(() => {
     if (searchQuery.trim()) {
@@ -114,21 +117,25 @@ const SearchPage = () => {
     if (!recentSearches) {
       return null;
     }
-    return <RecentSearch recentSearches={recentSearches} />;
+    return (
+      <RecentSearch recentSearches={recentSearches} onDelete={handleDelete} />
+    );
   };
 
   const renderNoResults = () => {
     if (linkData?.pages[0].linkCount === 0) {
       return (
-        <View style={styles.centerContainer}>
-          <Image
-            source={theme.SEARCH_EDGE_IMAGE}
-            style={styles.image}
-            resizeMode="contain"
-          />
-          <Text style={styles.noExistText}>
-            조건에 맞는 검색 결과가 없어요.
-          </Text>
+        <View style={styles.container}>
+          <View style={styles.centerContainer}>
+            <Image
+              source={theme.SEARCH_EDGE_IMAGE}
+              style={styles.image}
+              resizeMode="contain"
+            />
+            <Text style={styles.noExistText}>
+              조건에 맞는 검색 결과가 없어요.
+            </Text>
+          </View>
         </View>
       );
     }
@@ -185,13 +192,13 @@ export default SearchPage;
 const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     centerContainer: {
-      flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
+      paddingTop: 100,
     },
     image: {
-      width: '80%',
-      height: 300,
+      width: 220,
+      height: 220,
     },
     container: {
       flex: 1,

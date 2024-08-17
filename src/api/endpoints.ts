@@ -35,5 +35,6 @@ export const API_ENDPOINTS = {
     GET_PINNED: '/api/links/pinned', // 핀 고정 링크 목록 조회
     SEARCH: '/api/links/search', // 링크 검색
     RECENT_SEARCH: '/api/links/recent', // 최근 검색어 조회
+    RECENT_SEARCH_EXCLUDE: '/api/links/recent/:linkId/exclude', // 최근 검색어 삭제
   },
 };

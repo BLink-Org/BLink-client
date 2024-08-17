@@ -7,21 +7,24 @@ import {
   type ListRenderItem,
   Image,
 } from 'react-native';
-import {type IFileList} from '@/types/home';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import DeleteCard from '@/components/search/DeleteCard';
-import {EdgeLogoIcon} from '@/assets/icons/search';
-import {ILinkDtos, type ITheme} from '@/types';
+import {type ILinkDtos, type ITheme} from '@/types';
 
-const RecentSearch = ({recentSearches}: {recentSearches: ILinkDtos[]}) => {
+interface RecentSearchProps {
+  recentSearches: ILinkDtos[];
+  onDelete: (id: string) => void;
+}
+
+const RecentSearch = ({recentSearches, onDelete}: RecentSearchProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
   const renderItem: ListRenderItem<ILinkDtos> = useCallback(
     ({item, index}) => (
       <View style={styles.itemContainer}>
-        <DeleteCard content={item} />
+        <DeleteCard content={item} onDelete={() => onDelete(String(item.id))} />
         <View style={styles.separator} />
       </View>
     ),
@@ -60,15 +63,15 @@ export default RecentSearch;
 const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     image: {
-      width: '80%',
-      height: 300,
+      width: 220,
+      height: 220,
     },
     container: {
       flex: 1,
     },
     imageContainer: {
       flex: 1,
-      justifyContent: 'center',
+      paddingTop: 150,
       alignItems: 'center',
     },
 
