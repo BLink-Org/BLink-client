@@ -9,13 +9,19 @@ import {
   type ListRenderItem,
   Platform,
   ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useNavigation} from '@react-navigation/native';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import {useThemeStore} from '@/store/useThemeStore';
 import SmallCard from '@/components/home/SmallCard';
 import useStickyAnimation from '@/hooks/useStickyAnimation';
-import {type ILinkDtos, type ITheme} from '@/types';
+import {
+  type BookmarkWebViewNavigationProp,
+  type ILinkDtos,
+  type ITheme,
+} from '@/types';
 import {getSortByValue, getSortingOptions} from '@/utils/sorting-utils';
 import {usePinnedLinks} from '@/api/hooks/useLink';
 import SmallCardPlaceHolder from '@/components/home/SmallCardPlaceHolder';
@@ -58,6 +64,16 @@ const Bookmark = () => {
     linkCount,
   } = usePinnedLinks(linkInfoArgsOptions);
 
+  // 웹뷰에 전달
+  const navigation = useNavigation<BookmarkWebViewNavigationProp>();
+  const handleCardPress = (index: number) => {
+    navigation.navigate('BookmarkWebView', {
+      sortBy: getSortByValue(t, selectedSortingOption),
+      initialIndex: index,
+      size: 10,
+    });
+  };
+
   // 새로고침 상태 관리
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = useCallback(() => {
@@ -83,12 +99,14 @@ const Bookmark = () => {
       // 로딩이 완료되면 카드 렌더링
       return (
         <View>
-          <SmallCard
-            content={item}
-            showToast={showToast}
-            linkInfoArgs={linkInfoArgsOptions}
-            page="bookmark"
-          />
+          <TouchableOpacity onPress={() => handleCardPress(index)}>
+            <SmallCard
+              content={item}
+              showToast={showToast}
+              linkInfoArgs={linkInfoArgsOptions}
+              page="bookmark"
+            />
+          </TouchableOpacity>
           {!isLastItem && <View style={styles.separator} />}
         </View>
       );

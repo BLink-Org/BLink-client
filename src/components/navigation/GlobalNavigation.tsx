@@ -11,6 +11,7 @@ import LinkApiTest from '@/screens/stack-screens/LinkApiTest';
 import WebViewList from '@/screens/stack-screens/WebViewList';
 import SearchWebView from '@/screens/stack-screens/SearchWebView';
 import {type RootStackParamList} from '@/types/navigation';
+import BookmarkWebView from '@/screens/stack-screens/BookmarkWebView';
 import BottomTabNavigation from './BottomTabNavigation';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -44,6 +45,11 @@ const GlobalNavigation = ({isAuthenticated}: {isAuthenticated: boolean}) => {
           <Stack.Screen
             name="SearchWebView"
             component={SearchWebView}
+            options={{animation: 'slide_from_bottom'}}
+          />
+          <Stack.Screen
+            name="BookmarkWebView"
+            component={BookmarkWebView}
             options={{animation: 'slide_from_bottom'}}
           />
         </>
