@@ -57,7 +57,6 @@ const Bookmark = () => {
     refetch,
     linkCount,
   } = usePinnedLinks(linkInfoArgsOptions);
-  console.log('🚀 ~ file: Bookmark.tsx:47 ~ Bookmark ~ linkData:', linkData);
 
   // 새로고침 상태 관리
   const [refreshing, setRefreshing] = useState(false);

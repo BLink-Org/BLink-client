@@ -8,10 +8,6 @@ interface ScreenHeaderProps {
 }
 
 const ScreenHeader = ({toggleSideBar, isBookmark}: ScreenHeaderProps) => {
-  console.log(
-    '🚀 ~ file: ScreenHeader.tsx:11 ~ ScreenHeader ~ isBookmark:',
-    isBookmark,
-  );
   const {theme} = useThemeStore();
   return (
     <View style={styles.container}>

@@ -73,26 +73,6 @@ const moveLinkToTrash = async (linkId: string) => {
   return data.result;
 };
 
-// 링크 휴지통 이동 훅
-export const useMoveLinkToTrash = ({
-  size,
-  sortBy,
-  folderId,
-}: UseLinkInfoArgs) => {
-  const handleCacheUpdate = useHandleCacheUpdate();
-
-  return useMutation({
-    mutationFn: moveLinkToTrash,
-    onSuccess: (_, linkId) => {
-      const cacheKey = ['links', size, sortBy, folderId];
-      handleCacheUpdate(cacheKey, linkId);
-    },
-    onError: (error: Error) => {
-      console.warn('Move Link to Trash error:', error);
-    },
-  });
-};
-
 // 특정 링크가 저장 되어 있는 폴더 목록 GET
 const getLinkFolder = async (linkId: number): Promise<GetLinkFolderSchema> => {
   const endpoint = API_ENDPOINTS.LINKS.FETCH_FOLDER.replace(
@@ -132,6 +112,7 @@ export const useMoveLink = () => {
       queryClient.invalidateQueries({queryKey: ['folders']});
       queryClient.invalidateQueries({queryKey: ['links']});
       queryClient.invalidateQueries({queryKey: ['searchLinks']});
+      queryClient.invalidateQueries({queryKey: ['pinnedLinks']});
     },
     onError: (error: string) => {
       console.warn('Move Link error:', error);
@@ -256,6 +237,8 @@ export const useRecoverLink = ({size, sortBy}: UseLinkInfoArgs) => {
       handleCacheUpdate(cacheKey, linkId);
       // 'links' 캐시 무효화 처리 (링크 목록 새로고침)
       queryClient.invalidateQueries({queryKey: ['links']});
+      queryClient.invalidateQueries({queryKey: ['searchLinks']});
+      queryClient.invalidateQueries({queryKey: ['pinnedLinks']});
     },
     onError: (error: string) => {
       console.warn('Recover Link error:', error);
@@ -384,7 +367,7 @@ export const useDeleteRecentLink = () => {
   });
 };
 
-// 링크 제목 수정 PATCH in Home
+// 링크 제목 수정
 const updateLinkTitle = async (payload: UpdateLinkTitleArgs) => {
   const endpoint = API_ENDPOINTS.LINKS.UPDATE_TITLE.replace(
     ':linkId',
@@ -393,13 +376,14 @@ const updateLinkTitle = async (payload: UpdateLinkTitleArgs) => {
   await apiClient.patch(endpoint, {title: payload.title});
 };
 
-// 링크 제목 수정 훅
+// 링크 제목 수정 PATCH in Home
 export const useUpdateLinkTitle = ({
   size,
   sortBy,
   folderId,
 }: UseLinkInfoArgs) => {
   const handleCacheUpdate = useHandleCacheUpdate();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: updateLinkTitle,
@@ -410,9 +394,34 @@ export const useUpdateLinkTitle = ({
         title: payload.title,
       });
       handleCacheUpdate(cacheKey, payload.linkId, updateLinkTitleFn);
+      queryClient.invalidateQueries({queryKey: ['searchLinks']});
+      queryClient.invalidateQueries({queryKey: ['pinnedLinks']});
     },
     onError: (error: string) => {
       console.warn('Update Link Title error:', error);
+    },
+  });
+};
+
+// 링크 제목 수정 PATCH in Bookmark
+export const useUpdateBookmarkLinkTitle = ({size, sortBy}: UseLinkInfoArgs) => {
+  const queryClient = useQueryClient();
+  const handleCacheUpdate = useHandleCacheUpdate();
+
+  return useMutation({
+    mutationFn: updateLinkTitle,
+    onSuccess: (_, payload) => {
+      const bookmarkCacheKey = ['pinnedLinks', size, sortBy];
+      const updateLinkTitleFn = (link: ILinkDtos) => ({
+        ...link,
+        title: payload.title,
+      });
+      handleCacheUpdate(bookmarkCacheKey, payload.linkId, updateLinkTitleFn);
+      queryClient.invalidateQueries({queryKey: ['links']});
+      queryClient.invalidateQueries({queryKey: ['searchLinks']});
+    },
+    onError: (error: string) => {
+      console.warn('Update Bookmark Link Title error:', error);
     },
   });
 };
@@ -426,14 +435,13 @@ export const useUpdateSearchLinkTitle = ({query, size}: UseLinkInfoArgs) => {
     mutationFn: updateLinkTitle,
     onSuccess: (_, payload) => {
       const searchCacheKey = ['searchLinks', query, size];
-      const homeCacheKey = ['links', size];
       const updateLinkTitleFn = (link: ILinkDtos) => ({
         ...link,
         title: payload.title,
       });
-      console.log('payload 검색창 제목 수정 성공', payload);
       handleCacheUpdate(searchCacheKey, payload.linkId, updateLinkTitleFn);
-      queryClient.invalidateQueries({queryKey: homeCacheKey});
+      queryClient.invalidateQueries({queryKey: ['links']});
+      queryClient.invalidateQueries({queryKey: ['pinnedLinks']});
     },
     onError: (error: string) => {
       console.warn('Update Search Link Title error:', error);
@@ -461,9 +469,33 @@ export const useToggleLinkPin = ({size, sortBy, folderId}: UseLinkInfoArgs) => {
       });
       handleCacheUpdate(cacheKey, linkId, togglePinFn);
       queryClient.invalidateQueries({queryKey: ['searchLinks']});
+      queryClient.invalidateQueries({queryKey: ['pinnedLinks']});
     },
     onError: (error: string) => {
       console.warn('Toggle Link Pin error:', error);
+    },
+  });
+};
+
+// 링크 고정/고정 해제 토글 PATCH in Bookmark
+export const useToggleBookmarkLinkPin = ({size, sortBy}: UseLinkInfoArgs) => {
+  const handleCacheUpdate = useHandleCacheUpdate();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: toggleLinkPin,
+    onSuccess: (_, linkId) => {
+      const cacheKey = ['pinnedLinks', size, sortBy];
+      const togglePinFn = (link: ILinkDtos) => ({
+        ...link,
+        pinned: !link.pinned,
+      });
+      handleCacheUpdate(cacheKey, linkId, togglePinFn);
+      queryClient.invalidateQueries({queryKey: ['links']});
+      queryClient.invalidateQueries({queryKey: ['searchLinks']});
+    },
+    onError: (error: string) => {
+      console.warn('Toggle Bookmark Link Pin error:', error);
     },
   });
 };
@@ -482,9 +514,71 @@ export const useToggleSearchLinkPin = ({query, size}: UseLinkInfoArgs) => {
       });
       handleCacheUpdate(cacheKey, linkId, togglePinFn);
       queryClient.invalidateQueries({queryKey: ['links']});
+      queryClient.invalidateQueries({queryKey: ['pinnedLinks']});
     },
     onError: (error: string) => {
       console.warn('Toggle Search Link Pin error:', error);
+    },
+  });
+};
+
+// 링크 휴지통 이동 PATCH in Home
+export const useMoveLinkToTrash = ({
+  size,
+  sortBy,
+  folderId,
+}: UseLinkInfoArgs) => {
+  const queryClient = useQueryClient();
+  const handleCacheUpdate = useHandleCacheUpdate();
+
+  return useMutation({
+    mutationFn: moveLinkToTrash,
+    onSuccess: (_, linkId) => {
+      const cacheKey = ['links', size, sortBy, folderId];
+      handleCacheUpdate(cacheKey, linkId);
+      queryClient.invalidateQueries({queryKey: ['searchLinks']});
+      queryClient.invalidateQueries({queryKey: ['pinnedLinks']});
+    },
+    onError: (error: Error) => {
+      console.warn('Move Link to Trash error:', error);
+    },
+  });
+};
+
+// 링크 휴지통 이동 PATCH in Bookmark
+export const useMoveBookmarkLinkToTrash = ({size, sortBy}: UseLinkInfoArgs) => {
+  const queryClient = useQueryClient();
+  const handleCacheUpdate = useHandleCacheUpdate();
+
+  return useMutation({
+    mutationFn: moveLinkToTrash,
+    onSuccess: (_, linkId) => {
+      const bookmarkCacheKey = ['pinnedLinks', size, sortBy];
+      handleCacheUpdate(bookmarkCacheKey, linkId);
+      queryClient.invalidateQueries({queryKey: ['links']});
+      queryClient.invalidateQueries({queryKey: ['searchLinks']});
+    },
+    onError: (error: Error) => {
+      console.warn('Move Bookmark Link to Trash error:', error);
+    },
+  });
+};
+
+// 링크 휴지통 이동 PATCH in Search
+export const useMoveSearchLinkToTrash = ({query, size}: UseLinkInfoArgs) => {
+  const queryClient = useQueryClient();
+  const handleCacheUpdate = useHandleCacheUpdate();
+
+  return useMutation({
+    mutationFn: moveLinkToTrash,
+    onSuccess: (_, linkId) => {
+      const searchCacheKey = ['searchLinks', query, size];
+      handleCacheUpdate(searchCacheKey, linkId);
+      queryClient.invalidateQueries({queryKey: ['links']});
+      queryClient.invalidateQueries({queryKey: ['pinnedLinks']});
+    },
+    onError: (error: Error) => {
+      console.warn('Move Search Link to Trash error:', error);
     },
   });
 };

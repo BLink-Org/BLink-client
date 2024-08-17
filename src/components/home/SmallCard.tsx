@@ -24,10 +24,14 @@ import FolderMoveContent from '@/components/link/FolderMoveContent';
 import {TOAST_MESSAGE} from '@/constants/toast';
 import {
   useDeleteLink,
+  useMoveBookmarkLinkToTrash,
   useMoveLinkToTrash,
+  useMoveSearchLinkToTrash,
   useRecoverLink,
+  useToggleBookmarkLinkPin,
   useToggleLinkPin,
   useToggleSearchLinkPin,
+  useUpdateBookmarkLinkTitle,
   useUpdateLinkTitle,
   useUpdateSearchLinkTitle,
 } from '@/api/hooks/useLink';
@@ -52,24 +56,34 @@ const SmallCard = ({
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
-  // 휴지통으로 이동
-  const {mutate: moveLinkToTrash} = useMoveLinkToTrash(linkInfoArgs);
   // 휴지통에서 영구삭제
   const {mutate: deleteLink} = useDeleteLink(linkInfoArgs);
   // 휴지통에서 복원
   const {mutate: recoverLink} = useRecoverLink(linkInfoArgs);
+
+  // 휴지통으로 이동
+  const {mutate: moveLinkToTrash} =
+    page === 'search'
+      ? useMoveSearchLinkToTrash(linkInfoArgs)
+      : page === 'bookmark'
+        ? useMoveBookmarkLinkToTrash(linkInfoArgs)
+        : useMoveLinkToTrash(linkInfoArgs);
+
   // 링크 제목 수정
-  // 페이지에 따라 맞는 제목 수정 훅 선택
   const {mutate: updateTitle} =
     page === 'search'
       ? useUpdateSearchLinkTitle(linkInfoArgs)
-      : useUpdateLinkTitle(linkInfoArgs);
+      : page === 'bookmark'
+        ? useUpdateBookmarkLinkTitle(linkInfoArgs)
+        : useUpdateLinkTitle(linkInfoArgs);
 
   // 핀 on/off
   const {mutate: togglePin} =
     page === 'search'
-      ? useToggleSearchLinkPin(linkInfoArgs) // 검색 페이지용 핀 토글 훅 사용
-      : useToggleLinkPin(linkInfoArgs); // 기본 페이지용 핀 토글 훅 사용
+      ? useToggleSearchLinkPin(linkInfoArgs)
+      : page === 'bookmark'
+        ? useToggleBookmarkLinkPin(linkInfoArgs)
+        : useToggleLinkPin(linkInfoArgs);
 
   const CardImage = useMemo(() => {
     return theme.SMALL_CARD_IMAGE;
