@@ -4,14 +4,13 @@ import {
   FlatList,
   StyleSheet,
   View,
-  SafeAreaView,
   RefreshControl,
   Platform,
   ActivityIndicator,
   type ListRenderItem,
   TouchableOpacity,
 } from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
 import {FONTS} from '@/constants';
 import ThemeBackground from '@/components/common/ThemeBackground';
@@ -33,6 +32,7 @@ import AnimatedLogoHeader from '@/components/common/AnimatedLogoHeader';
 import LargeCardPlaceHolder from '@/components/home/LargeCardPlaceHolder';
 import HomeListHeader from '@/components/home/HomeListHeader';
 import {getSortByValue, getSortingOptions} from '@/utils/sorting-utils';
+import CustomStatusBar from '@/components/common/CustomStatusBar';
 
 const Home = () => {
   const {t} = useTranslation();
@@ -149,8 +149,10 @@ const Home = () => {
 
   return (
     <SafeAreaView
-      style={[styles.container, {backgroundColor: theme.BACKGROUND}]}>
+      style={[styles.container, {backgroundColor: theme.TEXT500}]}
+      edges={['top']}>
       <ThemeBackground />
+      <CustomStatusBar />
       <View style={styles.mainContainer}>
         <AnimatedLogoHeader
           translateY={translateY}

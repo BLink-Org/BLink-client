@@ -28,6 +28,7 @@ import {
 } from '@/types';
 import CustomLoading from '@/components/common/CustomLoading';
 import RecentSearch from '@/components/search/ResentSearch';
+import CustomStatusBar from '@/components/common/CustomStatusBar';
 
 const SearchPage = () => {
   const {theme} = useThemeStore();
@@ -154,6 +155,7 @@ const SearchPage = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ThemeBackground />
+      <CustomStatusBar />
       <View style={styles.container}>
         <SearchHeader
           searchQuery={searchQuery}
