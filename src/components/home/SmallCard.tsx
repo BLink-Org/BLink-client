@@ -27,6 +27,7 @@ import {
   useMoveLinkToTrash,
   useRecoverLink,
   useToggleLinkPin,
+  useToggleSearchLinkPin,
   useUpdateLinkTitle,
   useUpdateSearchLinkTitle,
 } from '@/api/hooks/useLink';
@@ -65,7 +66,10 @@ const SmallCard = ({
       : useUpdateLinkTitle(linkInfoArgs);
 
   // 핀 on/off
-  const {mutate: togglePin} = useToggleLinkPin(linkInfoArgs);
+  const {mutate: togglePin} =
+    page === 'search'
+      ? useToggleSearchLinkPin(linkInfoArgs) // 검색 페이지용 핀 토글 훅 사용
+      : useToggleLinkPin(linkInfoArgs); // 기본 페이지용 핀 토글 훅 사용
 
   const CardImage = useMemo(() => {
     return theme.SMALL_CARD_IMAGE;

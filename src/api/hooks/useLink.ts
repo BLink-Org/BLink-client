@@ -4,6 +4,7 @@ import {
   useMutation,
   useInfiniteQuery,
   useQueryClient,
+  QueryClient,
 } from '@tanstack/react-query';
 import {API_ENDPOINTS} from '@/api/endpoints';
 import apiClient from '@/api/client';
@@ -93,39 +94,6 @@ export const useMoveLinkToTrash = ({
   });
 };
 
-// 링크 제목 수정 PATCH
-const updateLinkTitle = async (payload: UpdateLinkTitleArgs) => {
-  const endpoint = API_ENDPOINTS.LINKS.UPDATE_TITLE.replace(
-    ':linkId',
-    payload.linkId,
-  );
-  await apiClient.patch(endpoint, {title: payload.title});
-};
-
-// 링크 제목 수정 훅
-export const useUpdateLinkTitle = ({
-  size,
-  sortBy,
-  folderId,
-}: UseLinkInfoArgs) => {
-  const handleCacheUpdate = useHandleCacheUpdate();
-
-  return useMutation({
-    mutationFn: updateLinkTitle,
-    onSuccess: (_, payload) => {
-      const cacheKey = ['links', size, sortBy, folderId];
-      const updateLinkTitleFn = (link: ILinkDtos) => ({
-        ...link,
-        title: payload.title,
-      });
-      handleCacheUpdate(cacheKey, payload.linkId, updateLinkTitleFn);
-    },
-    onError: (error: string) => {
-      console.warn('Update Link Title error:', error);
-    },
-  });
-};
-
 // 특정 링크가 저장 되어 있는 폴더 목록 GET
 const getLinkFolder = async (linkId: number): Promise<GetLinkFolderSchema> => {
   const endpoint = API_ENDPOINTS.LINKS.FETCH_FOLDER.replace(
@@ -164,33 +132,10 @@ export const useMoveLink = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: ['folders']});
       queryClient.invalidateQueries({queryKey: ['links']});
+      queryClient.invalidateQueries({queryKey: ['searchLinks']});
     },
     onError: (error: string) => {
       console.warn('Move Link error:', error);
-    },
-  });
-};
-
-// 링크 고정/고정 해제 토글 PATCH
-const toggleLinkPin = async (linkId: string) => {
-  const endpoint = API_ENDPOINTS.LINKS.PIN_TOGGLE.replace(':linkId', linkId);
-  await apiClient.patch(endpoint);
-};
-
-export const useToggleLinkPin = ({size, sortBy, folderId}: UseLinkInfoArgs) => {
-  const handleCacheUpdate = useHandleCacheUpdate();
-  return useMutation({
-    mutationFn: toggleLinkPin,
-    onSuccess: (_, linkId) => {
-      const cacheKey = ['links', size, sortBy, folderId];
-      const togglePinFn = (link: ILinkDtos) => ({
-        ...link,
-        pinned: !link.pinned,
-      });
-      handleCacheUpdate(cacheKey, linkId, togglePinFn);
-    },
-    onError: (error: string) => {
-      console.warn('Toggle Link Pin error:', error);
     },
   });
 };
@@ -410,7 +355,40 @@ export const useDeleteRecentLink = () => {
   });
 };
 
-// 검색 창에서 링크 제목 수정 PATCH
+// 링크 제목 수정 PATCH in Home
+const updateLinkTitle = async (payload: UpdateLinkTitleArgs) => {
+  const endpoint = API_ENDPOINTS.LINKS.UPDATE_TITLE.replace(
+    ':linkId',
+    payload.linkId,
+  );
+  await apiClient.patch(endpoint, {title: payload.title});
+};
+
+// 링크 제목 수정 훅
+export const useUpdateLinkTitle = ({
+  size,
+  sortBy,
+  folderId,
+}: UseLinkInfoArgs) => {
+  const handleCacheUpdate = useHandleCacheUpdate();
+
+  return useMutation({
+    mutationFn: updateLinkTitle,
+    onSuccess: (_, payload) => {
+      const cacheKey = ['links', size, sortBy, folderId];
+      const updateLinkTitleFn = (link: ILinkDtos) => ({
+        ...link,
+        title: payload.title,
+      });
+      handleCacheUpdate(cacheKey, payload.linkId, updateLinkTitleFn);
+    },
+    onError: (error: string) => {
+      console.warn('Update Link Title error:', error);
+    },
+  });
+};
+
+// 링크 제목 수정 PATCH in Search
 export const useUpdateSearchLinkTitle = ({query, size}: UseLinkInfoArgs) => {
   const queryClient = useQueryClient();
   const handleCacheUpdate = useHandleCacheUpdate();
@@ -430,6 +408,54 @@ export const useUpdateSearchLinkTitle = ({query, size}: UseLinkInfoArgs) => {
     },
     onError: (error: string) => {
       console.warn('Update Search Link Title error:', error);
+    },
+  });
+};
+
+// 링크 고정/고정 해제 토글 PATCH in Home
+const toggleLinkPin = async (linkId: string) => {
+  const endpoint = API_ENDPOINTS.LINKS.PIN_TOGGLE.replace(':linkId', linkId);
+  await apiClient.patch(endpoint);
+};
+
+export const useToggleLinkPin = ({size, sortBy, folderId}: UseLinkInfoArgs) => {
+  const handleCacheUpdate = useHandleCacheUpdate();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: toggleLinkPin,
+    onSuccess: (_, linkId) => {
+      const cacheKey = ['links', size, sortBy, folderId];
+      const togglePinFn = (link: ILinkDtos) => ({
+        ...link,
+        pinned: !link.pinned,
+      });
+      handleCacheUpdate(cacheKey, linkId, togglePinFn);
+      queryClient.invalidateQueries({queryKey: ['searchLinks']});
+    },
+    onError: (error: string) => {
+      console.warn('Toggle Link Pin error:', error);
+    },
+  });
+};
+
+// 링크 고정/고정 해제 토글 PATCH in Search
+export const useToggleSearchLinkPin = ({query, size}: UseLinkInfoArgs) => {
+  const handleCacheUpdate = useHandleCacheUpdate();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: toggleLinkPin,
+    onSuccess: (_, linkId) => {
+      const cacheKey = ['searchLinks', query, size];
+      const togglePinFn = (link: ILinkDtos) => ({
+        ...link,
+        pinned: !link.pinned,
+      });
+      handleCacheUpdate(cacheKey, linkId, togglePinFn);
+      queryClient.invalidateQueries({queryKey: ['links']});
+    },
+    onError: (error: string) => {
+      console.warn('Toggle Search Link Pin error:', error);
     },
   });
 };

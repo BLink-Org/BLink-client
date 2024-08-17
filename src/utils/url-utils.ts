@@ -22,7 +22,7 @@ export function isValidUrl(url: string): boolean {
 // TODO: 문구 수정 필요
 export const shareUrl = (currentUrl: string) => {
   Share.share({
-    message: `Check out this website: ${currentUrl}`,
+    // message: `Check out this website: ${currentUrl}`,
     url: currentUrl,
   }).catch(error => {
     console.error('Error sharing: ', error.message);
@@ -31,7 +31,7 @@ export const shareUrl = (currentUrl: string) => {
 
 export const shareUrlHome = async (currentUrl: string) => {
   return await Share.share({
-    message: `Check out this website: ${currentUrl}`,
+    // message: `Check out this website: ${currentUrl}`,
     url: currentUrl,
   })
     .then(result => {

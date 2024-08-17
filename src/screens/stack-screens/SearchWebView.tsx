@@ -9,7 +9,7 @@ import {type ITheme} from '@/types';
 import {useThemeStore} from '@/store/useThemeStore';
 import {
   useSearchLinks,
-  useToggleLinkPin,
+  useToggleSearchLinkPin,
   useViewLink,
 } from '@/api/hooks/useLink';
 import NavigationButton from '@/components/webview/NavigationButton';
@@ -59,7 +59,7 @@ const SearchWebView = () => {
     isFetchingNextPage,
   } = useSearchLinks(linkInfoArgsOptions);
 
-  const {mutate: togglePin} = useToggleLinkPin(linkInfoArgsOptions);
+  const {mutate: togglePin} = useToggleSearchLinkPin({query, size});
   const {mutate: viewLink} = useViewLink();
 
   const linkList = linkData?.pages.flatMap(page => page.linkDtos) ?? [];
