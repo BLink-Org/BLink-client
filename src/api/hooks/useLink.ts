@@ -446,7 +446,7 @@ const searchLinks = async (
     },
   });
   // 1.5초 지연
-  // await new Promise(resolve => setTimeout(resolve, 1500));
+  await new Promise(resolve => setTimeout(resolve, 1500));
   return data.result;
 };
 

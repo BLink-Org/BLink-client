@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   type ListRenderItem,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import ThemeBackground from '@/components/common/ThemeBackground';
@@ -22,7 +23,7 @@ import {
   type SearchWebViewNavigationProp,
 } from '@/types';
 import SmallCardPlaceHolder from '@/components/home/SmallCardPlaceHolder';
-import SearchPlaceHolder from '@/components/search/SearchPlaceHolder';
+import CustomLoading from '@/components/common/CustomLoading';
 
 const SearchPage = () => {
   const {theme} = useThemeStore();
@@ -30,6 +31,10 @@ const SearchPage = () => {
 
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [finalSearchQuery, setFinalSearchQuery] = useState<string>('');
+  console.log(
+    '🚀 ~ file: Search.tsx:34 ~ SearchPage ~ finalSearchQuery:',
+    finalSearchQuery,
+  );
   const isQueryEnabled = finalSearchQuery.trim().length > 0;
 
   const {
@@ -44,9 +49,15 @@ const SearchPage = () => {
     enabled: isQueryEnabled, // 검색어가 있을 때만 쿼리를 실행
   });
 
-  const handleSearch = useCallback((query: string) => {
-    setSearchQuery(query);
-  }, []);
+  const handleSearch = useCallback(
+    (query: string) => {
+      setSearchQuery(query);
+      if (query.trim() === '') {
+        setFinalSearchQuery('');
+      }
+    },
+    [setSearchQuery, setFinalSearchQuery],
+  );
 
   // 검색 완료 버튼 클릭 시 호출 -> 최종적으로 검색어를 적용
   const handleSearchSubmit = useCallback(() => {
@@ -87,9 +98,6 @@ const SearchPage = () => {
 
   // 검색 결과 헤더
   const renderHeader = useMemo(() => {
-    if (isLoading) {
-      return <SearchPlaceHolder />;
-    }
     return (
       <View style={styles.headerText}>
         <Text style={styles.headerTextContent}>
@@ -97,7 +105,38 @@ const SearchPage = () => {
         </Text>
       </View>
     );
-  }, [isLoading, linkData]);
+  }, [linkData]);
+
+  // 검색 x 페이지
+  const NoSearchResults = () => {
+    return (
+      <View style={styles.centerContainer}>
+        <Image
+          source={require('@/assets/images/img-search.png')}
+          style={styles.image}
+          resizeMode="contain"
+        />
+      </View>
+    );
+  };
+
+  const renderNoResults = () => {
+    if (linkData?.pages[0].linkCount === 0) {
+      return (
+        <View style={styles.centerContainer}>
+          <Image
+            source={theme.SEARCH_EDGE_IMAGE}
+            style={styles.image}
+            resizeMode="contain"
+          />
+          <Text style={styles.noExistText}>
+            조건에 맞는 검색 결과가 없어요.
+          </Text>
+        </View>
+      );
+    }
+    return null;
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -108,30 +147,37 @@ const SearchPage = () => {
           handleSearch={handleSearch}
           handleSearchSubmit={handleSearchSubmit}
         />
-        <FlatList
-          data={
-            isLoading
-              ? Array(10).fill({})
-              : linkData?.pages.flatMap(page => page.linkDtos)
-          }
-          renderItem={renderItem}
-          keyExtractor={(item, index) => index.toString()}
-          ListHeaderComponent={renderHeader}
-          contentContainerStyle={styles.contentContainer}
-          initialNumToRender={10}
-          windowSize={10}
-          onEndReached={() => {
-            if (hasNextPage && !isLoading) {
-              fetchNextPage();
+        {finalSearchQuery.trim() === '' ? (
+          <NoSearchResults />
+        ) : isLoading ? (
+          <CustomLoading />
+        ) : (
+          <FlatList
+            data={
+              isLoading
+                ? Array(10).fill({})
+                : linkData?.pages.flatMap(page => page.linkDtos)
             }
-          }}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={() =>
-            isFetchingNextPage ? (
-              <ActivityIndicator size="small" color="#6D96FF" />
-            ) : null
-          }
-        />
+            renderItem={renderItem}
+            keyExtractor={(item, index) => index.toString()}
+            ListHeaderComponent={renderHeader}
+            contentContainerStyle={styles.contentContainer}
+            initialNumToRender={10}
+            ListEmptyComponent={renderNoResults}
+            windowSize={10}
+            onEndReached={() => {
+              if (hasNextPage && !isLoading) {
+                fetchNextPage();
+              }
+            }}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={() =>
+              isFetchingNextPage ? (
+                <ActivityIndicator size="small" color="#6D96FF" />
+              ) : null
+            }
+          />
+        )}
       </View>
     </SafeAreaView>
   );
@@ -141,10 +187,24 @@ export default SearchPage;
 
 const createStyles = (theme: ITheme) =>
   StyleSheet.create({
+    centerContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    image: {
+      width: '80%',
+      height: 300,
+    },
     container: {
       flex: 1,
     },
+    noExistText: {
+      color: theme.TEXT500,
+      ...FONTS.BODY2_MEDIUM,
+    },
     contentContainer: {
+      flex: 1,
       paddingHorizontal: 18,
       paddingBottom: 80,
     },
