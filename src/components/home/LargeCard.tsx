@@ -160,6 +160,7 @@ const LargeCard = ({
             <Image
               source={{uri: content.imageUrl}}
               style={styles.image}
+              resizeMode="cover"
               onLoad={handleImageLoad}
               onError={handleImageLoad}
             />
@@ -240,6 +241,7 @@ const createStyles = (theme: ITheme) =>
       overflow: 'hidden',
       position: 'relative',
     },
+
     dotPosition: {
       position: 'absolute',
       top: 12,

@@ -5,7 +5,6 @@ import {useThemeStore} from '@/store/useThemeStore';
 
 const CustomStatusBar = () => {
   const {theme} = useThemeStore();
-
   const insets = useSafeAreaInsets();
   return (
     <View

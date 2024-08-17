@@ -148,6 +148,10 @@ const FolderSideBar = ({
             transform: [{translateX: animation}],
             paddingTop: insets.top,
           },
+          {
+            backgroundColor:
+              theme.THEME_NUMBER === 3 ? '#E1EAFF' : theme.BACKGROUND, // TODO: 임시 색상 처리, 이미지로 교체 필요
+          },
         ]}>
         <TouchableOpacity onPress={toggleSideBar} style={styles.closeButton}>
           <BackIcon width={26} height={26} fill={theme.TEXT900} />
@@ -235,7 +239,6 @@ const createStyles = (theme: ITheme) =>
       ...StyleSheet.absoluteFillObject,
     },
     modalContent: {
-      backgroundColor: theme.BACKGROUND,
       borderTopRightRadius: 28,
       borderBottomRightRadius: 28,
       width: 316,
@@ -249,6 +252,7 @@ const createStyles = (theme: ITheme) =>
       shadowOpacity: 0.1,
       shadowRadius: 20,
       elevation: 5,
+      backgroundColor: theme.BACKGROUND,
     },
     titleContainer: {
       height: 69,

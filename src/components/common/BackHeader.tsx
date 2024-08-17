@@ -40,7 +40,6 @@ const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     container: {
       paddingHorizontal: 18,
-      backgroundColor: theme.BACKGROUND,
     },
     headerIcon: {
       height: 58,
