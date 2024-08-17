@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {TouchableOpacity} from 'react-native';
+import {Image, TouchableOpacity} from 'react-native';
 import {
   HomeIcon,
   PinnedIcon,
@@ -30,30 +30,58 @@ interface IconProps {
 const HomeBarIcon = ({focused, theme}: IconProps) => (
   <HomeIcon
     strokeWidth={1.5}
-    fill={focused ? theme.TEXT900 : 'transparent'}
-    stroke={theme.TEXT900}
+    fill={
+      focused
+        ? theme.THEME_NUMBER === 3
+          ? theme.BACKGROUND
+          : theme.TEXT900
+        : 'transparent'
+    }
+    stroke={theme.THEME_NUMBER === 3 ? theme.BACKGROUND : theme.TEXT900}
   />
 );
+
 const PinnedBarIcon = ({focused, theme}: IconProps) => (
   <PinnedIcon
     strokeWidth={1.5}
-    fill={focused ? theme.TEXT900 : 'transparent'}
-    stroke={theme.TEXT900}
+    fill={
+      focused
+        ? theme.THEME_NUMBER === 3
+          ? theme.BACKGROUND
+          : theme.TEXT900
+        : 'transparent'
+    }
+    stroke={theme.THEME_NUMBER === 3 ? theme.BACKGROUND : theme.TEXT900}
   />
 );
+
 const AddBarIcon = ({color}: {color: string}) => <LinkIcon fill={color} />;
+
 const SearchBarIcon = ({focused, theme}: IconProps) => {
   return focused ? (
-    <SearchIcon fill={theme.TEXT900} strokeWidth={1.5} />
+    <SearchIcon
+      fill={theme.THEME_NUMBER === 3 ? theme.BACKGROUND : theme.TEXT900}
+      strokeWidth={1.5}
+    />
   ) : (
-    <SearchUnfocusedIcon fill={theme.TEXT900} strokeWidth={1.5} />
+    <SearchUnfocusedIcon
+      fill={theme.THEME_NUMBER === 3 ? theme.BACKGROUND : theme.TEXT900}
+      strokeWidth={1.5}
+    />
   );
 };
+
 const MyPageBarIcon = ({focused, theme}: IconProps) => {
   return focused ? (
-    <MypageIcon fill={theme.TEXT900} stroke={theme.TEXT900} />
+    <MypageIcon
+      fill={theme.THEME_NUMBER === 3 ? theme.BACKGROUND : theme.TEXT900}
+      stroke={theme.THEME_NUMBER === 3 ? theme.BACKGROUND : theme.TEXT900}
+    />
   ) : (
-    <MypageIcon stroke={theme.TEXT900} strokeWidth={1.5} />
+    <MypageIcon
+      stroke={theme.THEME_NUMBER === 3 ? theme.BACKGROUND : theme.TEXT900}
+      strokeWidth={1.5}
+    />
   );
 };
 
@@ -63,6 +91,7 @@ const BottomTabNavigation = () => {
   const toggleBottomSheet = () => {
     setIsBottomSheetVisible(!isBottomSheetVisible);
   };
+
   return (
     <>
       <BottomSheet
@@ -73,8 +102,14 @@ const BottomTabNavigation = () => {
       <Tab.Navigator
         screenOptions={{
           tabBarShowLabel: false,
-          tabBarActiveTintColor: theme.TEXT900,
-          tabBarInactiveTintColor: theme.TEXT900,
+          tabBarActiveTintColor:
+            theme.THEME_NUMBER === 3 ? theme.BACKGROUND : theme.TEXT900,
+          tabBarInactiveTintColor:
+            theme.THEME_NUMBER === 3 ? theme.BACKGROUND : theme.TEXT900,
+          tabBarBackground: () =>
+            theme.THEME_NUMBER === 3 ? (
+              <Image source={require('@/assets/images/img-gnb-theme3.png')} />
+            ) : null,
           tabBarStyle: {
             borderTopWidth: 0,
             backgroundColor: theme.BACKGROUND,

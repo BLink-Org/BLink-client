@@ -29,6 +29,7 @@ import {useBottomButtonSizeStore} from '@/store/useBottomButtonSizeStore';
 import useToast from '@/hooks/useToast';
 import AnimatedLogoHeader from '@/components/common/AnimatedLogoHeader';
 import BookmarkListHeader from '@/components/home/BookmarkListHeader';
+import CustomStatusBar from '@/components/common/CustomStatusBar';
 
 const Bookmark = () => {
   const {t} = useTranslation();
@@ -122,11 +123,14 @@ const Bookmark = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ThemeBackground />
+      <CustomStatusBar />
       <View style={styles.mainContainer}>
         <AnimatedLogoHeader
           translateY={translateY}
           toggleSideBar={() => {}}
-          backgroundThemeColor={theme.BACKGROUND}
+          backgroundThemeColor={
+            theme.THEME_NUMBER === 3 ? theme.MAIN200 : theme.BACKGROUND
+          }
           isBookmark
         />
 

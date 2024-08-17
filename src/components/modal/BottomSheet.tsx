@@ -65,6 +65,7 @@ const BottomSheet = ({
       onRequestClose={toggleBottomSheet}
       transparent
       animationType="none"
+      statusBarTranslucent={true}
       hardwareAccelerated>
       <TouchableWithoutFeedback onPress={toggleBottomSheet}>
         <View style={styles.overlay} />

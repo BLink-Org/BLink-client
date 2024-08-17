@@ -17,7 +17,15 @@ const SearchHeader = memo(
     const styles = useMemo(() => createStyles(theme), [theme]);
 
     return (
-      <View style={styles.searchContainer}>
+      // <View style={styles.searchContainer, {backgroundColor: theme.THEME_NUMBER === 3 ? theme.MAIN200 : theme.BACKGROUND}}>
+      <View
+        style={[
+          styles.searchContainer,
+          {
+            backgroundColor:
+              theme.THEME_NUMBER === 3 ? theme.MAIN200 : theme.BACKGROUND,
+          },
+        ]}>
         <TextInput
           style={styles.searchInput}
           onChangeText={handleSearch}
@@ -45,8 +53,8 @@ export default SearchHeader;
 const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     searchContainer: {
-      marginVertical: 16,
-      marginHorizontal: 18,
+      paddingVertical: 16,
+      paddingHorizontal: 18,
       flexDirection: 'row',
       alignItems: 'center',
       overflow: 'hidden',

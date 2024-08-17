@@ -82,6 +82,8 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
     }
   }, [textInput, selectedFolderId]);
 
+  // TODO: 안드로이드 키보드 해결 필요
+
   return (
     <>
       <BottomSheet
