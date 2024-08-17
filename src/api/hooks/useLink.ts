@@ -162,7 +162,6 @@ const getLinkFolder = async (linkId: number): Promise<GetLinkFolderSchema> => {
     `${linkId}`,
   );
   const {data} = await apiClient.get(endpoint);
-  console.log('api', data);
   return data.result;
 };
 export const useLinkFolder = (linkId: number) => {
