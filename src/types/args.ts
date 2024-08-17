@@ -37,11 +37,22 @@ export interface GetLinkInfoArgs {
   folderId?: number | null;
   page: number;
   size: number;
-  sortBy: string;
+  sortBy?: string;
 }
 
 export interface UseLinkInfoArgs {
   folderId?: number | null;
   size: number;
-  sortBy: string;
+  sortBy?: string;
+}
+
+export interface GetSearchLinkInfoArgs {
+  query: string;
+  page: number;
+  size: number;
+}
+
+export interface UseSearchLinkInfoArgs {
+  query: string;
+  size: number;
 }

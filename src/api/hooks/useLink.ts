@@ -15,8 +15,11 @@ import {
   type UpdateLinkTitleArgs,
   type GetLinkInfoArgs,
   type UseLinkInfoArgs,
+  type GetSearchLinkInfoArgs,
+  type ILinkDtos,
   type GetLinkFolderSchema,
 } from '@/types';
+import {filterLinkCache} from './util';
 
 // 링크 목록 조회 GET
 const getLinks = async (payload: GetLinkInfoArgs): Promise<GetLinksSchema> => {
@@ -30,10 +33,11 @@ const getLinks = async (payload: GetLinkInfoArgs): Promise<GetLinksSchema> => {
     },
   });
   // 3초 지연
-  await new Promise(resolve => setTimeout(resolve, 1500));
+  // await new Promise(resolve => setTimeout(resolve, 1500));
   return data.result;
 };
 
+// 링크 목록 조회 GET
 export const useLinks = ({folderId, size, sortBy}: UseLinkInfoArgs) => {
   // linkCount를 상태로 관리하여 업데이트가 있을 때만 변경될 수 있도록
   const [linkCount, setLinkCount] = useState<number | null>(0);
@@ -69,6 +73,41 @@ const moveLinkToTrash = async (linkId: string) => {
   return data.result;
 };
 
+// export const useMoveLinkToTrash = ({
+//   size,
+//   sortBy,
+//   folderId,
+// }: UseLinkInfoArgs) => {
+//   const queryClient = useQueryClient();
+
+//   return useMutation({
+//     mutationFn: moveLinkToTrash,
+//     onSuccess: (_, linkId) => {
+//       const cacheKey = ['links', size, sortBy, folderId];
+//       queryClient.setQueryData<InfiniteData<GetLinksSchema>>(
+//         cacheKey,
+//         oldData => {
+//           if (!oldData) {
+//             return oldData;
+//           }
+//           const newPages = oldData.pages.map(page => ({
+//             ...page,
+//             linkDtos: page.linkDtos.filter(link => String(link.id) !== linkId),
+//             linkCount: page.linkCount - 1,
+//           }));
+//           return {
+//             ...oldData,
+//             pages: newPages,
+//           };
+//         },
+//       );
+//     },
+//     onError: (error: Error) => {
+//       console.warn('Move Link to Trash error:', error);
+//     },
+//   });
+// };
+
 export const useMoveLinkToTrash = ({
   size,
   sortBy,
@@ -80,22 +119,10 @@ export const useMoveLinkToTrash = ({
     mutationFn: moveLinkToTrash,
     onSuccess: (_, linkId) => {
       const cacheKey = ['links', size, sortBy, folderId];
+
       queryClient.setQueryData<InfiniteData<GetLinksSchema>>(
         cacheKey,
-        oldData => {
-          if (!oldData) {
-            return oldData;
-          }
-          const newPages = oldData.pages.map(page => ({
-            ...page,
-            linkDtos: page.linkDtos.filter(link => String(link.id) !== linkId),
-            linkCount: page.linkCount - 1,
-          }));
-          return {
-            ...oldData,
-            pages: newPages,
-          };
-        },
+        oldData => filterLinkCache(oldData, linkId),
       );
     },
     onError: (error: Error) => {
@@ -274,22 +301,6 @@ export const useCreateLink = (options = {}) => {
   });
 };
 
-// 링크 조회 업데이트 PATCH
-const viewLink = async (linkId: string) => {
-  const endpoint = API_ENDPOINTS.LINKS.VIEW.replace(':linkId', linkId);
-  await apiClient.patch(endpoint);
-};
-
-export const useViewLink = (options = {}) => {
-  return useMutation({
-    mutationFn: viewLink,
-    onError: (error: string) => {
-      console.warn('View Link error:', error);
-    },
-    ...options,
-  });
-};
-
 // 휴지통 링크 목록 조회 GET
 const getTrashLinks = async (
   payload: GetLinkInfoArgs,
@@ -409,6 +420,112 @@ export const useDeleteLink = ({size, sortBy}: UseLinkInfoArgs) => {
     },
     onError: (error: Error) => {
       console.warn('Delete Link error:', error);
+    },
+  });
+};
+
+// 링크 목록 검색
+const searchLinks = async (
+  payload: GetSearchLinkInfoArgs,
+): Promise<GetLinksSchema> => {
+  const {query, page, size} = payload;
+  const {data} = await apiClient.get(API_ENDPOINTS.LINKS.SEARCH, {
+    params: {
+      query,
+      page,
+      size,
+    },
+  });
+  // 1.5초 지연
+  // await new Promise(resolve => setTimeout(resolve, 1500));
+  return data.result;
+};
+
+export const useSearchLinks = ({
+  query,
+  size,
+  enabled,
+}: {
+  query: string;
+  size: number;
+  enabled: boolean;
+}) => {
+  return useInfiniteQuery({
+    queryKey: ['searchLinks', query, size],
+    queryFn: async ({pageParam = 0}) => {
+      const result = await searchLinks({query, page: pageParam, size});
+      return result;
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      const maxPages = Math.ceil(lastPage.linkCount / size);
+      const nextPage = allPages.length;
+      return nextPage < maxPages ? nextPage : undefined;
+    },
+    initialPageParam: 0,
+    enabled, // 쿼리가 실행될 조건을 제어하는 옵션
+  });
+};
+
+// 링크 조회 업데이트 PATCH
+const viewLink = async (linkId: string) => {
+  const endpoint = API_ENDPOINTS.LINKS.VIEW.replace(':linkId', linkId);
+  await apiClient.patch(endpoint);
+};
+
+export const useViewLink = (options = {}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: viewLink,
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['recentSearch']});
+    },
+    onError: (error: string) => {
+      console.warn('View Link error:', error);
+    },
+    ...options,
+  });
+};
+
+// 최근 검색어 조회
+const getRecentSearch = async (): Promise<ILinkDtos[]> => {
+  const {data} = await apiClient.get(API_ENDPOINTS.LINKS.RECENT_SEARCH);
+  // 3초 지연
+  return data.result.linkDtos;
+};
+
+export const useRecentSearch = () => {
+  return useQuery({
+    queryKey: ['recentSearch'],
+    queryFn: getRecentSearch,
+  });
+};
+
+// 최근 검색어 삭제 API 호출 함수
+const excludeRecentSearch = async (linkId: string) => {
+  const endpoint = API_ENDPOINTS.LINKS.RECENT_SEARCH_EXCLUDE.replace(
+    ':linkId',
+    linkId,
+  );
+  await apiClient.patch(endpoint);
+};
+
+// Hook으로 삭제 기능 제공
+export const useDeleteRecentLink = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: excludeRecentSearch,
+    onSuccess: (_, linkId: string) => {
+      queryClient.setQueryData<ILinkDtos[]>(['recentSearch'], oldData => {
+        if (!oldData) return [];
+
+        const updatedData = oldData.filter(link => String(link.id) !== linkId);
+        console.log('업데이트된 데이터:', updatedData);
+
+        return updatedData;
+      });
+    },
+    onError: error => {
+      console.error('Error deleting link:', error);
     },
   });
 };

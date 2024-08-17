@@ -144,10 +144,7 @@ const LargeCard = ({
         <View style={styles.cardImageContainer}>
           {content.imageUrl && imageLoading && <LoadingScreen />}
           <TouchableOpacity style={styles.dotPosition}>
-            <TouchableOpacity
-              ref={buttonRef}
-              onPress={toggleDropdown}
-              style={styles.dotButton}>
+            <TouchableOpacity ref={buttonRef} onPress={toggleDropdown}>
               <ThreeDotIcon fill={theme.TEXT300} />
             </TouchableOpacity>
             {isDropdownOpen && (
@@ -186,18 +183,18 @@ const LargeCard = ({
               {extractHostname(content.url ?? '')}
             </Text>
           </View>
-          <TouchableOpacity onPress={handlePinToggle} style={styles.pinButton}>
+          <TouchableOpacity onPress={handlePinToggle}>
             {content.pinned ? (
               <PinnedSelectedIcon
-                width={24}
-                height={24}
+                width={20}
+                height={20}
                 fill={theme.MAIN400}
                 stroke={theme.MAIN400}
               />
             ) : (
               <PinnedUnselectedIcon
-                width={24}
-                height={24}
+                width={20}
+                height={20}
                 stroke={theme.TEXT400}
               />
             )}
@@ -235,7 +232,6 @@ const createStyles = (theme: ITheme) =>
     container: {
       width: screenWidth,
       paddingVertical: 16,
-      height: 271,
     },
     cardImageContainer: {
       width: screenWidth,
@@ -243,13 +239,6 @@ const createStyles = (theme: ITheme) =>
       borderRadius: 8,
       overflow: 'hidden',
       position: 'relative',
-    },
-    dotButton: {
-      marginHorizontal: -16,
-      paddingHorizontal: 16,
-    },
-    pinButton: {
-      paddingLeft: 5,
     },
     dotPosition: {
       position: 'absolute',
@@ -286,7 +275,6 @@ const createStyles = (theme: ITheme) =>
     footer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      alignItems: 'center',
     },
     footerFront: {
       flexDirection: 'row',

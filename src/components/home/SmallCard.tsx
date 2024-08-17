@@ -35,6 +35,7 @@ interface SmallCardProps {
   content: ILinkDtos;
   isTrash?: boolean;
   showToast?: (text: string) => void;
+  isSearch?: boolean;
   linkInfoArgs: UseLinkInfoArgs;
 }
 
@@ -43,6 +44,7 @@ const SmallCard = ({
   isTrash,
   showToast = () => {},
   linkInfoArgs,
+  isSearch,
 }: SmallCardProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
@@ -58,6 +60,9 @@ const SmallCard = ({
   const {mutate: recoverLink} = useRecoverLink(linkInfoArgs);
   // 링크 제목 수정
   const {mutate: updateTitle} = useUpdateLinkTitle(linkInfoArgs);
+
+  
+
   // 핀 on/off
   const {mutate: togglePin} = useToggleLinkPin(linkInfoArgs);
 
@@ -215,7 +220,7 @@ const SmallCard = ({
       <View style={styles.container}>
         <View style={styles.dotPosition}>
           <Text style={styles.folderText}>
-            {content.folderName ?? '폴더 없는 링크'}
+            {content?.folderName ?? '폴더 없는 링크'}
           </Text>
           <TouchableOpacity
             ref={buttonRef}
@@ -240,14 +245,14 @@ const SmallCard = ({
               numberOfLines={2}
               ellipsizeMode="tail"
               onTextLayout={handleTitleLayout}>
-              {content.title === '' ? '제목 없음' : content.title}
+              {content?.title === '' ? '제목 없음' : content.title}
             </Text>
             <View style={styles.descriptionTop} />
             <Text
               style={styles.descriptionText}
               numberOfLines={contentLines}
               ellipsizeMode="tail">
-              {content.contents === '' ? '내용 없음' : content.contents}
+              {content?.contents === '' ? '내용 없음' : content.contents}
             </Text>
           </View>
           <View style={styles.cardImageContainer}>
