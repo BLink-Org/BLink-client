@@ -1,13 +1,12 @@
 import {useMemo} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {type IFileList} from '@/types/home';
 import {DeleteIcon} from '@/assets/icons/common';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
-import {type ITheme} from '@/types';
+import {type ILinkDtos, type ITheme} from '@/types';
 
 interface LargeCardProps {
-  content: IFileList;
+  content: ILinkDtos;
 }
 
 const DeleteCard = ({content}: LargeCardProps) => {
@@ -17,9 +16,11 @@ const DeleteCard = ({content}: LargeCardProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.leftContainer}>
-        <Text style={styles.folderText}>{content.folder}</Text>
+        <Text style={styles.folderText}>
+          {content.folderName ?? '폴더 없이 저장'}
+        </Text>
         <Text style={styles.titleText} numberOfLines={1} ellipsizeMode="tail">
-          {content.title}
+          {content.title === '' ? '제목 없음' : content.title}
         </Text>
       </View>
       <TouchableOpacity style={styles.rightContainer}>
@@ -54,5 +55,6 @@ const createStyles = (theme: ITheme) =>
     titleText: {
       ...FONTS.BODY1_MEDIUM,
       color: theme.TEXT900,
+      paddingRight: 20,
     },
   });

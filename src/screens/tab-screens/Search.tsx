@@ -16,14 +16,14 @@ import {useThemeStore} from '@/store/useThemeStore';
 import SmallCard from '@/components/home/SmallCard';
 import SearchHeader from '@/components/search/SearchHeader';
 import {FONTS} from '@/constants';
-import {useSearchLinks} from '@/api/hooks/useLink';
+import {useRecentSearch, useSearchLinks} from '@/api/hooks/useLink';
 import {
   type ILinkDtos,
   type ITheme,
   type SearchWebViewNavigationProp,
 } from '@/types';
-import SmallCardPlaceHolder from '@/components/home/SmallCardPlaceHolder';
 import CustomLoading from '@/components/common/CustomLoading';
+import RecentSearch from '@/components/search/ResentSearch';
 
 const SearchPage = () => {
   const {theme} = useThemeStore();
@@ -49,11 +49,16 @@ const SearchPage = () => {
     enabled: isQueryEnabled, // 검색어가 있을 때만 쿼리를 실행
   });
 
+  // 최근 검색 목록 get
+  const {data: recentSearches, refetch: refetchSearches} = useRecentSearch();
+
   const handleSearch = useCallback(
     (query: string) => {
       setSearchQuery(query);
       if (query.trim() === '') {
+        console.log('검색어 없음');
         setFinalSearchQuery('');
+        refetchSearches();
       }
     },
     [setSearchQuery, setFinalSearchQuery],
@@ -81,9 +86,6 @@ const SearchPage = () => {
       const isLastItem =
         index ===
         (linkData?.pages.flatMap(page => page.linkDtos).length ?? 0) - 1;
-      if (isLoading) {
-        return <SmallCardPlaceHolder />;
-      }
       return (
         <View>
           <TouchableOpacity onPress={() => handleCardPress(index)}>
@@ -107,17 +109,12 @@ const SearchPage = () => {
     );
   }, [linkData]);
 
-  // 검색 x 페이지
+  // 검색 결과 없음 화면
   const NoSearchResults = () => {
-    return (
-      <View style={styles.centerContainer}>
-        <Image
-          source={require('@/assets/images/img-search.png')}
-          style={styles.image}
-          resizeMode="contain"
-        />
-      </View>
-    );
+    if (!recentSearches) {
+      return null;
+    }
+    return <RecentSearch recentSearches={recentSearches} />;
   };
 
   const renderNoResults = () => {
@@ -204,7 +201,6 @@ const createStyles = (theme: ITheme) =>
       ...FONTS.BODY2_MEDIUM,
     },
     contentContainer: {
-      flex: 1,
       paddingHorizontal: 18,
       paddingBottom: 80,
     },

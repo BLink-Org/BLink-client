@@ -33,6 +33,7 @@ export const API_ENDPOINTS = {
     PIN_TOGGLE: '/api/links/:linkId/pin/toggle', // 링크 고정 토글
     GET_TRASH: '/api/links/trash', // 휴지통 링크 목록 조회
     GET_PINNED: '/api/links/pinned', // 핀 고정 링크 목록 조회
-    SEARCH: '/api/links/search',
+    SEARCH: '/api/links/search', // 링크 검색
+    RECENT_SEARCH: '/api/links/recent', // 최근 검색어 조회
   },
 };

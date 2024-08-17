@@ -5,19 +5,20 @@ import {
   FlatList,
   StyleSheet,
   type ListRenderItem,
+  Image,
 } from 'react-native';
 import {type IFileList} from '@/types/home';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import DeleteCard from '@/components/search/DeleteCard';
 import {EdgeLogoIcon} from '@/assets/icons/search';
-import {type ITheme} from '@/types';
+import {ILinkDtos, type ITheme} from '@/types';
 
-const RecentSearch = ({recentSearches}: {recentSearches: IFileList[]}) => {
+const RecentSearch = ({recentSearches}: {recentSearches: ILinkDtos[]}) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
-  const renderItem: ListRenderItem<IFileList> = useCallback(
+  const renderItem: ListRenderItem<ILinkDtos> = useCallback(
     ({item, index}) => (
       <View style={styles.itemContainer}>
         <DeleteCard content={item} />
@@ -30,8 +31,12 @@ const RecentSearch = ({recentSearches}: {recentSearches: IFileList[]}) => {
   // 데이터가 없을 경우 아이콘을 표시
   if (recentSearches.length === 0) {
     return (
-      <View style={styles.emptyDataContainer}>
-        <EdgeLogoIcon />
+      <View style={styles.imageContainer}>
+        <Image
+          source={require('@/assets/images/img-search.png')}
+          style={styles.image}
+          resizeMode="contain"
+        />
       </View>
     );
   }
@@ -54,11 +59,22 @@ export default RecentSearch;
 
 const createStyles = (theme: ITheme) =>
   StyleSheet.create({
+    image: {
+      width: '80%',
+      height: 300,
+    },
     container: {
       flex: 1,
     },
+    imageContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+
     itemContainer: {
       paddingHorizontal: 18,
+      justifyContent: 'center',
     },
     headerText: {
       paddingHorizontal: 18,

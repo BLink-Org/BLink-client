@@ -7,7 +7,11 @@ import {FONTS} from '@/constants';
 import {extractHostname, shareUrl} from '@/utils/url-utils';
 import {type ITheme} from '@/types';
 import {useThemeStore} from '@/store/useThemeStore';
-import {useSearchLinks, useToggleLinkPin} from '@/api/hooks/useLink';
+import {
+  useSearchLinks,
+  useToggleLinkPin,
+  useViewLink,
+} from '@/api/hooks/useLink';
 import NavigationButton from '@/components/webview/NavigationButton';
 import {
   ArrowBackIcon,
@@ -42,6 +46,7 @@ const SearchWebView = () => {
 
   const [currentIndex, setCurrentIndex] = useState<number>(initialIndex);
   const [currentUrl, setCurrentUrl] = useState<string | null>(null); // 현재 링크 목록
+  const previousIndexRef = useRef<number | null>(null); // 링크를 이동하였는지 확인하기 위한 ref
   const [webViewKey, setWebViewKey] = useState<number>(0); // 웹뷰 리렌더링용 키
   const [canGoBack, setCanGoBack] = useState<boolean>(false);
   const [canGoForward, setCanGoForward] = useState<boolean>(false);
@@ -55,6 +60,11 @@ const SearchWebView = () => {
   } = useSearchLinks(linkInfoArgsOptions);
 
   const {mutate: togglePin} = useToggleLinkPin(linkInfoArgsOptions);
+  const {mutate: viewLink} = useViewLink({
+    onSuccess: () => {
+      console.log('viewLink success');
+    },
+  });
 
   const linkList = linkData?.pages.flatMap(page => page.linkDtos) ?? [];
   const currentLink = linkList[currentIndex];
@@ -62,9 +72,16 @@ const SearchWebView = () => {
   // 첫 URL 및 핀 상태 설정
   useEffect(() => {
     if (linkList.length > 0 && currentLink?.url) {
-      setCurrentUrl(currentLink.url as string | null);
+      setCurrentUrl(currentLink.url);
     }
   }, [linkList, currentIndex]);
+
+  useEffect(() => {
+    if (currentLink?.id && previousIndexRef.current !== currentIndex) {
+      viewLink(String(currentLink.id)); // 링크 조회 Patch
+      previousIndexRef.current = currentIndex;
+    }
+  }, [currentIndex, currentLink?.id, viewLink]);
 
   const handleNavigationStateChange = (navState: WebViewNavigation) => {
     // 뒤로가기, 앞으로가기 버튼 상태 업데이트
@@ -105,7 +122,7 @@ const SearchWebView = () => {
       if (nextPageData.data?.pages) {
         const newLinks = nextPageData.data.pages.flatMap(page => page.linkDtos);
         setCurrentIndex(currentIndex + 1);
-        setCurrentUrl((newLinks[0]?.url as string | null) ?? '');
+        setCurrentUrl(newLinks[0]?.url ?? '');
         setWebViewKey(prevKey => prevKey + 1);
       }
     }

@@ -16,6 +16,7 @@ import {
   type GetLinkInfoArgs,
   type UseLinkInfoArgs,
   type GetSearchLinkInfoArgs,
+  type ILinkDtos,
 } from '@/types';
 
 // 링크 목록 조회 GET
@@ -294,22 +295,6 @@ export const useCreateLink = (options = {}) => {
   });
 };
 
-// 링크 조회 업데이트 PATCH
-const viewLink = async (linkId: string) => {
-  const endpoint = API_ENDPOINTS.LINKS.VIEW.replace(':linkId', linkId);
-  await apiClient.patch(endpoint);
-};
-
-export const useViewLink = (options = {}) => {
-  return useMutation({
-    mutationFn: viewLink,
-    onError: (error: string) => {
-      console.warn('View Link error:', error);
-    },
-    ...options,
-  });
-};
-
 // 휴지통 링크 목록 조회 GET
 const getTrashLinks = async (
   payload: GetLinkInfoArgs,
@@ -472,5 +457,41 @@ export const useSearchLinks = ({
     },
     initialPageParam: 0,
     enabled, // 쿼리가 실행될 조건을 제어하는 옵션
+  });
+};
+
+// 링크 조회 업데이트 PATCH
+const viewLink = async (linkId: string) => {
+  const endpoint = API_ENDPOINTS.LINKS.VIEW.replace(':linkId', linkId);
+  await apiClient.patch(endpoint);
+};
+
+// PATCH 요청 후에 캐시 무효화 또는 새로고침 로직 추가
+export const useViewLink = (options = {}) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: viewLink,
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['recentSearch']});
+    },
+    onError: (error: string) => {
+      console.warn('View Link error:', error);
+    },
+    ...options,
+  });
+};
+
+// 최근 검색어 조회
+const getRecentSearch = async (): Promise<ILinkDtos[]> => {
+  const {data} = await apiClient.get(API_ENDPOINTS.LINKS.RECENT_SEARCH);
+  // 3초 지연
+  return data.result.linkDtos;
+};
+
+export const useRecentSearch = () => {
+  return useQuery({
+    queryKey: ['recentSearch'],
+    queryFn: getRecentSearch,
   });
 };
