@@ -17,6 +17,7 @@ import {
   type GetSearchLinkInfoArgs,
   type ILinkDtos,
   type GetLinkFolderSchema,
+  type UseSearchLinkInfoArgs,
 } from '@/types';
 import {useHandleCacheUpdate} from '@/api/hooks/util';
 
@@ -186,7 +187,6 @@ export const useToggleLinkPin = ({size, sortBy, folderId}: UseLinkInfoArgs) => {
         ...link,
         pinned: !link.pinned,
       });
-
       handleCacheUpdate(cacheKey, linkId, togglePinFn);
     },
     onError: (error: string) => {
@@ -233,8 +233,7 @@ const getTrashLinks = async (
       size,
     },
   });
-  //  3초 지연
-  // await new Promise(resolve => setTimeout(resolve, 2500));
+
   return data.result;
 };
 
@@ -280,9 +279,7 @@ export const useRecoverLink = ({size, sortBy}: UseLinkInfoArgs) => {
     mutationFn: recoverLink,
     onSuccess: (_, linkId) => {
       const cacheKey = ['trashLinks', size, sortBy];
-
       handleCacheUpdate(cacheKey, linkId);
-
       // 'links' 캐시 무효화 처리 (링크 목록 새로고침)
       queryClient.invalidateQueries({queryKey: ['links']});
     },
@@ -335,11 +332,7 @@ export const useSearchLinks = ({
   query,
   size,
   enabled,
-}: {
-  query: string;
-  size: number;
-  enabled: boolean;
-}) => {
+}: UseSearchLinkInfoArgs) => {
   return useInfiniteQuery({
     queryKey: ['searchLinks', query, size],
     queryFn: async ({pageParam = 0}) => {
@@ -413,6 +406,30 @@ export const useDeleteRecentLink = () => {
     },
     onError: error => {
       console.error('Error deleting link:', error);
+    },
+  });
+};
+
+// 검색 창에서 링크 제목 수정 PATCH
+export const useUpdateSearchLinkTitle = ({query, size}: UseLinkInfoArgs) => {
+  const queryClient = useQueryClient();
+  const handleCacheUpdate = useHandleCacheUpdate();
+
+  return useMutation({
+    mutationFn: updateLinkTitle,
+    onSuccess: (_, payload) => {
+      const searchCacheKey = ['searchLinks', query, size];
+      const homeCacheKey = ['links', size];
+      const updateLinkTitleFn = (link: ILinkDtos) => ({
+        ...link,
+        title: payload.title,
+      });
+      console.log('payload 검색창 제목 수정 성공', payload);
+      handleCacheUpdate(searchCacheKey, payload.linkId, updateLinkTitleFn);
+      queryClient.invalidateQueries({queryKey: homeCacheKey});
+    },
+    onError: (error: string) => {
+      console.warn('Update Search Link Title error:', error);
     },
   });
 };

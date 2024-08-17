@@ -44,6 +44,8 @@ export interface UseLinkInfoArgs {
   folderId?: number | null;
   size: number;
   sortBy?: string;
+  query?: string;
+  enabled?: boolean;
 }
 
 export interface GetSearchLinkInfoArgs {
@@ -55,4 +57,5 @@ export interface GetSearchLinkInfoArgs {
 export interface UseSearchLinkInfoArgs {
   query: string;
   size: number;
+  enabled: boolean;
 }

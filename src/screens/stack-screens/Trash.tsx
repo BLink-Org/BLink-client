@@ -50,7 +50,6 @@ const Trash = () => {
 
   const handleSelection = (selected: string) => {
     setSelectedSortingOption(selected);
-    refetch();
   };
 
   const [refreshing, setRefreshing] = useState(false);
@@ -79,8 +78,8 @@ const Trash = () => {
         <View>
           <SmallCard
             content={item}
-            isTrash={true}
             linkInfoArgs={linkInfoArgsOptions}
+            page="trash"
           />
           {!isLastItem && <View style={styles.separator} />}
         </View>

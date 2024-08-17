@@ -28,23 +28,22 @@ import {
   useRecoverLink,
   useToggleLinkPin,
   useUpdateLinkTitle,
+  useUpdateSearchLinkTitle,
 } from '@/api/hooks/useLink';
 import {extractHostname, shareUrl} from '@/utils/url-utils';
 
 interface SmallCardProps {
   content: ILinkDtos;
-  isTrash?: boolean;
+  page?: string;
   showToast?: (text: string) => void;
-  isSearch?: boolean;
   linkInfoArgs: UseLinkInfoArgs;
 }
 
 const SmallCard = ({
   content,
-  isTrash,
+  page,
   showToast = () => {},
   linkInfoArgs,
-  isSearch,
 }: SmallCardProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
@@ -59,9 +58,11 @@ const SmallCard = ({
   // 휴지통에서 복원
   const {mutate: recoverLink} = useRecoverLink(linkInfoArgs);
   // 링크 제목 수정
-  const {mutate: updateTitle} = useUpdateLinkTitle(linkInfoArgs);
-
-  
+  // 페이지에 따라 맞는 제목 수정 훅 선택
+  const {mutate: updateTitle} =
+    page === 'search'
+      ? useUpdateSearchLinkTitle(linkInfoArgs)
+      : useUpdateLinkTitle(linkInfoArgs);
 
   // 핀 on/off
   const {mutate: togglePin} = useToggleLinkPin(linkInfoArgs);
@@ -231,7 +232,7 @@ const SmallCard = ({
           {isDropdownOpen && (
             <DropDownModal
               isVisible={isDropdownOpen}
-              options={isTrash ? trashOptions : editOptions}
+              options={page === 'trash' ? trashOptions : editOptions}
               onClose={closeDropdown}
               anchorPosition={anchorPosition}
             />
@@ -276,7 +277,7 @@ const SmallCard = ({
               {extractHostname(content.url ?? '')}
             </Text>
           </View>
-          {!isTrash ? (
+          {!(page === 'trash') ? (
             <TouchableOpacity
               onPress={handlePinToggle}
               style={styles.pinButton}>
