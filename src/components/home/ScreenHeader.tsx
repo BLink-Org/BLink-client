@@ -4,15 +4,20 @@ import {useThemeStore} from '@/store/useThemeStore';
 
 interface ScreenHeaderProps {
   toggleSideBar: () => void;
+  isBookmark?: boolean;
 }
 
-const ScreenHeader = ({toggleSideBar}: ScreenHeaderProps) => {
+const ScreenHeader = ({toggleSideBar, isBookmark}: ScreenHeaderProps) => {
   const {theme} = useThemeStore();
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={toggleSideBar}>
-        <SidebarIcon width={30} height={30} stroke={theme.TEXT900} />
-      </TouchableOpacity>
+      {!isBookmark ? (
+        <TouchableOpacity onPress={toggleSideBar}>
+          <SidebarIcon width={30} height={30} stroke={theme.TEXT900} />
+        </TouchableOpacity>
+      ) : (
+        <View style={styles.rightSpace} />
+      )}
       <Image
         source={require('@/assets/images/img-linksaving_wordmark-blue.png')}
         style={styles.logoImage}

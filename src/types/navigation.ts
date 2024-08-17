@@ -34,7 +34,11 @@ export interface RootStackParamList extends ParamListBase {
     initialIndex: number;
     size: number;
   };
-
+  BookmarkWebView: {
+    sortBy: string;
+    initialIndex: number;
+    size: number;
+  };
   SearchWebView: {
     query: string | null;
     size: number;
@@ -54,7 +58,14 @@ export type WebViewListNavigationProp = NativeStackNavigationProp<
   'WebViewList'
 >;
 
+// 검색 웹뷰에 대한 Navigation Object의 Type을 정의
 export type SearchWebViewNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   'SearchWebView'
+>;
+
+// 북마크 웹뷰에 대한 Navigation Object의 Type을 정의
+export type BookmarkWebViewNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'BookmarkWebView'
 >;

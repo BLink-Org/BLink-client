@@ -8,8 +8,8 @@ import {extractHostname, shareUrl} from '@/utils/url-utils';
 import {type ITheme} from '@/types';
 import {useThemeStore} from '@/store/useThemeStore';
 import {
-  useSearchLinks,
-  useToggleSearchLinkPin,
+  usePinnedLinks,
+  useToggleBookmarkLinkPin,
   useViewLink,
 } from '@/api/hooks/useLink';
 import NavigationButton from '@/components/webview/NavigationButton';
@@ -25,47 +25,45 @@ import BottomSheet from '@/components/modal/BottomSheet';
 import LinkContent from '@/components/link/LinkContent';
 import {PinnedIcon} from '@/assets/icons/bottom-tab';
 
-const SearchWebView = () => {
+const BookmarkWebView = () => {
   const navigation = useNavigation();
   const webViewRef = useRef<WebView>(null);
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
   const route = useRoute();
-  const {query, size, initialIndex} = route.params as {
-    query: string;
+  const {size, sortBy, initialIndex} = route.params as {
     size: number;
+    sortBy: string;
     initialIndex: number;
   };
 
   const linkInfoArgsOptions = {
-    query,
     size,
-    enabled: true,
+    sortBy,
   };
 
   const [currentIndex, setCurrentIndex] = useState<number>(initialIndex);
-  const [currentUrl, setCurrentUrl] = useState<string | null>(null); // 현재 링크 목록
-  const previousIndexRef = useRef<number | null>(null); // 링크를 이동하였는지 확인하기 위한 ref
-  const [webViewKey, setWebViewKey] = useState<number>(0); // 웹뷰 리렌더링용 키
+  const [currentUrl, setCurrentUrl] = useState<string | null>(null);
+  const previousIndexRef = useRef<number | null>(null);
+  const [webViewKey, setWebViewKey] = useState<number>(0);
   const [canGoBack, setCanGoBack] = useState<boolean>(false);
   const [canGoForward, setCanGoForward] = useState<boolean>(false);
-  const [webViewUrl, setWebViewUrl] = useState<string | null>(null); // 웹뷰 URL
+  const [webViewUrl, setWebViewUrl] = useState<string | null>(null);
 
   const {
     data: linkData,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useSearchLinks(linkInfoArgsOptions);
+  } = usePinnedLinks(linkInfoArgsOptions);
 
-  const {mutate: togglePin} = useToggleSearchLinkPin({query, size});
+  const {mutate: togglePin} = useToggleBookmarkLinkPin({size, sortBy});
   const {mutate: viewLink} = useViewLink();
 
   const linkList = linkData?.pages.flatMap(page => page.linkDtos) ?? [];
   const currentLink = linkList[currentIndex];
 
-  // 첫 URL 및 핀 상태 설정
   useEffect(() => {
     if (linkList.length > 0 && currentLink?.url) {
       setCurrentUrl(currentLink.url);
@@ -74,25 +72,21 @@ const SearchWebView = () => {
 
   useEffect(() => {
     if (currentLink?.id && previousIndexRef.current !== currentIndex) {
-      viewLink(String(currentLink.id)); // 링크 조회 Patch
+      viewLink(String(currentLink.id));
       previousIndexRef.current = currentIndex;
     }
   }, [currentIndex, currentLink?.id, viewLink]);
 
   const handleNavigationStateChange = (navState: WebViewNavigation) => {
-    // 뒤로가기, 앞으로가기 버튼 상태 업데이트
     setCanGoBack(navState.canGoBack);
     setCanGoForward(navState.canGoForward);
-    // 현재 URL 업데이트
     setWebViewUrl(navState.url);
   };
 
-  // 핀 on/off
   const handlePinToggle = () => {
     togglePin(String(currentLink.id));
   };
 
-  // 하나의 웹 뷰 내에서 뒤로가기, 앞으로가기, 새로고침
   const directBack = () => {
     webViewRef.current?.goBack();
   };
@@ -101,7 +95,6 @@ const SearchWebView = () => {
     webViewRef.current?.goForward();
   };
 
-  // 전체 링크에서 이전 링크, 다음 링크로 이동
   const goBack = () => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
@@ -138,7 +131,6 @@ const SearchWebView = () => {
     navigation.goBack();
   };
 
-  // 링크 저장
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
   const toggleBottomSheet = () => {
     setIsBottomSheetVisible(!isBottomSheetVisible);
@@ -163,12 +155,13 @@ const SearchWebView = () => {
       {currentUrl && (
         <WebView
           ref={webViewRef}
-          key={webViewKey} // 키 변경 시 웹뷰 리렌더링
+          key={webViewKey}
           source={{uri: currentUrl}}
           style={styles.webViewContainer}
           onNavigationStateChange={handleNavigationStateChange}
         />
       )}
+
       <View style={styles.backForwardButton}>
         <NavigationButton
           onPress={goBack}
@@ -211,7 +204,7 @@ const SearchWebView = () => {
           <SaveIcon fill={theme.TEXT900} />
         </TouchableOpacity>
       </View>
-      {/* 링크 저장모달 */}
+
       <BottomSheet
         modalTitle="링크 저장"
         {...{isBottomSheetVisible, toggleBottomSheet}}>
@@ -224,7 +217,7 @@ const SearchWebView = () => {
   );
 };
 
-export default SearchWebView;
+export default BookmarkWebView;
 
 const createStyles = (theme: ITheme) =>
   StyleSheet.create({
@@ -243,7 +236,6 @@ const createStyles = (theme: ITheme) =>
     webViewContainer: {
       flex: 1,
     },
-
     navigationContainer: {
       flexDirection: 'row',
       justifyContent: 'space-between',

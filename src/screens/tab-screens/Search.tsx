@@ -83,6 +83,11 @@ const SearchPage = () => {
       initialIndex: index,
     });
   };
+
+  const linkInfoArgsOptions = {
+    query: finalSearchQuery,
+    size: 10,
+  };
   // FlatList 사용 최적화
   const renderItem: ListRenderItem<ILinkDtos> = useCallback(
     ({item, index}) => {
@@ -92,7 +97,11 @@ const SearchPage = () => {
       return (
         <View>
           <TouchableOpacity onPress={() => handleCardPress(index)}>
-            <SmallCard content={item} linkInfoArgs={{size: 10}} />
+            <SmallCard
+              content={item}
+              linkInfoArgs={linkInfoArgsOptions}
+              page="search"
+            />
           </TouchableOpacity>
           {!isLastItem && <View style={styles.separator} />}
         </View>
