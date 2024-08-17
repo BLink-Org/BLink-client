@@ -25,6 +25,13 @@ import {
 import {ArrowBackIcon} from '@/assets/icons/mypage';
 import {type RootStackNavigationProp, type IFolderDtos} from '@/types';
 import SmallCardPlaceHolder from '@/components/home/SmallCardPlaceHolder';
+import {
+  Theme1SmallCardImage,
+  Theme2SmallCardImage,
+  Theme3BackgroundImage,
+  Theme3BigCardImage,
+  Theme3SmallCardImage,
+} from '@/assets/icons/theme';
 
 const APITest = () => {
   const queryClient = useQueryClient();
@@ -137,8 +144,11 @@ const APITest = () => {
         <TouchableOpacity onPress={goBackPage}>
           <ArrowBackIcon />
         </TouchableOpacity>
-        <View style={{height: 100}}>
-          <SmallCardPlaceHolder />
+        <View style={{flex: 1}}>
+          <Theme1SmallCardImage width={84} height={84} />
+          <Theme2SmallCardImage width={84} height={84} />
+          <Theme3SmallCardImage width={84} height={84} />
+          <Theme3BackgroundImage width={406} height={812} />
         </View>
 
         <Text style={{fontSize: 25}}>Health API Test</Text>

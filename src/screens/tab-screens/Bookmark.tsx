@@ -126,7 +126,9 @@ const Bookmark = () => {
         <AnimatedLogoHeader
           translateY={translateY}
           toggleSideBar={() => {}}
-          backgroundThemeColor={theme.BACKGROUND}
+          backgroundThemeColor={
+            theme.THEME_NUMBER === 3 ? theme.MAIN200 : theme.BACKGROUND
+          }
           isBookmark
         />
 

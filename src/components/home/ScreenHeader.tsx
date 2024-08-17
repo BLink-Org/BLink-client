@@ -9,6 +9,7 @@ interface ScreenHeaderProps {
 
 const ScreenHeader = ({toggleSideBar, isBookmark}: ScreenHeaderProps) => {
   const {theme} = useThemeStore();
+  const themeNumber = theme.THEME_NUMBER;
   return (
     <View style={styles.container}>
       {!isBookmark ? (
@@ -18,10 +19,18 @@ const ScreenHeader = ({toggleSideBar, isBookmark}: ScreenHeaderProps) => {
       ) : (
         <View style={styles.rightSpace} />
       )}
-      <Image
-        source={require('@/assets/images/img-linksaving_wordmark-blue.png')}
-        style={styles.logoImage}
-      />
+      {themeNumber === 3 ? (
+        <Image
+          source={require('@/assets/images/img-header-theme3.png')}
+          style={styles.logoImage2}
+        />
+      ) : (
+        <Image
+          source={require('@/assets/images/img-linksaving_wordmark-blue.png')}
+          style={styles.logoImage}
+        />
+      )}
+
       <View style={styles.rightSpace} />
     </View>
   );
@@ -40,6 +49,10 @@ const styles = StyleSheet.create({
   logoImage: {
     width: 67,
     height: 24,
+  },
+  logoImage2: {
+    width: 80,
+    height: 26,
   },
   rightSpace: {
     width: 30,

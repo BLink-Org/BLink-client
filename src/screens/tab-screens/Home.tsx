@@ -148,13 +148,16 @@ const Home = () => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={[styles.container, {backgroundColor: theme.BACKGROUND}]}>
       <ThemeBackground />
       <View style={styles.mainContainer}>
         <AnimatedLogoHeader
           translateY={translateY}
           toggleSideBar={toggleSideBar}
-          backgroundThemeColor={theme.BACKGROUND}
+          backgroundThemeColor={
+            theme.THEME_NUMBER === 3 ? theme.MAIN200 : theme.BACKGROUND
+          }
         />
         <FlatList
           data={

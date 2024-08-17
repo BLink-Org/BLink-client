@@ -8,6 +8,9 @@ import {
   Theme2BackgroundImage,
   Theme2BigCardImage,
   Theme2SmallCardImage,
+  Theme3BackgroundImage,
+  Theme3BigCardImage,
+  Theme3SmallCardImage,
 } from '@/assets/icons/theme';
 
 export const THEME_INFOS = [
@@ -34,6 +37,7 @@ export const THEME_INFOS = [
 
 // TODO: 추후 type폴더로 이동
 export interface Theme {
+  THEME_NUMBER: number;
   BACKGROUND_IMAGE: React.FC<SvgProps>;
   BIG_CARD_IMAGE: React.FC<SvgProps>;
   SMALL_CARD_IMAGE: React.FC<SvgProps>;
@@ -61,6 +65,7 @@ export interface Theme {
 
 export const THEMES: Record<number, Theme> = {
   1: {
+    THEME_NUMBER: 1,
     BACKGROUND_IMAGE: Theme1BackgroundImage,
     BIG_CARD_IMAGE: Theme1BigCardImage,
     SMALL_CARD_IMAGE: Theme1SmallCardImage,
@@ -86,6 +91,7 @@ export const THEMES: Record<number, Theme> = {
     ERROR: '#FF554A',
   },
   2: {
+    THEME_NUMBER: 2,
     BACKGROUND_IMAGE: Theme2BackgroundImage,
     BIG_CARD_IMAGE: Theme2BigCardImage,
     SMALL_CARD_IMAGE: Theme2SmallCardImage,
@@ -111,9 +117,10 @@ export const THEMES: Record<number, Theme> = {
     ERROR: '#FF554A',
   },
   3: {
-    BACKGROUND_IMAGE: Temp2BackgroundImage,
-    BIG_CARD_IMAGE: Theme1BigCardImage,
-    SMALL_CARD_IMAGE: Theme1SmallCardImage,
+    THEME_NUMBER: 3,
+    BACKGROUND_IMAGE: Theme3BackgroundImage,
+    BIG_CARD_IMAGE: Theme3BigCardImage,
+    SMALL_CARD_IMAGE: Theme3SmallCardImage,
     EMPTY_IMAGE: require('@/assets/images/img-empty.png'),
     SEARCH_EDGE_IMAGE: require('@/assets/images/img-searchedge.png'),
     ERROR_IMAGE: require('@/assets/images/img-error.png'),
@@ -136,27 +143,28 @@ export const THEMES: Record<number, Theme> = {
     ERROR: '#FF554A',
   },
   4: {
-    BACKGROUND_IMAGE: Theme1BackgroundImage,
-    BIG_CARD_IMAGE: Theme1BigCardImage,
-    SMALL_CARD_IMAGE: Theme1SmallCardImage,
+    THEME_NUMBER: 4,
+    BACKGROUND_IMAGE: Theme3BackgroundImage,
+    BIG_CARD_IMAGE: Theme3BigCardImage,
+    SMALL_CARD_IMAGE: Theme3SmallCardImage,
     EMPTY_IMAGE: require('@/assets/images/img-empty.png'),
     SEARCH_EDGE_IMAGE: require('@/assets/images/img-searchedge.png'),
     ERROR_IMAGE: require('@/assets/images/img-error.png'),
     BACKGROUND: '#FFFFFF',
-    TEXT100: '#123123',
-    TEXT200: '#432123',
-    TEXT300: '#f12d12',
-    TEXT400: '#512d12',
-    TEXT500: '#612d12',
-    TEXT600: '#712d12',
-    TEXT700: '#812d12',
-    TEXT800: '#912d12',
-    TEXT900: '#a12d12',
-    MAIN100: '#293813',
-    MAIN200: '#393813',
-    MAIN300: '#493813',
-    MAIN400: '#593813',
-    MAIN500: '#693813',
+    TEXT100: '#F7F9FB',
+    TEXT200: '#ECF1F5',
+    TEXT300: '#C1C9D3',
+    TEXT400: '#A8B0BA',
+    TEXT500: '#6B7684',
+    TEXT600: '#4E6968',
+    TEXT700: '#333D4B',
+    TEXT800: '#161B21',
+    TEXT900: '#000000',
+    MAIN100: '#EEF3FF',
+    MAIN200: '#D8E3FF',
+    MAIN300: '#8AABFF',
+    MAIN400: '#6D96FF',
+    MAIN500: '#4A7DFF',
     SUB: '#FF7970',
     ERROR: '#FF554A',
   },
