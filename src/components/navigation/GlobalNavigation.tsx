@@ -7,9 +7,10 @@ import AccountManage from '@/screens/stack-screens/AccountManage';
 import Setting from '@/screens/stack-screens/Setting';
 import Trash from '@/screens/stack-screens/Trash';
 import APITest from '@/screens/stack-screens/APITest';
-import WebViewTest from '@/screens/stack-screens/WebViewTest';
 import Onboarding from '@/screens/stack-screens/Onboarding';
 import LinkApiTest from '@/screens/stack-screens/LinkApiTest';
+import WebViewList from '@/screens/stack-screens/WebViewList';
+import WebViewTest from '@/screens/stack-screens/WebViewTest';
 import BottomTabNavigation from './BottomTabNavigation';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -39,6 +40,11 @@ const GlobalNavigation = ({isAuthenticated}: {isAuthenticated: boolean}) => {
           <Stack.Screen name="AccountManage" component={AccountManage} />
           <Stack.Screen name="Setting" component={Setting} />
           <Stack.Screen name="Trash" component={Trash} />
+          <Stack.Screen
+            name="WebViewList"
+            component={WebViewList}
+            options={{animation: 'slide_from_bottom'}}
+          />
         </>
       )}
     </Stack.Navigator>
