@@ -13,7 +13,6 @@ import {
 } from '@/assets/icons/bottom-tab';
 import AddScreen from '@/screens/tab-screens/Add';
 import BookmarkScreen from '@/screens/tab-screens/Bookmark';
-import SearchScreen from '@/screens/tab-screens/Search';
 import {useThemeStore} from '@/store/useThemeStore';
 import {type Theme} from '@/constants/theme';
 import Onboarding from '@/screens/stack-screens/Onboarding';
@@ -24,6 +23,7 @@ import Support from '@/screens/stack-screens/Support';
 import Setting from '@/screens/stack-screens/Setting';
 import UnAuthHome from '@/screens/no-login-tab-screen/UnAuthHome';
 import UnAuthWebView from '@/screens/no-login-tab-screen/UnAuthWebView';
+import UnAuthSearch from '@/screens/no-login-tab-screen/UnAuthSearch';
 import LoginModal from '../modal/LoginModal';
 
 interface IconProps {
@@ -169,18 +169,11 @@ const BottomTabNavigationUnauthenticated = () => {
           }}
         />
         <Tab.Screen
-          name="search"
-          component={SearchScreen}
+          name="UnAuthSearch"
+          component={UnAuthSearch}
           options={{
+            headerShown: false,
             tabBarIcon: ({focused}) => <SearchBarIcon {...{focused, theme}} />,
-            tabBarButton: props => (
-              <TouchableOpacity
-                {...props}
-                onPress={() => {
-                  onPressLoginAlert();
-                }}
-              />
-            ),
           }}
         />
         <Tab.Screen
