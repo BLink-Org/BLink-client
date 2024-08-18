@@ -1,5 +1,9 @@
-import React, {useEffect, useMemo} from 'react';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import React, {useCallback, useEffect, useMemo} from 'react';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import {
   View,
   StyleSheet,
@@ -35,7 +39,14 @@ const MyPage = () => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
-  const {data: userInfoData, isLoading, isError} = useUserInfo();
+  const {data: userInfoData, isLoading, isError, refetch} = useUserInfo();
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch]),
+  );
+
   const {refreshToken} = useUserStore.getState();
 
   const route = useRoute<MyPageRouteProp>();
@@ -53,7 +64,6 @@ const MyPage = () => {
   }, [route.params?.toastState]);
 
   // 애플 이메일 제공 x 유저 -> 이메일 정보 분기 처리
-
   const email = userInfoData?.email;
   const displayEmail = email?.endsWith('@privaterelay.appleid.com')
     ? '애플 가상 이메일입니다'
