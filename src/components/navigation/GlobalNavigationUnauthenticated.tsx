@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Alert, Image, TouchableOpacity} from 'react-native';
+import {Image, TouchableOpacity} from 'react-native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {useNavigation} from '@react-navigation/native';
 import {
@@ -17,12 +17,12 @@ import SearchScreen from '@/screens/tab-screens/Search';
 import {useThemeStore} from '@/store/useThemeStore';
 import {type Theme} from '@/constants/theme';
 import Onboarding from '@/screens/stack-screens/Onboarding';
-import TempHome from '@/screens/no-login-tab-screen/TempHome';
 import UnAuthMypage from '@/screens/no-login-tab-screen/UnAuthMypage';
 import {type RootStackNavigationProp} from '@/types';
 import ThemeSetting from '@/screens/stack-screens/ThemeSetting';
 import Support from '@/screens/stack-screens/Support';
 import Setting from '@/screens/stack-screens/Setting';
+import UnAuthHome from '@/screens/no-login-tab-screen/UnAuthHome';
 import NoticeModal from '../modal/NoticeModal';
 
 interface IconProps {
@@ -132,8 +132,8 @@ const BottomTabNavigationUnauthenticated = () => {
           },
         }}>
         <Tab.Screen
-          name="TempHome"
-          component={TempHome}
+          name="UnAuthHome"
+          component={UnAuthHome}
           options={{
             headerShown: false,
             tabBarIcon: ({focused}) => <HomeBarIcon {...{focused, theme}} />,
