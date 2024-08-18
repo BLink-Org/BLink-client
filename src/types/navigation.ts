@@ -42,6 +42,7 @@ export interface RootStackParamList extends ParamListBase {
     size: number;
     initialIndex: number;
   };
+  tempHome: undefined;
 }
 
 // BottomTab Screen에 대한 Navigation Object의 Type을 정의
@@ -67,3 +68,11 @@ export type BookmarkWebViewNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   'BookmarkWebView'
 >;
+
+// Onboarding에 대한 Navigation Object의 Type을 정의
+export type OnboardingNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'Onboarding'
+>;
+
+//

@@ -12,6 +12,7 @@ import i18n from '@/i18n/i18n';
 import {useUserStore} from '@/store/useUserStore';
 import {trackEvent} from '@/utils/amplitude-utils';
 import {AMPLITUDE_API_KEY} from '@env';
+import GlobalNavigationUnauthenticated from '@/components/navigation/GlobalNavigationUnauthenticated';
 
 interface AppProps {
   sharedText: string;
@@ -81,7 +82,11 @@ export default function App(props: AppProps) {
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
         <NavigationContainer key={isAuthenticated ? 'auth-true' : 'auth-false'}>
-          <GlobalNavigation isAuthenticated={isAuthenticated} />
+          {isAuthenticated ? (
+            <GlobalNavigation />
+          ) : (
+            <GlobalNavigationUnauthenticated />
+          )}
         </NavigationContainer>
       </SafeAreaProvider>
     </QueryClientProvider>

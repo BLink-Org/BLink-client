@@ -6,11 +6,22 @@ import {
   View,
   Image,
 } from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 import GoogleLogin from '@/components/auth/GoogleLogin';
 import AppleLogin from '@/components/auth/AppleLogin';
 import {FONTS} from '@/constants';
+import {type RootStackNavigationProp} from '@/types';
 
 const Onboarding = () => {
+  const navigation = useNavigation<RootStackNavigationProp>();
+
+  // 둘러보기 클릭 시
+  const handleAround = () => {
+    navigation.navigate('Tab', {
+      screen: 'TempHome',
+    });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer} />
@@ -33,7 +44,7 @@ const Onboarding = () => {
       <View style={styles.loginContainer}>
         <GoogleLogin />
         <AppleLogin />
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleAround}>
           <Text style={styles.aroundText}>둘러보기</Text>
         </TouchableOpacity>
       </View>

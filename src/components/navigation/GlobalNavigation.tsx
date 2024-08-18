@@ -14,42 +14,37 @@ import BottomTabNavigation from './BottomTabNavigation';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-const GlobalNavigation = ({isAuthenticated}: {isAuthenticated: boolean}) => {
+const GlobalNavigation = () => {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      {!isAuthenticated ? (
-        <Stack.Screen
-          name="Onboarding"
-          component={Onboarding}
-          options={{headerShown: false}}
-        />
-      ) : (
-        <>
-          <Stack.Screen name="Main" component={BottomTabNavigation} />
-          <Stack.Screen name="ThemeSetting" component={ThemeSetting} />
-          <Stack.Screen name="Support" component={Support} />
-          <Stack.Screen name="AccountDelete" component={AccountDelete} />
-          <Stack.Screen name="AccountManage" component={AccountManage} />
-          <Stack.Screen name="Setting" component={Setting} />
-          <Stack.Screen name="Trash" component={Trash} />
-          <Stack.Screen
-            name="WebViewList"
-            component={WebViewList}
-            options={{animation: 'slide_from_bottom'}}
-          />
+      <Stack.Screen
+        name="Onboarding"
+        component={Onboarding}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen name="Main" component={BottomTabNavigation} />
+      <Stack.Screen name="ThemeSetting" component={ThemeSetting} />
+      <Stack.Screen name="Support" component={Support} />
+      <Stack.Screen name="AccountDelete" component={AccountDelete} />
+      <Stack.Screen name="AccountManage" component={AccountManage} />
+      <Stack.Screen name="Setting" component={Setting} />
+      <Stack.Screen name="Trash" component={Trash} />
+      <Stack.Screen
+        name="WebViewList"
+        component={WebViewList}
+        options={{animation: 'slide_from_bottom'}}
+      />
 
-          <Stack.Screen
-            name="SearchWebView"
-            component={SearchWebView}
-            options={{animation: 'slide_from_bottom'}}
-          />
-          <Stack.Screen
-            name="BookmarkWebView"
-            component={BookmarkWebView}
-            options={{animation: 'slide_from_bottom'}}
-          />
-        </>
-      )}
+      <Stack.Screen
+        name="SearchWebView"
+        component={SearchWebView}
+        options={{animation: 'slide_from_bottom'}}
+      />
+      <Stack.Screen
+        name="BookmarkWebView"
+        component={BookmarkWebView}
+        options={{animation: 'slide_from_bottom'}}
+      />
     </Stack.Navigator>
   );
 };

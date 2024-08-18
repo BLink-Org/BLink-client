@@ -1,9 +1,5 @@
-import React, {useCallback, useEffect, useMemo} from 'react';
-import {
-  useFocusEffect,
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native';
+import React, {useEffect, useMemo} from 'react';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import {
   View,
   StyleSheet,
@@ -20,7 +16,6 @@ import ThemeBackground from '@/components/common/ThemeBackground';
 import LogoHeader from '@/components/common/LogoHeader';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
-import StaticInfo from '@/components/mypage/StaticInfo';
 import NavigationInfo from '@/components/mypage/NavigationInfo';
 import {useModalStore} from '@/store/useModalStore';
 import AlertModal from '@/components/modal/AlertModal';
@@ -29,23 +24,12 @@ import {signOut} from '@/utils/auth-utils';
 import {useLogout} from '@/api/hooks/useAuth';
 import {useUserStore} from '@/store/useUserStore';
 import {trackEvent} from '@/utils/amplitude-utils';
-import {useUserInfo} from '@/api/hooks/useUser';
-import CustomLoading from '@/components/common/CustomLoading';
-import DeletedTrueContainer from '@/components/mypage/DeletedTrueContainer';
 import useToast from '@/hooks/useToast';
 import {TOAST_MESSAGE} from '@/constants/toast';
 
 const MyPage = () => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
-
-  // const {data: userInfoData, isLoading, isError, refetch} = useUserInfo();
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     refetch();
-  //   }, [refetch]),
-  // );
 
   const {refreshToken} = useUserStore.getState();
 
@@ -63,11 +47,7 @@ const MyPage = () => {
     navigation.setParams({toastState: null});
   }, [route.params?.toastState]);
 
-  // // 애플 이메일 제공 x 유저 -> 이메일 정보 분기 처리
-  // const email = userInfoData?.email;
-  // const displayEmail = email?.endsWith('@privaterelay.appleid.com')
-  //   ? '애플 가상 이메일입니다'
-  //   : email;
+  // 애플 이메일 제공 x 유저 -> 이메일 정보 분기 처리
 
   // 로그아웃 post
   const {mutate: logout} = useLogout();
@@ -90,9 +70,6 @@ const MyPage = () => {
     signOut();
   };
 
-  // if (isLoading) return <CustomLoading />;
-  // if (isError) return <Text>error</Text>;
-
   return (
     <SafeAreaView style={styles.container}>
       {renderToast()}
@@ -100,26 +77,15 @@ const MyPage = () => {
       <LogoHeader />
       <ScrollView>
         <View style={styles.contentContainer}>
-          {/* <View style={styles.headerText}>
+          <View style={styles.headerText}>
             <Text style={styles.titleText}>계정</Text>
           </View>
           <View style={styles.userInfo}>
-            <Text style={styles.emailText}>{displayEmail}</Text>
             <TouchableOpacity onPress={handleAccountManage}>
               <Text style={styles.accountManageText}>계정 관리</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.staticInfoContainer}>
-            {userInfoData?.deleteRequest ? (
-              <DeletedTrueContainer />
-            ) : (
-              <StaticInfo
-                linkCount={userInfoData?.linkCount}
-                bookmarkCount={userInfoData?.pinCount}
-                folderCount={userInfoData?.folderCount}
-              />
-            )}
-          </View> */}
+          <View style={styles.staticInfoContainer}></View>
           <View style={styles.divider} />
           <View style={styles.navigationContainer}>
             <NavigationInfo

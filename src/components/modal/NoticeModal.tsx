@@ -10,6 +10,7 @@ interface CustomModalProps {
   onClose: () => void;
   title: string;
   description: string;
+  onClick?: () => void;
 }
 
 const NoticeModal = ({
@@ -17,6 +18,7 @@ const NoticeModal = ({
   onClose,
   title,
   description,
+  onClick,
 }: CustomModalProps) => {
   const {theme} = useThemeStore();
   const styles = createStyles(theme);
@@ -35,7 +37,7 @@ const NoticeModal = ({
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.description}>{description}</Text>
       </View>
-      <TouchableOpacity style={styles.button} onPress={onClose}>
+      <TouchableOpacity style={styles.button} onPress={onClick ?? onClose}>
         <Text style={styles.buttonText}>확인</Text>
       </TouchableOpacity>
     </Modal>
