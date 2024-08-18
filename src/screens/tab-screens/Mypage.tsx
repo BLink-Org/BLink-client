@@ -148,17 +148,6 @@ const MyPage = () => {
               onPress={logoutModalOpen}
             />
           </View>
-          {/* 임시 테스트 페이지 */}
-          <TouchableOpacity
-            onPress={() => navigation.navigate('WebViewTest')}
-            style={{paddingVertical: 30}}>
-            <Text>webViewTest</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('APITest')}
-            style={{paddingVertical: 30}}>
-            <Text>apiTest</Text>
-          </TouchableOpacity>
         </View>
       </ScrollView>
       <AlertModal

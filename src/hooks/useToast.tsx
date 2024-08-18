@@ -36,19 +36,19 @@ export default function useToast({marginBottom}: ToastProps) {
       setIsToastVisible(true);
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 500,
+        duration: 400,
         useNativeDriver: true,
       }).start();
 
       const fadeOutTimer = setTimeout(() => {
         Animated.timing(fadeAnim, {
           toValue: 0,
-          duration: 500,
+          duration: 400,
           useNativeDriver: true,
         }).start(() => {
           setIsToastVisible(false);
         });
-      }, 3000);
+      }, 1200);
 
       return () => clearTimeout(fadeOutTimer);
     } else {
