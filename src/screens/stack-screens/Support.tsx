@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {SafeAreaView, StyleSheet, View} from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {useThemeStore} from '@/store/useThemeStore';
 import NavigationInfo from '@/components/mypage/NavigationInfo';
 import BackHeader from '@/components/common/BackHeader';
@@ -11,6 +12,7 @@ const Support = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState({url: '', title: ''});
   const {theme} = useThemeStore();
+  const {t} = useTranslation();
 
   const handleOpenLink = (url: string, title: string) => {
     setModalContent({url, title});
@@ -20,12 +22,12 @@ const Support = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ThemeBackground />
-      <BackHeader title="지원" themeColor={theme.TEXT900} />
+      <BackHeader title={t('지원')} themeColor={theme.TEXT900} />
       <View style={styles.contentContainer}>
         {LINK_INFOS.map(link => (
           <NavigationInfo
             key={link.id}
-            title={link.title}
+            title={t(link.title)}
             themeColor={theme.TEXT800}
             onPress={() => handleOpenLink(link.url, link.title)}
           />

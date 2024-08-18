@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useTranslation} from 'react-i18next';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import {useThemeStore} from '@/store/useThemeStore';
 import SmallCard from '@/components/home/SmallCard';
@@ -19,26 +20,27 @@ import AnimatedHeader from '@/components/mypage/AnimatedHeader';
 import SmallCardPlaceHolder from '@/components/home/SmallCardPlaceHolder';
 import ListHeader from '@/components/mypage/ListHeaderComponent';
 import ListEmpty from '@/components/home/ListEmpty';
+import {
+  getSortByTrashValue,
+  getSortingTrashOptions,
+} from '@/utils/sorting-utils';
 
 const Trash = () => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {t} = useTranslation();
 
   const navigation = useNavigation();
 
-  const sortingOptions = ['최근 삭제순', '과거 삭제순'];
+  const sortingOptions = useMemo(() => getSortingTrashOptions(t), [t]);
   const [selectedSortingOption, setSelectedSortingOption] = useState(
     sortingOptions[0],
   );
 
   const linkInfoArgsOptions = {
     size: 10,
-    sortBy:
-      selectedSortingOption === '최근 삭제순'
-        ? 'trashMovedDate_desc'
-        : 'trashMovedDate_asc',
+    sortBy: getSortByTrashValue(t, selectedSortingOption),
   };
-
   const {
     data: linkData,
     isLoading,
@@ -99,6 +101,7 @@ const Trash = () => {
             handleGoBack={handleGoBack}
             themeBackground={theme.BACKGROUND}
             arrowColor={theme.TEXT900}
+            isThemeThree={theme.THEME_NUMBER === 3}
           />
           <FlatList
             data={
@@ -140,7 +143,7 @@ const Trash = () => {
             ListEmptyComponent={
               <ListEmpty
                 textColor={theme.TEXT500}
-                message="휴지통으로 이동된 링크가 아직 없어요"
+                message={t('휴지통으로 이동된 링크가 아직 없어요')}
               />
             }
             ListFooterComponent={() =>

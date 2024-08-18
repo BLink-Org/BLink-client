@@ -21,3 +21,19 @@ export const getSortingOptions = (t: IFunction) => [
   t('제목순 (A-ㅎ)'),
   t('제목순 (ㅎ-A)'),
 ];
+
+export const getSortByTrashValue = (t: IFunction, selectedOption: string) => {
+  switch (selectedOption) {
+    case t('최근 삭제순'):
+      return 'trashMovedDate_desc';
+    case t('과거 삭제순'):
+      return 'trashMovedDate_asc';
+    default:
+      return 'trashMovedDate_desc';
+  }
+};
+
+export const getSortingTrashOptions = (t: IFunction) => [
+  t('최근 삭제순'),
+  t('과거 삭제순'),
+];

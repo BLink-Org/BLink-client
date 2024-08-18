@@ -8,6 +8,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
+import {useTranslation} from 'react-i18next';
 import BackHeader from '@/components/common/BackHeader';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import {useThemeStore} from '@/store/useThemeStore';
@@ -18,6 +19,7 @@ import {type ITheme} from '@/types';
 const Setting = () => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {t} = useTranslation();
 
   // 알람 설정 -> 추후 추가 예정
   // const [isToggled, setIsToggled] = useState<boolean>(false);
@@ -43,11 +45,11 @@ const Setting = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ThemeBackground />
-      <BackHeader title="환경 설정" themeColor={theme.TEXT900} />
+      <BackHeader title={t('환경 설정')} themeColor={theme.TEXT900} />
 
       <View style={styles.contentContainer}>
         <NavigationInfo
-          title="언어"
+          title={t('언어')}
           themeColor={theme.TEXT800}
           onPress={handleLanguage}
         />

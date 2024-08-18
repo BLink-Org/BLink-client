@@ -1,5 +1,6 @@
 import React, {useMemo} from 'react';
 import {Text, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {useModalStore} from '@/store/useModalStore';
@@ -26,6 +27,7 @@ const ThemeCard = ({
 }: ThemeCardProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {t} = useTranslation();
 
   const {showModal, closeModal} = useModalStore();
   const modalId = `themeConfirm-${id}`;
@@ -64,8 +66,8 @@ const ThemeCard = ({
 
         <View style={styles.bodyContainer}>
           <View style={styles.textBox}>
-            <Text style={styles.nameText}>{name}</Text>
-            <Text style={styles.priceText}>{price}</Text>
+            <Text style={styles.nameText}>{t(name)}</Text>
+            <Text style={styles.priceText}>{t(price)}</Text>
           </View>
           {selected ? (
             <View style={styles.buttonContainer}>
@@ -83,10 +85,10 @@ const ThemeCard = ({
       {/* alertModal 처리 */}
       <AlertModal
         modalId={modalId}
-        headerText="선택한 테마를 적용하시겠어요?"
-        bodyText="테마는 즉시 적용돼요"
-        leftText="취소"
-        rightText="적용"
+        headerText={t('선택한 테마를 적용하시겠어요?')}
+        bodyText={t('테마는 즉시 적용돼요')}
+        leftText={t('취소')}
+        rightText={t('적용')}
         rightOnPress={handleConfirmSelect}
       />
     </TouchableOpacity>

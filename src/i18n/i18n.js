@@ -12,9 +12,6 @@ const resources = {
   },
 };
 
-console.log('ko', ko);
-console.log('en', en);
-
 i18n.use(initReactI18next).init({
   resources,
   lng: 'en',

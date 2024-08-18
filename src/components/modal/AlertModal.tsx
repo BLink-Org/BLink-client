@@ -65,7 +65,7 @@ const createStyles = (theme: ITheme) =>
       alignItems: 'center',
     },
     modalContent: {
-      width: 300,
+      width: 320,
       borderRadius: 12,
       overflow: 'hidden',
     },

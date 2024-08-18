@@ -7,6 +7,7 @@ interface AnimatedHeaderProps {
   handleGoBack: () => void;
   themeBackground: string;
   arrowColor: string;
+  isThemeThree: boolean;
 }
 
 const AnimatedHeader = ({
@@ -14,12 +15,13 @@ const AnimatedHeader = ({
   handleGoBack,
   themeBackground,
   arrowColor,
+  isThemeThree,
 }: AnimatedHeaderProps) => {
   return (
     <Animated.View
       style={[
         styles.header,
-        {backgroundColor: themeBackground},
+        {backgroundColor: isThemeThree ? '#EEF3FF' : themeBackground},
         {
           transform: [{translateY}],
         },
