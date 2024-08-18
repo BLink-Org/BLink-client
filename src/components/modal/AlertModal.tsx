@@ -80,6 +80,7 @@ const createStyles = (theme: ITheme) =>
     headerText: {
       color: theme.TEXT900,
       ...FONTS.BODY1_SEMIBOLD,
+      textAlign: 'center',
     },
     bodyText: {
       color: theme.TEXT600,

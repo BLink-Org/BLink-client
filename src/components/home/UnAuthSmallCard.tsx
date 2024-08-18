@@ -9,6 +9,7 @@ import {
   type NativeSyntheticEvent,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import {useTranslation} from 'react-i18next';
 import {useThemeStore} from '@/store/useThemeStore';
 import {PinnedSelectedIcon, PinnedUnselectedIcon} from '@/assets/icons/common';
 import {FONTS} from '@/constants';
@@ -30,6 +31,8 @@ interface SmallCardProps {
 const UnAuthSmallCard = ({content}: SmallCardProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {t} = useTranslation();
+
   const navigation = useNavigation<RootStackNavigationProp>();
   // 로그인 모달
   const [isNoticeModalVisible, setIsNoticeModalVisible] = useState(false);
@@ -69,7 +72,7 @@ const UnAuthSmallCard = ({content}: SmallCardProps) => {
   const editOptions = useMemo(
     () => [
       {
-        label: '제목 수정',
+        label: t('제목 수정'),
         icon: <PencilIcon />,
         onSelect: () => {
           closeDropdown();
@@ -77,7 +80,7 @@ const UnAuthSmallCard = ({content}: SmallCardProps) => {
         },
       },
       {
-        label: '폴더 이동',
+        label: t('폴더 이동'),
         icon: <MoveIcon />,
         onSelect: () => {
           closeDropdown();
@@ -85,7 +88,7 @@ const UnAuthSmallCard = ({content}: SmallCardProps) => {
         },
       },
       {
-        label: '공유',
+        label: t('공유'),
         icon: <ShareIcon />,
         onSelect: () => {
           const currentUrl = content.url ?? '';
@@ -94,7 +97,7 @@ const UnAuthSmallCard = ({content}: SmallCardProps) => {
       },
 
       {
-        label: '삭제',
+        label: t('삭제'),
         icon: <DeleteIcon />,
         onSelect: () => {
           closeDropdown();
@@ -129,7 +132,7 @@ const UnAuthSmallCard = ({content}: SmallCardProps) => {
       <View style={styles.container}>
         <View style={styles.dotPosition}>
           <Text style={styles.folderText}>
-            {content?.folderName ?? '폴더 없는 링크'}
+            {content?.folderName ?? t('폴더 없는 링크')}
           </Text>
           <TouchableOpacity
             ref={buttonRef}
@@ -154,14 +157,14 @@ const UnAuthSmallCard = ({content}: SmallCardProps) => {
               numberOfLines={2}
               ellipsizeMode="tail"
               onTextLayout={handleTitleLayout}>
-              {content?.title === '' ? '제목 없음' : content.title}
+              {content?.title === '' ? t('제목이 없는 링크입니다.') : content.title}
             </Text>
             <View style={styles.descriptionTop} />
             <Text
               style={styles.descriptionText}
               numberOfLines={contentLines}
               ellipsizeMode="tail">
-              {content?.contents === '' ? '내용 없음' : content.contents}
+              {content?.contents === '' ? t('내용이 없는 링크입니다.') : content.contents}
             </Text>
           </View>
           <View style={styles.cardImageContainer}>

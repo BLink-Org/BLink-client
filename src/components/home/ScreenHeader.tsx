@@ -30,7 +30,6 @@ const ScreenHeader = ({toggleSideBar, isBookmark}: ScreenHeaderProps) => {
           style={styles.logoImage}
         />
       )}
-
       <View style={styles.rightSpace} />
     </View>
   );

@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {useThemeStore} from '@/store/useThemeStore';
 import {PinnedSelectedIcon, PinnedUnselectedIcon} from '@/assets/icons/common';
 import {FONTS} from '@/constants';
@@ -43,6 +44,7 @@ const LargeCard = ({
 }: LargeCardProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {t} = useTranslation();
 
   const CardImage = useMemo(() => {
     return theme.BIG_CARD_IMAGE;
@@ -84,7 +86,7 @@ const LargeCard = ({
   const editOptions = useMemo(
     () => [
       {
-        label: '제목 수정',
+        label: t('제목 수정'),
         icon: <PencilIcon />,
         onSelect: () => {
           closeDropdown();
@@ -92,7 +94,7 @@ const LargeCard = ({
         },
       },
       {
-        label: '폴더 이동',
+        label: t('폴더 이동'),
         icon: <MoveIcon />,
         onSelect: () => {
           closeDropdown();
@@ -100,7 +102,7 @@ const LargeCard = ({
         },
       },
       {
-        label: '공유',
+        label: t('공유'),
         icon: <ShareIcon />,
         onSelect: () => {
           const currentUrl = content.url ?? '';
@@ -108,7 +110,7 @@ const LargeCard = ({
         },
       },
       {
-        label: '삭제',
+        label: t('삭제'),
         icon: <DeleteIcon />,
         onSelect: () => {
           moveLinkToTrash(String(content.id));
@@ -173,12 +175,14 @@ const LargeCard = ({
         </View>
         <View style={styles.folderTop} />
         <Text style={styles.folderText}>
-          {content.folderName ?? '폴더 없는 링크'}
+          {content.folderName ?? t('폴더 없는 링크')}
         </Text>
+
         <View style={styles.titleTop} />
         <Text style={styles.titleText} numberOfLines={1} ellipsizeMode="tail">
-          {content.title === '' ? '제목 없음' : content.title}
+          {content.title === '' ? t('제목이 없는 링크입니다.') : content.title}
         </Text>
+
         <View style={styles.footerTop} />
         <View style={styles.footer}>
           <View style={styles.footerFront}>
@@ -206,7 +210,7 @@ const LargeCard = ({
         </View>
       </View>
       <BottomSheet
-        modalTitle="제목 수정"
+        modalTitle={t('제목 수정')}
         isBottomSheetVisible={isTitleBottomSheetVisible}
         toggleBottomSheet={toggleTitleBottomSheet}>
         <TitleContent
@@ -217,7 +221,7 @@ const LargeCard = ({
         />
       </BottomSheet>
       <BottomSheet
-        modalTitle="폴더 이동"
+        modalTitle={t('폴더 이동')}
         isBottomSheetVisible={isFolderBottomSheetVisible}
         toggleBottomSheet={toggleFolderBottomSheet}>
         <FolderMoveContent

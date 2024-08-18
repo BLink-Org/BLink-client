@@ -119,5 +119,12 @@
   "- 계정 삭제 철회는 [My] > [계정 관리] > [계정 삭제 신청]에서 할 수 있습니다.": "- You can cancel the account deletion request in [My] > [Account Manage] > [Request Account Deletion].",
   "로그아웃 하시겠습니까?": "Are you sure you want to sign out?",
   "삭제_신청_일": "If you cancel your deletion request within 7 days from {{deleteRequestDate}}, you can continue using B.Link with your original account information.",
-  "제목이 없는 링크입니다.": "This link has no title."
+  "제목이 없는 링크입니다.": "This link has no title.",
+  "내용이 없는 링크입니다.": "This link has no content.",
+  "핀에 저장한 링크가 있으면 여기에 보여요": "Pinned links will appear here.",
+  "폴더 이동": "Move Folder",
+  "링크를 복원하시겠어요?": "Would you like to restore this link?",
+  "마지막에 저장되어있던 위치로 돌아가요.": "Restore to the last saved location.",
+  "영구 삭제 하시겠어요?": "Are you sure you want to delete permanently?",
+  "휴지통에서 삭제된 링크는 복원할 수 없어요": "Links deleted from the Trash cannot be restored."
 }

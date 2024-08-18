@@ -9,6 +9,7 @@ import {
   type TextLayoutEventData,
   type NativeSyntheticEvent,
 } from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {useThemeStore} from '@/store/useThemeStore';
 import {PinnedSelectedIcon, PinnedUnselectedIcon} from '@/assets/icons/common';
 import {FONTS} from '@/constants';
@@ -53,6 +54,7 @@ const SmallCard = ({
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const {showModal, closeModal} = useModalStore();
+  const {t} = useTranslation();
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
@@ -148,7 +150,7 @@ const SmallCard = ({
   const editOptions = useMemo(
     () => [
       {
-        label: '제목 수정',
+        label: t('제목 수정'),
         icon: <PencilIcon />,
         onSelect: () => {
           closeDropdown();
@@ -156,7 +158,7 @@ const SmallCard = ({
         },
       },
       {
-        label: '폴더 이동',
+        label: t('폴더 이동'),
         icon: <MoveIcon />,
         onSelect: () => {
           closeDropdown();
@@ -164,7 +166,7 @@ const SmallCard = ({
         },
       },
       {
-        label: '공유',
+        label: t('공유'),
         icon: <ShareIcon />,
         onSelect: () => {
           const currentUrl = content.url ?? '';
@@ -173,7 +175,7 @@ const SmallCard = ({
       },
 
       {
-        label: '삭제',
+        label: t('삭제'),
         icon: <DeleteIcon />,
         onSelect: () => {
           moveLinkToTrash(String(content.id));
@@ -188,7 +190,7 @@ const SmallCard = ({
   const trashOptions = useMemo(
     () => [
       {
-        label: '복원',
+        label: t('복원'),
         icon: <PencilIcon />,
         onSelect: () => {
           closeDropdown();
@@ -196,7 +198,7 @@ const SmallCard = ({
         },
       },
       {
-        label: '영구삭제',
+        label: t('영구삭제'),
         icon: <DeleteIcon />,
         onSelect: () => {
           closeDropdown();
@@ -239,8 +241,9 @@ const SmallCard = ({
       <View style={styles.container}>
         <View style={styles.dotPosition}>
           <Text style={styles.folderText}>
-            {content?.folderName ?? '폴더 없는 링크'}
+            {content?.folderName ?? t('폴더 없는 링크')}
           </Text>
+
           <TouchableOpacity
             ref={buttonRef}
             onPress={toggleDropdown}
@@ -264,14 +267,18 @@ const SmallCard = ({
               numberOfLines={2}
               ellipsizeMode="tail"
               onTextLayout={handleTitleLayout}>
-              {content?.title === '' ? '제목 없음' : content.title}
+              {content?.title === ''
+                ? t('제목이 없는 링크입니다.')
+                : content.title}
             </Text>
             <View style={styles.descriptionTop} />
             <Text
               style={styles.descriptionText}
               numberOfLines={contentLines}
               ellipsizeMode="tail">
-              {content?.contents === '' ? '내용 없음' : content.contents}
+              {content?.contents === ''
+                ? t('내용이 없는 링크입니다.')
+                : content.contents}
             </Text>
           </View>
           <View style={styles.cardImageContainer}>
@@ -320,23 +327,24 @@ const SmallCard = ({
         {/* alertModal 처리 */}
         <AlertModal
           modalId={getModalId('trashOption-복원')}
-          headerText={`링크를 복원하시겠어요?`}
-          bodyText={'마지막에 저장되어있던 위치로 돌아가요'}
-          leftText="취소"
-          rightText="복원"
+          headerText={t('링크를 복원하시겠어요?')}
+          bodyText={t('마지막에 저장되어있던 위치로 돌아가요.')}
+          leftText={t('취소')}
+          rightText={t('복원')}
           rightOnPress={() => handleConfirmSelect('복원')}
         />
+
         <AlertModal
           modalId={getModalId('trashOption-영구삭제')}
-          headerText={`영구 삭제 하시겠어요? `}
-          bodyText={`휴지통에서 삭제된 링크는 복원할 수 없어요`}
-          leftText="취소"
-          rightText="삭제"
+          headerText={t('영구 삭제 하시겠어요?')}
+          bodyText={t('휴지통에서 삭제된 링크는 복원할 수 없어요')}
+          leftText={t('취소')}
+          rightText={t('삭제')}
           rightOnPress={() => handleConfirmSelect('영구삭제')}
         />
       </View>
       <BottomSheet
-        modalTitle="제목 수정"
+        modalTitle={t('제목 수정')}
         isBottomSheetVisible={isTitleBottomSheetVisible}
         toggleBottomSheet={toggleTitleBottomSheet}>
         <TitleContent
@@ -347,7 +355,7 @@ const SmallCard = ({
         />
       </BottomSheet>
       <BottomSheet
-        modalTitle="폴더 이동"
+        modalTitle={t('폴더 이동')}
         isBottomSheetVisible={isFolderBottomSheetVisible}
         toggleBottomSheet={toggleFolderBottomSheet}>
         <FolderMoveContent

@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import {useTranslation} from 'react-i18next';
 import {useThemeStore} from '@/store/useThemeStore';
 import {PinnedSelectedIcon, PinnedUnselectedIcon} from '@/assets/icons/common';
 import {FONTS} from '@/constants';
@@ -34,6 +35,7 @@ const UnAuthLargeCard = ({content}: LargeCardProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const navigation = useNavigation<RootStackNavigationProp>();
+  const {t} = useTranslation();
 
   const CardImage = useMemo(() => {
     return theme.BIG_CARD_IMAGE;
@@ -68,7 +70,7 @@ const UnAuthLargeCard = ({content}: LargeCardProps) => {
   const editOptions = useMemo(
     () => [
       {
-        label: '제목 수정',
+        label: t('제목 수정'),
         icon: <PencilIcon />,
         onSelect: () => {
           closeDropdown();
@@ -76,7 +78,7 @@ const UnAuthLargeCard = ({content}: LargeCardProps) => {
         },
       },
       {
-        label: '폴더 이동',
+        label: t('폴더 이동'),
         icon: <MoveIcon />,
         onSelect: () => {
           closeDropdown();
@@ -84,7 +86,7 @@ const UnAuthLargeCard = ({content}: LargeCardProps) => {
         },
       },
       {
-        label: '공유',
+        label: t('공유'),
         icon: <ShareIcon />,
         onSelect: () => {
           const currentUrl = content.url ?? '';
@@ -92,7 +94,7 @@ const UnAuthLargeCard = ({content}: LargeCardProps) => {
         },
       },
       {
-        label: '삭제',
+        label: t('삭제'),
         icon: <DeleteIcon />,
         onSelect: () => {
           onPressLoginAlert();
@@ -140,12 +142,13 @@ const UnAuthLargeCard = ({content}: LargeCardProps) => {
         </View>
         <View style={styles.folderTop} />
         <Text style={styles.folderText}>
-          {content.folderName ?? '폴더 없는 링크'}
+          {content.folderName ?? t('폴더 없는 링크')}
         </Text>
         <View style={styles.titleTop} />
         <Text style={styles.titleText} numberOfLines={1} ellipsizeMode="tail">
-          {content.title === '' ? '제목 없음' : content.title}
+          {content.title === '' ? t('제목이 없는 링크입니다.') : content.title}
         </Text>
+
         <View style={styles.footerTop} />
         <View style={styles.footer}>
           <View style={styles.footerFront}>
