@@ -1,17 +1,17 @@
-import {useMemo, useState} from 'react';
+import {useMemo} from 'react';
 import {
+  Alert,
   Linking,
+  NativeModules,
   Platform,
   SafeAreaView,
   StyleSheet,
-  Text,
   View,
 } from 'react-native';
 import BackHeader from '@/components/common/BackHeader';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import {useThemeStore} from '@/store/useThemeStore';
 import NavigationInfo from '@/components/mypage/NavigationInfo';
-import CustomToggle from '@/components/common/CustomToggle';
 import {FONTS} from '@/constants';
 import {type ITheme} from '@/types';
 
@@ -19,19 +19,24 @@ const Setting = () => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
-  const [isToggled, setIsToggled] = useState<boolean>(false);
+  // 알람 설정 -> 추후 추가 예정
+  // const [isToggled, setIsToggled] = useState<boolean>(false);
 
-  // 알람 설정 클릭 시
-  const handleAlarm = () => {
-    setIsToggled(!isToggled);
-  };
+  // // 알람 설정 클릭 시
+  // const handleAlarm = () => {
+  //   setIsToggled(!isToggled);
+  // };
 
   // 언어 설정 클릭 시 (논의 필요)
   const handleLanguage = () => {
     if (Platform.OS === 'ios') {
       Linking.openSettings();
     } else {
-      Linking.openURL('android.settings.LOCALE_SETTINGS');
+      if (NativeModules.OpenExternalURLModule) {
+        NativeModules.OpenExternalURLModule.linkAndroidSettings();
+      } else {
+        Alert.alert('Error', 'Unable to open Android language settings.');
+      }
     }
   };
 
@@ -47,10 +52,10 @@ const Setting = () => {
           onPress={handleLanguage}
         />
 
-        <View style={styles.bodyContainer}>
+        {/* <View style={styles.bodyContainer}>
           <Text style={styles.bodyText}>알림</Text>
           <CustomToggle isToggled={isToggled} onToggleChange={handleAlarm} />
-        </View>
+        </View> */}
       </View>
     </SafeAreaView>
   );
