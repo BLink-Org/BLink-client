@@ -1,5 +1,5 @@
-import {useEffect} from 'react';
-import {NativeModules, Platform} from 'react-native';
+import {useEffect, useState} from 'react';
+import {NativeModules, Platform, Linking} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import * as RNLocalize from 'react-native-localize';
@@ -17,6 +17,19 @@ interface AppProps {
   sharedText: string;
 }
 
+const getQueryParams = (url: string): Record<string, string> => {
+  const params: Record<string, string> = {};
+  const queryString = url.split('?')[1]; // '?' 이후의 쿼리 문자열을 가져옵니다.
+  if (queryString) {
+    const pairs = queryString.split('&'); // '&'로 쿼리 문자열을 나눕니다.
+    pairs.forEach(pair => {
+      const [key, value] = pair.split('='); // '='로 각 쌍을 나눕니다.
+      params[decodeURIComponent(key)] = decodeURIComponent(value || '');
+    });
+  }
+  return params;
+};
+
 const queryClient = new QueryClient();
 
 export default function App(props: AppProps) {
@@ -28,6 +41,32 @@ export default function App(props: AppProps) {
     isAuthenticated,
   );
   const loadTokens = useUserStore(state => state.loadTokens);
+
+  const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+  useEffect(() => {
+    const handleDeepLink = (event: {url: any}) => {
+      const url = event.url as string;
+      if (url) {
+        console.log('URL', decodeURI(url), props);
+        // const queryParams = getQueryParams(url); // 쿼리 파라미터 파싱
+        // const sharedURL = queryParams.sharedURL; // 'sharedURL' 값 가져오기
+        // console.log(queryParams, sharedURL);
+        // if (sharedURL) {
+        setIsBottomSheetVisible(true);
+        // }
+      }
+    };
+
+    const subscription = Linking.addEventListener('url', handleDeepLink);
+
+    Linking.getInitialURL().then(url => {
+      if (url) handleDeepLink({url});
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -81,7 +120,11 @@ export default function App(props: AppProps) {
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
         <NavigationContainer key={isAuthenticated ? 'auth-true' : 'auth-false'}>
-          <GlobalNavigation isAuthenticated={isAuthenticated} />
+          <GlobalNavigation
+            isBottomSheetVisible={isBottomSheetVisible}
+            setIsBottomSheetVisible={setIsBottomSheetVisible}
+            isAuthenticated={isAuthenticated}
+          />
         </NavigationContainer>
       </SafeAreaProvider>
     </QueryClientProvider>
