@@ -19,6 +19,7 @@ import {
 import {PinnedIcon} from '@/assets/icons/bottom-tab';
 import NoticeModal from '@/components/modal/NoticeModal';
 import DummyData from '@/constants/unauth-default-data.json';
+import LoginModal from '@/components/modal/LoginModal';
 
 const UnAuthWebView = () => {
   const webViewRef = useRef<WebView>(null);
@@ -144,11 +145,9 @@ const UnAuthWebView = () => {
           <SaveIcon fill={theme.TEXT900} />
         </TouchableOpacity>
       </View>
-      <NoticeModal
+      <LoginModal
         isVisible={isNoticeModalVisible}
         onClose={() => setIsNoticeModalVisible(false)}
-        title="로그인이 필요해요"
-        description="이 기능을 사용하려면 로그인이 필요합니다. 로그인 화면으로 이동할까요?"
         onClick={handleModalClose}
       />
     </SafeAreaView>

@@ -24,7 +24,7 @@ import Support from '@/screens/stack-screens/Support';
 import Setting from '@/screens/stack-screens/Setting';
 import UnAuthHome from '@/screens/no-login-tab-screen/UnAuthHome';
 import UnAuthWebView from '@/screens/no-login-tab-screen/UnAuthWebView';
-import NoticeModal from '../modal/NoticeModal';
+import LoginModal from '../modal/LoginModal';
 
 interface IconProps {
   focused: boolean;
@@ -109,11 +109,9 @@ const BottomTabNavigationUnauthenticated = () => {
 
   return (
     <>
-      <NoticeModal
+      <LoginModal
         isVisible={isNoticeModalVisible}
         onClose={() => setIsNoticeModalVisible(false)}
-        title="로그인이 필요해요"
-        description="이 기능을 사용하려면 로그인이 필요합니다. 로그인 화면으로 이동할까요?"
         onClick={handleModalClose}
       />
       <Tab.Navigator

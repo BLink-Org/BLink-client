@@ -21,7 +21,7 @@ import {
   type RootStackNavigationProp,
 } from '@/types';
 import {shareUrl} from '@/utils/url-utils';
-import NoticeModal from '../modal/NoticeModal';
+import LoginModal from '@/components/modal/LoginModal';
 
 interface SmallCardProps {
   content: ILinkDtos;
@@ -195,11 +195,9 @@ const UnAuthSmallCard = ({content}: SmallCardProps) => {
           </TouchableOpacity>
         </View>
       </View>
-      <NoticeModal
+      <LoginModal
         isVisible={isNoticeModalVisible}
         onClose={() => setIsNoticeModalVisible(false)}
-        title="로그인이 필요해요"
-        description="이 기능을 사용하려면 로그인이 필요합니다. 로그인 화면으로 이동할까요?"
         onClick={handleModalClose}
       />
     </>

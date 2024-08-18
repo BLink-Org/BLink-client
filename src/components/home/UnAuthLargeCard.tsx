@@ -20,7 +20,7 @@ import {
 import {DeleteIcon, PencilIcon} from '@/assets/icons/mypage';
 import DropDownModal from '@/components/modal/DropDownModal';
 import {shareUrl} from '@/utils/url-utils';
-import NoticeModal from '@/components/modal/NoticeModal';
+import LoginModal from '../modal/LoginModal';
 
 const screenWidth = Dimensions.get('screen').width - 36;
 const aspectRatio = 339 / 140;
@@ -170,11 +170,9 @@ const UnAuthLargeCard = ({content}: LargeCardProps) => {
           </TouchableOpacity>
         </View>
       </View>
-      <NoticeModal
+      <LoginModal
         isVisible={isNoticeModalVisible}
         onClose={() => setIsNoticeModalVisible(false)}
-        title="로그인이 필요해요"
-        description="이 기능을 사용하려면 로그인이 필요합니다. 로그인 화면으로 이동할까요?"
         onClick={handleModalClose}
       />
     </>
