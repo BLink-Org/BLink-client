@@ -13,7 +13,7 @@ import {
   useToggleBookmarkLinkPin,
   useViewLink,
 } from '@/api/hooks/useLink';
-import NavigationButton from '@/components/webview/NavigationButton';
+import NavigationButton from '@/components/common/NavigationButton';
 import {
   ArrowBackIcon,
   RefreshIcon,

@@ -7,7 +7,7 @@ import {FONTS} from '@/constants';
 import {extractHostname, shareUrl} from '@/utils/url-utils';
 import {type RootStackNavigationProp, type ITheme} from '@/types';
 import {useThemeStore} from '@/store/useThemeStore';
-import NavigationButton from '@/components/webview/NavigationButton';
+import NavigationButton from '@/components/common/NavigationButton';
 import {
   ArrowBackIcon,
   RefreshIcon,
@@ -17,7 +17,6 @@ import {
   ContentFrontIcon,
 } from '@/assets/icons/webview';
 import {PinnedIcon} from '@/assets/icons/bottom-tab';
-import NoticeModal from '@/components/modal/NoticeModal';
 import DummyData from '@/constants/unauth-default-data.json';
 import LoginModal from '@/components/modal/LoginModal';
 
