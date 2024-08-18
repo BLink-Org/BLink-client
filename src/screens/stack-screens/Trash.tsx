@@ -140,7 +140,7 @@ const Trash = () => {
             ListEmptyComponent={
               <ListEmpty
                 textColor={theme.TEXT500}
-                message="휴지통이 비어있습니다"
+                message="휴지통으로 이동된 링크가 아직 없어요"
               />
             }
             ListFooterComponent={() =>

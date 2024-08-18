@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Pressable} from 'react-native';
 import Modal from 'react-native-modal';
 import {useThemeStore} from '@/store/useThemeStore'; // 테마 관련 스토어 사용
 import {type ITheme} from '@/types'; // ITheme 타입 정의
@@ -37,9 +37,9 @@ const NoticeModal = ({
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.description}>{description}</Text>
       </View>
-      <TouchableOpacity style={styles.button} onPress={onClick ?? onClose}>
+      <Pressable style={styles.button} onPress={onClick ?? onClose}>
         <Text style={styles.buttonText}>확인</Text>
-      </TouchableOpacity>
+      </Pressable>
     </Modal>
   );
 };

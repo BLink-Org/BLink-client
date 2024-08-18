@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {
   View,
   StyleSheet,
@@ -8,10 +8,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import {
-  type MyPageRouteProp,
-  type RootStackNavigationProp,
-} from '@/types/navigation';
+import {type RootStackNavigationProp} from '@/types/navigation';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import LogoHeader from '@/components/common/LogoHeader';
 import {FONTS} from '@/constants';
@@ -23,7 +20,6 @@ const MyPage = () => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
-  const route = useRoute<MyPageRouteProp>();
   const navigation = useNavigation<RootStackNavigationProp>();
 
   const handleThemeSetting = () => navigation.navigate('ThemeSetting');
