@@ -7,6 +7,7 @@ import {
   Image,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import * as RNLocalize from 'react-native-localize';
 import GoogleLogin from '@/components/auth/GoogleLogin';
 import AppleLogin from '@/components/auth/AppleLogin';
 import {FONTS} from '@/constants';
@@ -14,6 +15,7 @@ import {type RootStackNavigationProp} from '@/types';
 
 const Onboarding = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
+  const locale = RNLocalize.getLocales()[0].languageCode === 'ko' ? 'KO' : 'EN';
 
   // 둘러보기 클릭 시
   const handleAround = () => {
@@ -24,13 +26,18 @@ const Onboarding = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.headerContainer} />
       <View style={styles.bodyContainer}>
-        <Text style={styles.bodyText}>
-          다시 보고 싶은 <Text style={styles.blueText}>링크</Text>를{' '}
-          <Text style={styles.blueText}>북마크</Text>
-        </Text>
-
+        {locale === 'KO' ? (
+          <Text style={styles.bodyText}>
+            다시 보고 싶은 <Text style={styles.blueText}>링크</Text>를{' '}
+            <Text style={styles.blueText}>북마크</Text>
+          </Text>
+        ) : (
+          <Text style={styles.bodyText}>
+            <Text style={styles.blueText}>B</Text>ookmark your
+            <Text style={styles.blueText}> Link</Text>s in a
+          </Text>
+        )}
         <Image
           source={require('@/assets/images/img-linksaving_wordmark-blue.png')}
           style={styles.logoImage}
@@ -45,7 +52,11 @@ const Onboarding = () => {
         <GoogleLogin />
         <AppleLogin />
         <TouchableOpacity onPress={handleAround}>
-          <Text style={styles.aroundText}>둘러보기</Text>
+          {locale === 'KO' ? (
+            <Text style={styles.aroundText}>둘러보기</Text>
+          ) : (
+            <Text style={styles.aroundText}>Around</Text>
+          )}
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -59,13 +70,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffffff',
   },
-  headerContainer: {
-    flex: 1,
-  },
   bodyContainer: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 80,
   },
   bodyText: {
     paddingBottom: 12,

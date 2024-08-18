@@ -126,5 +126,6 @@
   "링크를 복원하시겠어요?": "Would you like to restore this link?",
   "마지막에 저장되어있던 위치로 돌아가요.": "Restore to the last saved location.",
   "영구 삭제 하시겠어요?": "Are you sure you want to delete permanently?",
-  "휴지통에서 삭제된 링크는 복원할 수 없어요": "Links deleted from the Trash cannot be restored."
+  "휴지통에서 삭제된 링크는 복원할 수 없어요": "Links deleted from the Trash cannot be restored.",
+  "로딩 중...": "Loading..."
 }
