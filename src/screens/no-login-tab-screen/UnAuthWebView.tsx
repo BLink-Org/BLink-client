@@ -3,6 +3,7 @@ import {useNavigation} from '@react-navigation/native';
 import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {WebView, type WebViewNavigation} from 'react-native-webview';
+import {useTranslation} from 'react-i18next';
 import {FONTS} from '@/constants';
 import {extractHostname, shareUrl} from '@/utils/url-utils';
 import {type RootStackNavigationProp, type ITheme} from '@/types';
@@ -23,6 +24,8 @@ import LoginModal from '@/components/modal/LoginModal';
 const UnAuthWebView = () => {
   const webViewRef = useRef<WebView>(null);
   const {theme} = useThemeStore();
+  const {t} = useTranslation();
+
   const styles = useMemo(() => createStyles(theme), [theme]);
 
   const currentUrl = DummyData[0].url;
@@ -109,11 +112,15 @@ const UnAuthWebView = () => {
         />
       )}
       <View style={styles.backForwardButton}>
-        <NavigationButton onPress={goBack} disabled={true} label="이전 링크" />
+        <NavigationButton
+          onPress={goBack}
+          disabled={true}
+          label={t('이전 링크')}
+        />
         <NavigationButton
           onPress={handleGoForward}
           disabled={true}
-          label={'다음 링크'}
+          label={t('다음 링크')}
         />
       </View>
 

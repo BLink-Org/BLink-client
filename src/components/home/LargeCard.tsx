@@ -29,7 +29,7 @@ import {
 
 const screenWidth = Dimensions.get('screen').width - 36;
 const aspectRatio = 339 / 140; // 카드 비율
-const cardHeight = screenWidth / aspectRatio;
+const cardHeight = 140;
 
 interface LargeCardProps {
   content: ILinkDtos;
@@ -135,7 +135,7 @@ const LargeCard = ({
   const LoadingScreen = () => {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="small" color={theme.MAIN500} />
+        <ActivityIndicator size="small" color="#6D96FF" />
       </View>
     );
   };
@@ -170,7 +170,9 @@ const LargeCard = ({
               onError={handleImageLoad}
             />
           ) : (
-            <CardImage width={screenWidth} height={cardHeight} />
+            <View style={styles.imageContainer}>
+              <CardImage width={300} height={300} />
+            </View>
           )}
         </View>
         <View style={styles.folderTop} />
@@ -269,6 +271,15 @@ const createStyles = (theme: ITheme) =>
     },
     folderTop: {
       marginTop: 12,
+    },
+    imageContainer: {
+      flex: 1,
+      width: '100%',
+      height: 140,
+      overflow: 'hidden',
+      resizeMode: 'cover',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     titleTop: {
       marginTop: 4,

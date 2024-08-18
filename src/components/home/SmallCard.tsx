@@ -217,7 +217,7 @@ const SmallCard = ({
   const LoadingScreen = () => {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="small" color={theme.MAIN400} />
+        <ActivityIndicator size="small" color="#6D96FF" />
       </View>
     );
   };

@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, Text, StyleSheet, Pressable} from 'react-native';
 import Modal from 'react-native-modal';
+import {useTranslation} from 'react-i18next';
 import {useThemeStore} from '@/store/useThemeStore'; // 테마 관련 스토어 사용
 import {type ITheme} from '@/types'; // ITheme 타입 정의
 import {FONTS} from '@/constants';
@@ -14,6 +15,7 @@ interface CustomModalProps {
 const LoginModal = ({isVisible, onClose, onClick}: CustomModalProps) => {
   const {theme} = useThemeStore();
   const styles = createStyles(theme);
+  const {t} = useTranslation();
 
   return (
     <Modal
@@ -26,19 +28,19 @@ const LoginModal = ({isVisible, onClose, onClick}: CustomModalProps) => {
       hideModalContentWhileAnimating={true}
       style={styles.modal}>
       <View style={styles.modalContainer}>
-        <Text style={styles.title}>로그인이 필요해요</Text>
+        <Text style={styles.title}>{t('로그인이 필요해요')}</Text>
         <Text style={styles.description}>
-          해당 기능을 사용하려면 로그인 해주세요
+          {t('해당 기능을 사용하려면 로그인 해주세요.')}
         </Text>
       </View>
       <View style={[styles.buttonContainer]}>
         <Pressable
           style={[styles.button, {backgroundColor: theme.TEXT500}]}
           onPress={onClose}>
-          <Text style={styles.buttonText}>다음에</Text>
+          <Text style={styles.buttonText}>{t('다음에')}</Text>
         </Pressable>
         <Pressable style={styles.button} onPress={onClick}>
-          <Text style={styles.buttonText}>로그인</Text>
+          <Text style={styles.buttonText}>{t('로그인')}</Text>
         </Pressable>
       </View>
     </Modal>

@@ -8,6 +8,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {type RootStackNavigationProp} from '@/types/navigation';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import LogoHeader from '@/components/common/LogoHeader';
@@ -19,6 +20,7 @@ import {type ITheme} from '@/types';
 const MyPage = () => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {t} = useTranslation();
 
   const navigation = useNavigation<RootStackNavigationProp>();
 
@@ -34,33 +36,32 @@ const MyPage = () => {
       <ScrollView>
         <View style={styles.contentContainer}>
           <View style={styles.headerText}>
-            <Text style={styles.titleText}>계정</Text>
+            <Text style={styles.titleText}>{t('계정')}</Text>
           </View>
           <View style={styles.userInfo}>
             <Text style={styles.accountManageText}>
-              로그인하고 링크를 저장해보세요
+              {t('로그인하고 링크를 저장해보세요.')}
             </Text>
           </View>
           <View style={styles.staticInfoContainer}>
             <TouchableOpacity onPress={handleLogin}>
-              <Text style={styles.loginText}>로그인 / 회원가입</Text>
+              <Text style={styles.loginText}>{t('로그인 / 회원가입')}</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.divider} />
           <View style={styles.navigationContainer}>
             <NavigationInfo
-              title="테마"
+              title={t('테마')}
               themeColor={theme.TEXT800}
               onPress={handleThemeSetting}
             />
             <NavigationInfo
-              title="환경 설정"
+              title={t('환경 설정')}
               themeColor={theme.TEXT800}
               onPress={handleSetting}
             />
-
             <NavigationInfo
-              title="지원"
+              title={t('지원')}
               themeColor={theme.TEXT800}
               onPress={handleSupport}
             />

@@ -90,7 +90,7 @@ const UnAuthHome = () => {
         keyExtractor={(item, index) => index.toString()}
         ListHeaderComponent={
           <HomeListHeader
-            selectedFolderName={'전체'}
+            selectedFolderName={t('전체')}
             linkCount={1}
             sortingOptions={sortingOptions}
             selectedSortingOption={selectedSortingOption}
