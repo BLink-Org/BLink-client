@@ -71,7 +71,7 @@ const createStyles = (theme: ITheme) =>
     },
     imageContainer: {
       flex: 1,
-      paddingTop: 150,
+      paddingTop: 100,
       alignItems: 'center',
     },
 
