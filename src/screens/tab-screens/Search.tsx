@@ -205,7 +205,7 @@ const createStyles = (theme: ITheme) =>
     centerContainer: {
       justifyContent: 'center',
       alignItems: 'center',
-      paddingTop: 100,
+      paddingTop: 50,
     },
     image: {
       width: 220,

@@ -329,7 +329,6 @@ export const useViewLink = (options = {}) => {
 // 최근 검색어 조회
 const getRecentSearch = async (): Promise<ILinkDtos[]> => {
   const {data} = await apiClient.get(API_ENDPOINTS.LINKS.RECENT_SEARCH);
-  // 3초 지연
   return data.result.linkDtos;
 };
 
@@ -337,6 +336,21 @@ export const useRecentSearch = () => {
   return useQuery({
     queryKey: ['recentSearch'],
     queryFn: getRecentSearch,
+  });
+};
+
+// 링크 중복 검사 post
+const checkLinkExist = async (url: string): Promise<boolean> => {
+  const {data} = await apiClient.post(API_ENDPOINTS.LINKS.LINK_EXIST_CHECK, {
+    url,
+  });
+  return data.result;
+};
+
+export const useCheckLinkExist = (options = {}) => {
+  return useMutation({
+    mutationFn: checkLinkExist,
+    ...options,
   });
 };
 

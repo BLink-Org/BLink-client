@@ -3,7 +3,6 @@ import {Animated, Dimensions, StyleSheet, Text} from 'react-native';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {type ITheme} from '@/types';
-import {THEMES} from '@/constants/theme';
 
 interface ToastProps {
   marginBottom: number;
@@ -14,7 +13,7 @@ const toastWidth = screenWidth - 36;
 export default function useToast({marginBottom}: ToastProps) {
   const {theme} = useThemeStore();
   const compareTheme: boolean = useMemo(() => {
-    if (theme === THEMES[1]) return true;
+    if (theme.THEME_NUMBER === 1 || theme.THEME_NUMBER === 3) return true;
     return false;
   }, [theme]);
 
@@ -37,19 +36,19 @@ export default function useToast({marginBottom}: ToastProps) {
       setIsToastVisible(true);
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 500,
+        duration: 400,
         useNativeDriver: true,
       }).start();
 
       const fadeOutTimer = setTimeout(() => {
         Animated.timing(fadeAnim, {
           toValue: 0,
-          duration: 500,
+          duration: 400,
           useNativeDriver: true,
         }).start(() => {
           setIsToastVisible(false);
         });
-      }, 3000);
+      }, 1200);
 
       return () => clearTimeout(fadeOutTimer);
     } else {

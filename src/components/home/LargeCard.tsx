@@ -170,7 +170,7 @@ const LargeCard = ({
         </View>
         <View style={styles.folderTop} />
         <Text style={styles.folderText}>
-          {content.folderName ?? '폴더 없이 저장'}
+          {content.folderName ?? '폴더 없는 링크'}
         </Text>
         <View style={styles.titleTop} />
         <Text style={styles.titleText} numberOfLines={1} ellipsizeMode="tail">

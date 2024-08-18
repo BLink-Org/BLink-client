@@ -8,6 +8,7 @@ import {extractHostname, shareUrl} from '@/utils/url-utils';
 import {type ITheme} from '@/types';
 import {useThemeStore} from '@/store/useThemeStore';
 import {
+  useCheckLinkExist,
   usePinnedLinks,
   useToggleBookmarkLinkPin,
   useViewLink,
@@ -24,6 +25,7 @@ import {
 import BottomSheet from '@/components/modal/BottomSheet';
 import LinkContent from '@/components/link/LinkContent';
 import {PinnedIcon} from '@/assets/icons/bottom-tab';
+import NoticeModal from '@/components/modal/NoticeModal';
 
 const BookmarkWebView = () => {
   const navigation = useNavigation();
@@ -50,6 +52,7 @@ const BookmarkWebView = () => {
   const [canGoBack, setCanGoBack] = useState<boolean>(false);
   const [canGoForward, setCanGoForward] = useState<boolean>(false);
   const [webViewUrl, setWebViewUrl] = useState<string | null>(null);
+  const [isNoticeModalVisible, setIsNoticeModalVisible] = useState(false); // 링크 저장 유효성 검사 noticeModal
 
   const {
     data: linkData,
@@ -60,6 +63,20 @@ const BookmarkWebView = () => {
 
   const {mutate: togglePin} = useToggleBookmarkLinkPin({size, sortBy});
   const {mutate: viewLink} = useViewLink();
+
+  // 링크 중복 검사
+  const {mutate: existsCheck} = useCheckLinkExist({
+    onSuccess: (result: boolean) => {
+      if (!result) {
+        setIsBottomSheetVisible(!isBottomSheetVisible);
+      } else {
+        setIsNoticeModalVisible(true);
+      }
+    },
+    onError: () => {
+      console.error('Error checking link duplication');
+    },
+  });
 
   const linkList = linkData?.pages.flatMap(page => page.linkDtos) ?? [];
   const currentLink = linkList[currentIndex];
@@ -133,7 +150,9 @@ const BookmarkWebView = () => {
 
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
   const toggleBottomSheet = () => {
-    setIsBottomSheetVisible(!isBottomSheetVisible);
+    if (webViewUrl) {
+      existsCheck(webViewUrl);
+    }
   };
 
   return (
@@ -205,6 +224,14 @@ const BookmarkWebView = () => {
         </TouchableOpacity>
       </View>
 
+      {/* NoticeModal(링크 중복 검사 엣지케이스 시 모달) */}
+      <NoticeModal
+        isVisible={isNoticeModalVisible}
+        onClose={() => setIsNoticeModalVisible(false)}
+        title="이미 저장된 링크예요"
+        description="다른 페이지로 이동했을 때 클릭해서 새로운 링크를 빠르게 저장해보세요"
+      />
+      {/* 링크 저장모달 */}
       <BottomSheet
         modalTitle="링크 저장"
         {...{isBottomSheetVisible, toggleBottomSheet}}>

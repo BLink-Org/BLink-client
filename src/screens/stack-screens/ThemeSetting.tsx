@@ -45,7 +45,7 @@ const ThemeSetting = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ThemeBackground />
-      <BackHeader title="테마 설정" themeColor={theme.TEXT900} />
+      <BackHeader title="테마" themeColor={theme.TEXT900} />
       <View style={styles.contentContainer}>
         <Text style={styles.templateText}>4 templates</Text>
       </View>

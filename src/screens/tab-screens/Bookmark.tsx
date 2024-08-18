@@ -30,6 +30,7 @@ import useToast from '@/hooks/useToast';
 import AnimatedLogoHeader from '@/components/common/AnimatedLogoHeader';
 import BookmarkListHeader from '@/components/home/BookmarkListHeader';
 import CustomStatusBar from '@/components/common/CustomStatusBar';
+import ListEmpty from '@/components/home/ListEmpty';
 
 const Bookmark = () => {
   const {t} = useTranslation();
@@ -96,7 +97,6 @@ const Bookmark = () => {
       if (!linkData || isLoading) {
         return <SmallCardPlaceHolder />;
       }
-
       // 로딩이 완료되면 카드 렌더링
       return (
         <View>
@@ -167,6 +167,12 @@ const Bookmark = () => {
               progressViewOffset={60}
             />
           }
+          ListEmptyComponent={
+            <ListEmpty
+              textColor={theme.TEXT500}
+              message="핀에 저장한 링크가 있으면 여기에 보여요"
+            />
+          }
           ListFooterComponent={() =>
             isFetchingNextPage ? (
               <ActivityIndicator size="small" color="#6D96FF" />
@@ -191,7 +197,6 @@ const createStyles = (theme: ITheme) =>
       flex: 1,
       overflow: 'hidden',
     },
-
     contentContainer: {
       paddingTop: 60,
       paddingHorizontal: 18,

@@ -23,7 +23,7 @@ const BookmarkListHeader = ({
   return (
     <>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>북마크</Text>
+        <Text style={styles.title}>핀</Text>
       </View>
       <View style={styles.filterContainer}>
         <Text style={styles.linkCount}>{linkCount} Links</Text>

@@ -12,6 +12,7 @@ import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.soloader.SoLoader
 import java.lang.reflect.InvocationTargetException
 import org.devio.rn.splashscreen.SplashScreenReactPackage; // 스플래시 스크린
+import com.blinkapplication.openExternalURL.OpenExternalURLPackage
 
 class MainApplication : Application(), ReactApplication {
 
@@ -19,6 +20,7 @@ class MainApplication : Application(), ReactApplication {
         override fun getPackages(): List<ReactPackage> {
             return PackageList(this).packages.apply {
                 add(ShareMenuPackage())
+                add(OpenExternalURLPackage())  // 언어 설정 창으로 이동
                 // add(SplashScreenReactPackage()) // SplashScreen 패키지 추가
             }
         }

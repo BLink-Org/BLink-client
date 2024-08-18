@@ -5,9 +5,7 @@ import AccountDelete from '@/screens/stack-screens/AccountDelete';
 import AccountManage from '@/screens/stack-screens/AccountManage';
 import Setting from '@/screens/stack-screens/Setting';
 import Trash from '@/screens/stack-screens/Trash';
-import APITest from '@/screens/stack-screens/APITest';
 import Onboarding from '@/screens/stack-screens/Onboarding';
-import LinkApiTest from '@/screens/stack-screens/LinkApiTest';
 import WebViewList from '@/screens/stack-screens/WebViewList';
 import SearchWebView from '@/screens/stack-screens/SearchWebView';
 import {type RootStackParamList} from '@/types/navigation';
@@ -29,8 +27,6 @@ const GlobalNavigation = ({isAuthenticated}: {isAuthenticated: boolean}) => {
         <>
           <Stack.Screen name="Main" component={BottomTabNavigation} />
           <Stack.Screen name="ThemeSetting" component={ThemeSetting} />
-          <Stack.Screen name="LinkApiTest" component={LinkApiTest} />
-          <Stack.Screen name="APITest" component={APITest} />
           <Stack.Screen name="Support" component={Support} />
           <Stack.Screen name="AccountDelete" component={AccountDelete} />
           <Stack.Screen name="AccountManage" component={AccountManage} />

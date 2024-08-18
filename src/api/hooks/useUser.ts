@@ -10,7 +10,10 @@ const getUserInfo = async (): Promise<UserInfoSchema> => {
 };
 
 export const useUserInfo = () => {
-  return useQuery({queryKey: ['userInfo'], queryFn: getUserInfo});
+  return useQuery({
+    queryKey: ['userInfo'],
+    queryFn: getUserInfo,
+  });
 };
 
 // 계정 삭제 신청

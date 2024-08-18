@@ -33,6 +33,7 @@ const SearchHeader = memo(
           placeholder="전체에서 검색"
           placeholderTextColor={theme.TEXT300}
           onSubmitEditing={handleSearchSubmit}
+          autoFocus={true} // 자동 포커스
           returnKeyType="done" // 키보드 '완료' 버튼을 표시
         />
         <TouchableOpacity
@@ -71,6 +72,6 @@ const createStyles = (theme: ITheme) =>
     },
     searchIcon: {
       position: 'absolute',
-      right: 16,
+      right: 32,
     },
   });
