@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import * as RNLocalize from 'react-native-localize';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import {useThemeStore} from '@/store/useThemeStore';
 import dummyFileData from '@/constants/unauth-default-data.json';
@@ -19,10 +20,13 @@ import {type WebViewListNavigationProp, type ILinkDtos} from '@/types';
 import HomeListHeader from '@/components/home/HomeListHeader';
 import UnAuthLargeCard from '@/components/home/UnAuthLargeCard';
 import UnAuthSmallCard from '@/components/home/UnAuthSmallCard';
+import UnAuthFolderSideBar from '@/components/modal/UnAuthFolderSideBar';
 
 const UnAuthHome = () => {
   const {t} = useTranslation();
   const {theme} = useThemeStore();
+
+  const locale = RNLocalize.getLocales()[0].languageCode === 'ko' ? 'KO' : 'EN';
 
   const sortingOptions = getSortingOptions(t);
   const [selectedSortingOption, setSelectedSortingOption] = useState(
@@ -32,7 +36,8 @@ const UnAuthHome = () => {
     setSelectedSortingOption(selected);
   };
 
-  const sortedData: ILinkDtos[] = dummyFileData;
+  const sortedData: ILinkDtos[] =
+    locale === 'KO' ? [dummyFileData[0]] : [dummyFileData[1]];
 
   // 카드 사이즈 조절
   const [isLargeCard, setIsLargeCard] = useState(false);
@@ -48,6 +53,12 @@ const UnAuthHome = () => {
       setRefreshing(false);
     }, 300);
   }, []);
+
+  // 폴더 사이드바 토글
+  const [isSideBarVisible, setIsSideBarVisible] = useState(false);
+  const toggleSideBar = () => {
+    setIsSideBarVisible(!isSideBarVisible);
+  };
 
   const navigation = useNavigation<WebViewListNavigationProp>();
   const handleCardPress = () => {
@@ -72,7 +83,7 @@ const UnAuthHome = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ThemeBackground />
-      <ScreenHeader toggleSideBar={() => {}} />
+      <ScreenHeader toggleSideBar={toggleSideBar} />
       <FlatList
         data={sortedData}
         renderItem={renderItem}
@@ -94,6 +105,13 @@ const UnAuthHome = () => {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+      />
+      <UnAuthFolderSideBar
+        isSideBarVisible={isSideBarVisible}
+        toggleSideBar={toggleSideBar}
+        selectedFolderId={[0]}
+        setSelectedFolderId={() => {}}
+        setSelectedFolderName={() => {}}
       />
     </SafeAreaView>
   );

@@ -4,7 +4,6 @@ import {
   Theme1BackgroundImage,
   Theme1BigCardImage,
   Theme1SmallCardImage,
-  Temp2BackgroundImage,
   Theme2BackgroundImage,
   Theme2BigCardImage,
   Theme2SmallCardImage,

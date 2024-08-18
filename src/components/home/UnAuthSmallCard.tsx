@@ -20,7 +20,7 @@ import {
   type ITheme,
   type RootStackNavigationProp,
 } from '@/types';
-import {extractHostname, shareUrl} from '@/utils/url-utils';
+import {shareUrl} from '@/utils/url-utils';
 import NoticeModal from '../modal/NoticeModal';
 
 interface SmallCardProps {
@@ -175,22 +175,20 @@ const UnAuthSmallCard = ({content}: SmallCardProps) => {
         <View style={styles.footer}>
           <View style={styles.footerFront}>
             <Text style={styles.footerText}>{content.createdAt}</Text>
-            <Text style={styles.footerText}>
-              {extractHostname(content.url ?? '')}
-            </Text>
+            <Text style={styles.footerText}>notion.site</Text>
           </View>
           <TouchableOpacity onPress={handlePinToggle}>
             {isPinned ? (
               <PinnedSelectedIcon
-                width={20}
-                height={20}
+                width={24}
+                height={24}
                 fill={theme.MAIN400}
                 stroke={theme.MAIN400}
               />
             ) : (
               <PinnedUnselectedIcon
-                width={20}
-                height={20}
+                width={24}
+                height={24}
                 stroke={theme.TEXT400}
               />
             )}

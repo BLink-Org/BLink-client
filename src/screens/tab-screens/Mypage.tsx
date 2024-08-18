@@ -87,7 +87,7 @@ const MyPage = () => {
       logout(refreshToken);
       trackEvent('Logout');
     }
-    signOut();
+    signOut(navigation);
   };
 
   if (isLoading) return <CustomLoading />;
