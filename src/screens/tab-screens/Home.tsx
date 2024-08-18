@@ -33,6 +33,7 @@ import LargeCardPlaceHolder from '@/components/home/LargeCardPlaceHolder';
 import HomeListHeader from '@/components/home/HomeListHeader';
 import {getSortByValue, getSortingOptions} from '@/utils/sorting-utils';
 import CustomStatusBar from '@/components/common/CustomStatusBar';
+import ListEmpty from '@/components/home/ListEmpty';
 
 const Home = () => {
   const {t} = useTranslation();
@@ -195,6 +196,12 @@ const Home = () => {
               refreshing={refreshing}
               onRefresh={onRefresh}
               progressViewOffset={60}
+            />
+          }
+          ListEmptyComponent={
+            <ListEmpty
+              textColor={theme.TEXT500}
+              message="저장한 링크가 있으면 여기에 보여요"
             />
           }
           ListFooterComponent={() =>

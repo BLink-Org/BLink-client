@@ -15,9 +15,9 @@ import SmallCard from '@/components/home/SmallCard';
 import useStickyAnimation from '@/hooks/useStickyAnimation';
 import {type ILinkDtos, type ITheme} from '@/types';
 import {useTrashLinks} from '@/api/hooks/useLink';
-import ListHeader from '@/components/common/ListHeaderComponent';
 import AnimatedHeader from '@/components/mypage/AnimatedHeader';
 import SmallCardPlaceHolder from '@/components/home/SmallCardPlaceHolder';
+import ListHeader from '@/components/mypage/ListHeaderComponent';
 
 const Trash = () => {
   const {theme} = useThemeStore();
