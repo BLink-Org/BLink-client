@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo} from 'react';
+import React, {useMemo} from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {
   View,
@@ -17,62 +17,22 @@ import LogoHeader from '@/components/common/LogoHeader';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import NavigationInfo from '@/components/mypage/NavigationInfo';
-import {useModalStore} from '@/store/useModalStore';
-import AlertModal from '@/components/modal/AlertModal';
 import {type ITheme} from '@/types';
-import {signOut} from '@/utils/auth-utils';
-import {useLogout} from '@/api/hooks/useAuth';
-import {useUserStore} from '@/store/useUserStore';
-import {trackEvent} from '@/utils/amplitude-utils';
-import useToast from '@/hooks/useToast';
-import {TOAST_MESSAGE} from '@/constants/toast';
 
 const MyPage = () => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
-  const {refreshToken} = useUserStore.getState();
-
   const route = useRoute<MyPageRouteProp>();
   const navigation = useNavigation<RootStackNavigationProp>();
 
-  const {renderToast, showToast} = useToast({marginBottom: 44});
-  useEffect(() => {
-    if (!route.params?.toastState) return;
-    if (route.params?.toastState === 'delete') {
-      showToast(TOAST_MESSAGE.DELETE_ACCOUNT);
-    } else if (route.params?.toastState === 'cancel') {
-      showToast(TOAST_MESSAGE.DELETE_ACCOUNT_CANCEL);
-    }
-    navigation.setParams({toastState: null});
-  }, [route.params?.toastState]);
-
-  // 애플 이메일 제공 x 유저 -> 이메일 정보 분기 처리
-
-  // 로그아웃 post
-  const {mutate: logout} = useLogout();
-  const {showModal, closeModal} = useModalStore();
-
-  // Navigation Handlers
-  const handleAccountManage = () => navigation.navigate('AccountManage');
   const handleThemeSetting = () => navigation.navigate('ThemeSetting');
   const handleSetting = () => navigation.navigate('Setting');
-  const handleTrash = () => navigation.navigate('Trash');
   const handleSupport = () => navigation.navigate('Support');
-
-  const logoutModalOpen = () => showModal('logoutConfirm');
-  const handleConfirmLogout = () => {
-    closeModal('logoutConfirm');
-    if (refreshToken) {
-      logout(refreshToken);
-      trackEvent('Logout');
-    }
-    signOut();
-  };
+  const handleLogin = () => navigation.navigate('Onboarding');
 
   return (
     <SafeAreaView style={styles.container}>
-      {renderToast()}
       <ThemeBackground />
       <LogoHeader />
       <ScrollView>
@@ -81,15 +41,19 @@ const MyPage = () => {
             <Text style={styles.titleText}>계정</Text>
           </View>
           <View style={styles.userInfo}>
-            <TouchableOpacity onPress={handleAccountManage}>
-              <Text style={styles.accountManageText}>계정 관리</Text>
+            <Text style={styles.accountManageText}>
+              로그인하고 링크를 저장해보세요
+            </Text>
+          </View>
+          <View style={styles.staticInfoContainer}>
+            <TouchableOpacity onPress={handleLogin}>
+              <Text style={styles.loginText}>로그인 / 회원가입</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.staticInfoContainer}></View>
           <View style={styles.divider} />
           <View style={styles.navigationContainer}>
             <NavigationInfo
-              title="테마 설정"
+              title="테마"
               themeColor={theme.TEXT800}
               onPress={handleThemeSetting}
             />
@@ -98,32 +62,15 @@ const MyPage = () => {
               themeColor={theme.TEXT800}
               onPress={handleSetting}
             />
-            <NavigationInfo
-              title="휴지통"
-              themeColor={theme.TEXT800}
-              onPress={handleTrash}
-            />
+
             <NavigationInfo
               title="지원"
               themeColor={theme.TEXT800}
               onPress={handleSupport}
             />
-            <NavigationInfo
-              title="로그아웃"
-              themeColor={theme.TEXT800}
-              onPress={logoutModalOpen}
-            />
           </View>
         </View>
       </ScrollView>
-      <AlertModal
-        modalId="logoutConfirm"
-        headerText="로그아웃"
-        bodyText="로그아웃 하시겠습니까?"
-        leftText="취소"
-        rightText="확인"
-        rightOnPress={handleConfirmLogout}
-      />
     </SafeAreaView>
   );
 };
@@ -134,6 +81,10 @@ const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     container: {
       flex: 1,
+    },
+    loginText: {
+      ...FONTS.BODY1_SEMIBOLD,
+      color: theme.BACKGROUND,
     },
     contentContainer: {
       paddingHorizontal: 18,
@@ -159,7 +110,12 @@ const createStyles = (theme: ITheme) =>
       ...FONTS.BODY2_MEDIUM,
     },
     staticInfoContainer: {
-      paddingVertical: 16,
+      marginVertical: 30,
+      paddingVertical: 14,
+      borderRadius: 100,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: theme.MAIN400,
     },
     divider: {
       borderBottomWidth: 1,

@@ -20,6 +20,9 @@ import Onboarding from '@/screens/stack-screens/Onboarding';
 import TempHome from '@/screens/no-login-tab-screen/TempHome';
 import UnAuthMypage from '@/screens/no-login-tab-screen/UnAuthMypage';
 import {type RootStackNavigationProp} from '@/types';
+import ThemeSetting from '@/screens/stack-screens/ThemeSetting';
+import Support from '@/screens/stack-screens/Support';
+import Setting from '@/screens/stack-screens/Setting';
 import NoticeModal from '../modal/NoticeModal';
 
 interface IconProps {
@@ -202,6 +205,9 @@ const GlobalNavigationUnauthenticated = () => {
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="Onboarding" component={Onboarding} />
       <Stack.Screen name="Tab" component={BottomTabNavigationUnauthenticated} />
+      <Stack.Screen name="ThemeSetting" component={ThemeSetting} />
+      <Stack.Screen name="Support" component={Support} />
+      <Stack.Screen name="Setting" component={Setting} />
     </Stack.Navigator>
   );
 };

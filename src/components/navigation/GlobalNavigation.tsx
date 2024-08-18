@@ -17,11 +17,11 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const GlobalNavigation = () => {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen
+      {/* <Stack.Screen
         name="Onboarding"
         component={Onboarding}
         options={{headerShown: false}}
-      />
+      /> */}
       <Stack.Screen name="Main" component={BottomTabNavigation} />
       <Stack.Screen name="ThemeSetting" component={ThemeSetting} />
       <Stack.Screen name="Support" component={Support} />
