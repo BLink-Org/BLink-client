@@ -72,7 +72,7 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
 
   useEffect(() => {
     if (textInput && !isValidUrl(textInput)) {
-      setErrorMessage('입력한 정보의 링크를 찾을 수 없습니다');
+      setErrorMessage('입력한 링크를 찾을 수 없습니다');
       setIsReadyToSave(false);
     } else {
       setErrorMessage('');
@@ -101,7 +101,7 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
         style={[styles.contentContainer, {marginBottom: buttonHeight}]}>
         <TextInputGroup
           inputTitle="링크"
-          placeholder="www.example.co.kr"
+          placeholder="링크를 입력해주세요."
           {...{textInput, setTextInput, errorMessage}}
         />
         <View style={styles.folderTitle}>

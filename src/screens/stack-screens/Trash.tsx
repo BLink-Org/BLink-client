@@ -18,6 +18,7 @@ import {useTrashLinks} from '@/api/hooks/useLink';
 import AnimatedHeader from '@/components/mypage/AnimatedHeader';
 import SmallCardPlaceHolder from '@/components/home/SmallCardPlaceHolder';
 import ListHeader from '@/components/mypage/ListHeaderComponent';
+import ListEmpty from '@/components/home/ListEmpty';
 
 const Trash = () => {
   const {theme} = useThemeStore();
@@ -134,6 +135,12 @@ const Trash = () => {
                 refreshing={refreshing}
                 onRefresh={onRefresh}
                 progressViewOffset={60}
+              />
+            }
+            ListEmptyComponent={
+              <ListEmpty
+                textColor={theme.TEXT500}
+                message="휴지통이 비어있습니다"
               />
             }
             ListFooterComponent={() =>

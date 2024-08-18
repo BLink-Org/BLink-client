@@ -27,7 +27,7 @@ const ListHeader = ({
         <Text style={styles.title}>휴지통</Text>
       </View>
       <Text style={styles.subTitle}>
-        휴지통의 링크는 7일 이후 영구적으로 삭제됩니다.
+        휴지통으로 이동된 후 7일 뒤에는 완전히 삭제됩니다.
       </Text>
       <View style={styles.paddingContent} />
       <View style={styles.filterContainer}>
