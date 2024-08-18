@@ -5,7 +5,7 @@ import {
   useMemo,
   useState,
 } from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, Platform} from 'react-native';
 import Modal from 'react-native-modal';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
@@ -40,7 +40,7 @@ const DropDownModal = ({
 
   const handleClose = () => {
     setIsVisible(false);
-    // 3초 timeout 끝난 후 onClose 실행
+    // 0.3초 timeout 끝난 후 onClose 실행
     setTimeout(() => {
       onClose();
     }, 300);
@@ -112,22 +112,32 @@ const createStyles = (theme: ITheme) =>
       backgroundColor: theme.BACKGROUND,
       borderRadius: 12,
       width: 160,
+      ...Platform.select({
+        ios: {
+          shadowColor: '#000',
+          shadowOffset: {
+            width: 0,
+            height: 10,
+          },
+          shadowOpacity: 0.1,
+          shadowRadius: 6,
+        },
+        android: {
+          borderWidth: 2,
+          borderColor: theme.TEXT100,
+        },
+      }),
     },
     dropdown: {
       backgroundColor: theme.BACKGROUND,
       borderRadius: 5,
-      shadowColor: '#000',
-      shadowOffset: {
-        width: 0,
-        height: 10,
-      },
-      shadowOpacity: 0.1,
-      shadowRadius: 6,
     },
     option: {
       flexDirection: 'row',
       alignItems: 'center',
       padding: 12,
       gap: 8,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.TEXT200,
     },
   });
