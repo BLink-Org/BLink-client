@@ -6,66 +6,50 @@ import {
   View,
   Image,
   TouchableOpacity,
-  ActivityIndicator,
 } from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 import {useThemeStore} from '@/store/useThemeStore';
 import {PinnedSelectedIcon, PinnedUnselectedIcon} from '@/assets/icons/common';
 import {FONTS} from '@/constants';
 import {MoveIcon, ShareIcon, ThreeDotIcon} from '@/assets/icons/home';
-import {type UseLinkInfoArgs, type ITheme, type ILinkDtos} from '@/types';
+import {
+  type ITheme,
+  type ILinkDtos,
+  type RootStackNavigationProp,
+} from '@/types';
 import {DeleteIcon, PencilIcon} from '@/assets/icons/mypage';
 import DropDownModal from '@/components/modal/DropDownModal';
-import BottomSheet from '@/components/modal/BottomSheet';
-import TitleContent from '@/components/link/TitleContent';
-import FolderMoveContent from '@/components/link/FolderMoveContent';
-import {TOAST_MESSAGE} from '@/constants/toast';
-import {extractHostname, shareUrl} from '@/utils/url-utils';
-import {
-  useMoveLinkToTrash,
-  useToggleLinkPin,
-  useUpdateLinkTitle,
-} from '@/api/hooks/useLink';
+import {shareUrl} from '@/utils/url-utils';
+import LoginModal from '../modal/LoginModal';
 
 const screenWidth = Dimensions.get('screen').width - 36;
-const aspectRatio = 339 / 140; // 카드 비율
+const aspectRatio = 339 / 140;
 const cardHeight = screenWidth / aspectRatio;
 
 interface LargeCardProps {
   content: ILinkDtos;
-  showToast?: (text: string) => void;
-  linkInfoArgs: UseLinkInfoArgs;
 }
 
-const LargeCard = ({
-  content,
-  showToast = () => {},
-  linkInfoArgs,
-}: LargeCardProps) => {
+const UnAuthLargeCard = ({content}: LargeCardProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const navigation = useNavigation<RootStackNavigationProp>();
 
   const CardImage = useMemo(() => {
     return theme.BIG_CARD_IMAGE;
   }, [theme]);
 
-  // 핀 기능 핸들러 추가
-  const {mutate: togglePin} = useToggleLinkPin(linkInfoArgs);
-  const {mutate: moveLinkToTrash} = useMoveLinkToTrash(linkInfoArgs);
+  // 로그인 모달
+  const [isNoticeModalVisible, setIsNoticeModalVisible] = useState(false);
 
-  const {mutate: updateTitle} = useUpdateLinkTitle(linkInfoArgs);
-
-  // 제목 수정 바텀시트 모달 관리
-  const [isTitleBottomSheetVisible, setIsTitleBottomSheetVisible] =
-    useState(false);
-  const toggleTitleBottomSheet = () => {
-    setIsTitleBottomSheetVisible(!isTitleBottomSheetVisible);
+  // 모달 닫은 후 로그인으로 이동
+  const handleModalClose = () => {
+    navigation.navigate('Onboarding');
+    setIsNoticeModalVisible(false);
   };
-
-  // 폴더 이동 바텀시트 모달 관리
-  const [isFolderBottomSheetVisible, setIsFolderBottomSheetVisible] =
-    useState(false);
-  const toggleFolderBottomSheet = () => {
-    setIsFolderBottomSheetVisible(!isFolderBottomSheetVisible);
+  // 로그인 모달 열기
+  const onPressLoginAlert = () => {
+    setIsNoticeModalVisible(true);
   };
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -88,7 +72,7 @@ const LargeCard = ({
         icon: <PencilIcon />,
         onSelect: () => {
           closeDropdown();
-          toggleTitleBottomSheet();
+          onPressLoginAlert();
         },
       },
       {
@@ -96,7 +80,7 @@ const LargeCard = ({
         icon: <MoveIcon />,
         onSelect: () => {
           closeDropdown();
-          toggleFolderBottomSheet();
+          onPressLoginAlert();
         },
       },
       {
@@ -111,38 +95,23 @@ const LargeCard = ({
         label: '삭제',
         icon: <DeleteIcon />,
         onSelect: () => {
-          moveLinkToTrash(String(content.id));
-          showToast(TOAST_MESSAGE.DELETE_SUCCESS);
+          onPressLoginAlert();
           closeDropdown();
         },
       },
     ],
-    [closeDropdown, toggleTitleBottomSheet, toggleFolderBottomSheet],
+    [closeDropdown],
   );
 
-  // 핀 on/off 핸들러
+  const [isPinned, setIsPinned] = useState(false);
   const handlePinToggle = () => {
-    togglePin(String(content.id));
-  };
-
-  // 이미지 로딩 처리
-  const [imageLoading, setImageLoading] = useState<boolean>(true);
-  const handleImageLoad = () => {
-    setImageLoading(false);
-  };
-  const LoadingScreen = () => {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="small" color={theme.MAIN500} />
-      </View>
-    );
+    setIsPinned(prevState => !prevState);
   };
 
   return (
     <>
       <View style={styles.container}>
         <View style={styles.cardImageContainer}>
-          {content.imageUrl && imageLoading && <LoadingScreen />}
           <TouchableOpacity style={styles.dotPosition}>
             <TouchableOpacity
               ref={buttonRef}
@@ -164,8 +133,6 @@ const LargeCard = ({
               source={{uri: content.imageUrl}}
               style={styles.image}
               resizeMode="cover"
-              onLoad={handleImageLoad}
-              onError={handleImageLoad}
             />
           ) : (
             <CardImage width={screenWidth} height={cardHeight} />
@@ -183,53 +150,36 @@ const LargeCard = ({
         <View style={styles.footer}>
           <View style={styles.footerFront}>
             <Text style={styles.footerText}>{content.createdAt}</Text>
-            <Text style={styles.footerText}>
-              {extractHostname(content.url ?? '')}
-            </Text>
+            <Text style={styles.footerText}>notion.site</Text>
           </View>
           <TouchableOpacity onPress={handlePinToggle}>
-            {content.pinned ? (
+            {isPinned ? (
               <PinnedSelectedIcon
-                width={20}
-                height={20}
+                width={24}
+                height={24}
                 fill={theme.MAIN400}
                 stroke={theme.MAIN400}
               />
             ) : (
               <PinnedUnselectedIcon
-                width={20}
-                height={20}
+                width={24}
+                height={24}
                 stroke={theme.TEXT400}
               />
             )}
           </TouchableOpacity>
         </View>
       </View>
-      <BottomSheet
-        modalTitle="제목 수정"
-        isBottomSheetVisible={isTitleBottomSheetVisible}
-        toggleBottomSheet={toggleTitleBottomSheet}>
-        <TitleContent
-          defaultText={content.title}
-          toggleBottomSheet={toggleTitleBottomSheet}
-          updateTitle={updateTitle}
-          linkId={content.id}
-        />
-      </BottomSheet>
-      <BottomSheet
-        modalTitle="폴더 이동"
-        isBottomSheetVisible={isFolderBottomSheetVisible}
-        toggleBottomSheet={toggleFolderBottomSheet}>
-        <FolderMoveContent
-          toggleBottomSheet={toggleFolderBottomSheet}
-          linkId={content.id}
-        />
-      </BottomSheet>
+      <LoginModal
+        isVisible={isNoticeModalVisible}
+        onClose={() => setIsNoticeModalVisible(false)}
+        onClick={handleModalClose}
+      />
     </>
   );
 };
 
-export default LargeCard;
+export default UnAuthLargeCard;
 
 const createStyles = (theme: ITheme) =>
   StyleSheet.create({
@@ -244,10 +194,7 @@ const createStyles = (theme: ITheme) =>
       overflow: 'hidden',
       position: 'relative',
     },
-    dotPadding: {
-      marginHorizontal: -16,
-      paddingHorizontal: 16,
-    },
+
     dotPosition: {
       position: 'absolute',
       top: 12,
@@ -257,6 +204,10 @@ const createStyles = (theme: ITheme) =>
     image: {
       width: '100%',
       height: '100%',
+    },
+    dotPadding: {
+      marginHorizontal: -16,
+      paddingHorizontal: 16,
     },
     loadingContainer: {
       ...StyleSheet.absoluteFillObject,

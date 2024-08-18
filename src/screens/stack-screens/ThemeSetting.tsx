@@ -47,7 +47,7 @@ const ThemeSetting = () => {
       <ThemeBackground />
       <BackHeader title="테마" themeColor={theme.TEXT900} />
       <View style={styles.contentContainer}>
-        <Text style={styles.templateText}>4 templates</Text>
+        <Text style={styles.templateText}>3 templates</Text>
       </View>
       <FlatList
         data={THEME_INFOS}

@@ -5,6 +5,7 @@ import {useThemeStore} from '@/store/useThemeStore';
 import {useModalStore} from '@/store/useModalStore';
 import AlertModal from '@/components/modal/AlertModal';
 import {type ITheme} from '@/types';
+import {Theme3SmallCardImage} from '@/assets/icons/theme';
 
 interface ThemeCardProps {
   id: number;
@@ -38,6 +39,10 @@ const ThemeCard = ({
     closeModal(modalId);
   };
 
+  if (id === 4) {
+    return <View style={styles.mainContainer}></View>;
+  }
+
   return (
     <TouchableOpacity onPress={handleSelect} style={styles.mainContainer}>
       <View
@@ -45,9 +50,18 @@ const ThemeCard = ({
           styles.card,
           selected
             ? {borderColor: theme.MAIN400}
-            : {borderColor: theme.TEXT200},
+            : {borderColor: theme.TEXT300},
         ]}>
-        <View style={[styles.headerBackground, {backgroundColor: mainColor}]} />
+        {id === 3 ? (
+          <View style={styles.headerBackground}>
+            <Theme3SmallCardImage width={180} height={180} />
+          </View>
+        ) : (
+          <View
+            style={[styles.headerBackground, {backgroundColor: mainColor}]}
+          />
+        )}
+
         <View style={styles.bodyContainer}>
           <View style={styles.textBox}>
             <Text style={styles.nameText}>{name}</Text>
@@ -92,9 +106,13 @@ const createStyles = (theme: ITheme) =>
       borderWidth: 1,
       overflow: 'hidden',
     },
+
     headerBackground: {
       height: 140,
       width: '100%',
+      overflow: 'hidden',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     bodyContainer: {
       padding: 12,

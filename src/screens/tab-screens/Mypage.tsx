@@ -87,7 +87,7 @@ const MyPage = () => {
       logout(refreshToken);
       trackEvent('Logout');
     }
-    signOut();
+    signOut(navigation);
   };
 
   if (isLoading) return <CustomLoading />;
@@ -123,7 +123,7 @@ const MyPage = () => {
           <View style={styles.divider} />
           <View style={styles.navigationContainer}>
             <NavigationInfo
-              title="테마 설정"
+              title="테마"
               themeColor={theme.TEXT800}
               onPress={handleThemeSetting}
             />

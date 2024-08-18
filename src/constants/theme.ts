@@ -4,7 +4,6 @@ import {
   Theme1BackgroundImage,
   Theme1BigCardImage,
   Theme1SmallCardImage,
-  Temp2BackgroundImage,
   Theme2BackgroundImage,
   Theme2BigCardImage,
   Theme2SmallCardImage,
@@ -14,24 +13,24 @@ import {
 } from '@/assets/icons/theme';
 
 export const THEME_INFOS = [
-  {id: 1, name: '기본', price: 'Free', color: '#4285F4'},
+  {id: 1, name: '기본', price: 'Free', color: '#6D96FF'},
   {
     id: 2,
     name: '다크모드',
     price: 'Free',
-    color: '#000000',
+    color: '#292934',
   },
   {
     id: 3,
-    name: '무드오렌지',
-    price: '3,000원',
-    color: '#FF7970',
+    name: '블링키',
+    price: 'Free',
+    color: '#6D96FF',
   },
   {
     id: 4,
-    name: '사이니스타',
-    price: '3,000원',
-    color: '#EdE4FC',
+    name: '',
+    price: '',
+    color: 'transparent',
   },
 ];
 

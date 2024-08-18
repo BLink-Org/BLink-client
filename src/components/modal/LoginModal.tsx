@@ -8,18 +8,10 @@ import {FONTS} from '@/constants';
 interface CustomModalProps {
   isVisible: boolean;
   onClose: () => void;
-  title: string;
-  description: string;
-  onClick?: () => void;
+  onClick: () => void;
 }
 
-const NoticeModal = ({
-  isVisible,
-  onClose,
-  title,
-  description,
-  onClick,
-}: CustomModalProps) => {
+const LoginModal = ({isVisible, onClose, onClick}: CustomModalProps) => {
   const {theme} = useThemeStore();
   const styles = createStyles(theme);
 
@@ -34,17 +26,26 @@ const NoticeModal = ({
       hideModalContentWhileAnimating={true}
       style={styles.modal}>
       <View style={styles.modalContainer}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.description}>{description}</Text>
+        <Text style={styles.title}>로그인이 필요해요</Text>
+        <Text style={styles.description}>
+          해당 기능을 사용하려면 로그인 해주세요
+        </Text>
       </View>
-      <Pressable style={styles.button} onPress={onClick ?? onClose}>
-        <Text style={styles.buttonText}>확인</Text>
-      </Pressable>
+      <View style={[styles.buttonContainer]}>
+        <Pressable
+          style={[styles.button, {backgroundColor: theme.TEXT500}]}
+          onPress={onClose}>
+          <Text style={styles.buttonText}>다음에</Text>
+        </Pressable>
+        <Pressable style={styles.button} onPress={onClick}>
+          <Text style={styles.buttonText}>로그인</Text>
+        </Pressable>
+      </View>
     </Modal>
   );
 };
 
-export default NoticeModal;
+export default LoginModal;
 
 const createStyles = (theme: ITheme) =>
   StyleSheet.create({
@@ -55,9 +56,8 @@ const createStyles = (theme: ITheme) =>
       backgroundColor: theme.BACKGROUND,
       alignItems: 'center',
       justifyContent: 'center',
-      width: 300,
+      width: 320,
       height: 163,
-      paddingHorizontal: 40,
       paddingVertical: 40,
       gap: 8,
       borderTopLeftRadius: 12,
@@ -72,14 +72,20 @@ const createStyles = (theme: ITheme) =>
       ...FONTS.BODY2_REGULAR,
       textAlign: 'center',
     },
+    buttonContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      borderBottomRightRadius: 12,
+      borderBottomLeftRadius: 12,
+      overflow: 'hidden',
+    },
+
     button: {
-      width: 300,
+      width: 160,
       height: 55,
       backgroundColor: theme.MAIN400,
       paddingVertical: 10,
       paddingHorizontal: 20,
-      borderBottomRightRadius: 12,
-      borderBottomLeftRadius: 12,
       alignItems: 'center',
       justifyContent: 'center',
     },
