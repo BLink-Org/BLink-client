@@ -43,11 +43,11 @@ const MyPage = () => {
               {t('로그인하고 링크를 저장해보세요.')}
             </Text>
           </View>
-          <View style={styles.staticInfoContainer}>
-            <TouchableOpacity onPress={handleLogin}>
+          <TouchableOpacity onPress={handleLogin}>
+            <View style={styles.staticInfoContainer}>
               <Text style={styles.loginText}>{t('로그인 / 회원가입')}</Text>
-            </TouchableOpacity>
-          </View>
+            </View>
+          </TouchableOpacity>
           <View style={styles.divider} />
           <View style={styles.navigationContainer}>
             <NavigationInfo

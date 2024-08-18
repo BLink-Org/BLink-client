@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useQueryClient} from '@tanstack/react-query';
+import {useTranslation} from 'react-i18next';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {BackIcon, ForwardIcon} from '@/assets/icons/modal';
@@ -46,6 +47,8 @@ const FolderSideBar = ({
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const insets = useSafeAreaInsets();
+  const {t} = useTranslation();
+
   const {renderToast, showToast} = useToast({
     marginBottom: 128,
   });
@@ -56,7 +59,7 @@ const FolderSideBar = ({
     onSuccess: () => {
       setIsBottomSheetVisible(!isBottomSheetVisible);
       queryClient.invalidateQueries({queryKey: ['folders']});
-      showToast(TOAST_MESSAGE.CREATE_SUCCESS);
+      showToast(t(TOAST_MESSAGE.CREATE_SUCCESS));
     },
   });
 
@@ -65,7 +68,7 @@ const FolderSideBar = ({
       setIsBottomSheetVisible(!isBottomSheetVisible);
       queryClient.invalidateQueries({queryKey: ['folders']});
       queryClient.invalidateQueries({queryKey: ['links']});
-      showToast(TOAST_MESSAGE.EDIT_SUCCESS);
+      showToast(t(TOAST_MESSAGE.EDIT_SUCCESS));
     },
   });
 
@@ -157,7 +160,7 @@ const FolderSideBar = ({
           <BackIcon width={26} height={26} fill={theme.TEXT900} />
         </TouchableOpacity>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>폴더</Text>
+          <Text style={styles.title}>{t('폴더')}</Text>
         </View>
         <View style={styles.detailContainer}>
           <Text style={styles.linkCount}>
@@ -169,7 +172,7 @@ const FolderSideBar = ({
               setSelectedFolderId([]);
               toggleSideBar();
             }}>
-            <Text style={styles.totalButtonText}>전체보기</Text>
+            <Text style={styles.totalButtonText}>{t('전체보기')}</Text>
             <ForwardIcon fill={theme.TEXT700} />
           </TouchableOpacity>
         </View>
@@ -195,7 +198,7 @@ const FolderSideBar = ({
             <View style={styles.emptyView}>
               <Image source={theme.EMPTY_IMAGE} style={styles.emptyImage} />
               <Text style={styles.emptyText}>
-                생성한 폴더가 있으면 여기에 보여요
+                {t('생성한 폴더가 있으면 여기에 보여요.')}
               </Text>
             </View>
           )}
@@ -212,13 +215,13 @@ const FolderSideBar = ({
               fill={theme.MAIN400}
               style={{marginRight: 8}}
             />
-            <Text style={styles.addFolderButtonText}>폴더 생성</Text>
+            <Text style={styles.addFolderButtonText}>{t('폴더 생성')}</Text>
           </TouchableOpacity>
         </View>
       </Animated.View>
 
       <BottomSheet
-        modalTitle={isCreate ? '폴더 생성' : '폴더 수정'}
+        modalTitle={t(isCreate ? '폴더 생성' : '폴더 수정')}
         toggleBottomSheet={() => setIsBottomSheetVisible(!isBottomSheetVisible)}
         {...{isBottomSheetVisible}}>
         <FolderContent
@@ -321,6 +324,7 @@ const createStyles = (theme: ITheme) =>
       paddingHorizontal: 16,
       flexDirection: 'row',
       justifyContent: 'flex-end',
+      backgroundColor: theme.BACKGROUND,
     },
     addFolderButtonText: {
       color: theme.TEXT700,

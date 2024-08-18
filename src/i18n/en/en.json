@@ -27,13 +27,13 @@
   "링크를 먼저 저장해 주세요": "Please save the link first",
   "먼저 링크를 저장해야 핀에 추가할 수 있어요. 링크 추가 버튼으로 링크를 저장해보세요.": "Try saving the link using the 'Save Link' button then add to your pins.",
   "핀에 추가되었습니다.": "Added to your pins.",
-  "휴지통으로 이동되었습니다.": "Moved to Trash.",
+  "휴지통으로 이동되었습니다": "Moved to Trash.",
   "생성한 폴더가 있으면 여기에 보여요.": "Created folders will appear here.",
   "폴더": "Folder",
   "전체보기": "View All",
   "폴더 생성": "Create Folder",
   "폴더 없는 링크": "Links Without Folders",
-  "폴더명 수정": "Edit Folder Name",
+  "폴더명 수정": "Edit Folder",
   "위로 이동": "Move Up",
   "아래로 이동": "Move Down",
   "폴더명": "Folder Name",
@@ -127,5 +127,11 @@
   "마지막에 저장되어있던 위치로 돌아가요.": "Restore to the last saved location.",
   "영구 삭제 하시겠어요?": "Are you sure you want to delete permanently?",
   "휴지통에서 삭제된 링크는 복원할 수 없어요": "Links deleted from the Trash cannot be restored.",
-  "로딩 중...": "Loading..."
+  "로딩 중...": "Loading...",
+  "기본 폴더": "Default Folder",
+  "삭제 신청이 접수되었습니다": "Your deletion request has been received.",
+  "삭제 신청이 취소되었습니다": "Your deletion request has been canceled.",
+  "수정되었습니다": "Saved",
+  "생성되었습니다": "Created",
+  "제목을 입력해주세요.": "Please enter a title."
 }

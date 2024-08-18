@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, Text, StyleSheet, Pressable} from 'react-native';
 import Modal from 'react-native-modal';
+import {useTranslation} from 'react-i18next';
 import {useThemeStore} from '@/store/useThemeStore'; // 테마 관련 스토어 사용
 import {type ITheme} from '@/types'; // ITheme 타입 정의
 import {FONTS} from '@/constants';
@@ -22,6 +23,7 @@ const NoticeModal = ({
 }: CustomModalProps) => {
   const {theme} = useThemeStore();
   const styles = createStyles(theme);
+  const {t} = useTranslation();
 
   return (
     <Modal
@@ -34,11 +36,11 @@ const NoticeModal = ({
       hideModalContentWhileAnimating={true}
       style={styles.modal}>
       <View style={styles.modalContainer}>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.description}>{description}</Text>
+        <Text style={styles.title}>{t(title)}</Text>
+        <Text style={styles.description}>{t(description)}</Text>
       </View>
       <Pressable style={styles.button} onPress={onClick ?? onClose}>
-        <Text style={styles.buttonText}>확인</Text>
+        <Text style={styles.buttonText}>{t('확인')}</Text>
       </Pressable>
     </Modal>
   );

@@ -179,7 +179,7 @@ const SmallCard = ({
         icon: <DeleteIcon />,
         onSelect: () => {
           moveLinkToTrash(String(content.id));
-          showToast(TOAST_MESSAGE.DELETE_SUCCESS);
+          showToast(t(TOAST_MESSAGE.DELETE_SUCCESS));
           closeDropdown();
         },
       },

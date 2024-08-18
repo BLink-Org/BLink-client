@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {FONTS} from '@/constants';
 import DropdownFilter from '@/components/home/DropDownFilter';
 import {LargeCardIcon, SmallCardIcon} from '@/assets/icons/home';
@@ -27,11 +28,12 @@ const ListHeaderComponent = ({
 }: ListHeaderComponentProps) => {
   const {theme} = useThemeStore();
   const styles = createStyles(theme);
+  const {t} = useTranslation();
 
   return (
     <>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>{selectedFolderName}</Text>
+        <Text style={styles.title}>{t(selectedFolderName)}</Text>
       </View>
       <View style={styles.filterContainer}>
         <Text style={styles.linkCount}>{linkCount} Links</Text>

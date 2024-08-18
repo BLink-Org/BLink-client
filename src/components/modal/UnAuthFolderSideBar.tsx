@@ -10,6 +10,7 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useTranslation} from 'react-i18next';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {BackIcon, ForwardIcon} from '@/assets/icons/modal';
@@ -34,6 +35,7 @@ const UnAuthFolderSideBar = ({
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const insets = useSafeAreaInsets();
+  const {t} = useTranslation();
 
   const [visible, setVisible] = useState(isSideBarVisible);
 
@@ -88,7 +90,7 @@ const UnAuthFolderSideBar = ({
           <BackIcon width={26} height={26} fill={theme.TEXT900} />
         </TouchableOpacity>
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>폴더</Text>
+          <Text style={styles.title}>{t('폴더')}</Text>
         </View>
         <View style={styles.detailContainer}>
           <Text style={styles.linkCount}>{1 + ' Links'}</Text>
@@ -98,13 +100,14 @@ const UnAuthFolderSideBar = ({
               setSelectedFolderId([]);
               toggleSideBar();
             }}>
-            <Text style={styles.totalButtonText}>전체보기</Text>
+            <Text style={styles.totalButtonText}>{t('전체보기')}</Text>
+
             <ForwardIcon fill={theme.TEXT700} />
           </TouchableOpacity>
         </View>
 
         <View style={styles.folderContainer}>
-          <Text style={styles.folderText}>기본 폴더</Text>
+          <Text style={styles.folderText}>{t('기본 폴더')}</Text>
           <View style={styles.rightSpace}>
             <Text style={styles.folderText}>1</Text>
             <ThreeDotIcon fill={theme.TEXT300} />

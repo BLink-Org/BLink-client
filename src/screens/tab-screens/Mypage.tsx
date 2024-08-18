@@ -58,9 +58,9 @@ const MyPage = () => {
   useEffect(() => {
     if (!route.params?.toastState) return;
     if (route.params?.toastState === 'delete') {
-      showToast(TOAST_MESSAGE.DELETE_ACCOUNT);
+      showToast(t(TOAST_MESSAGE.DELETE_ACCOUNT));
     } else if (route.params?.toastState === 'cancel') {
-      showToast(TOAST_MESSAGE.DELETE_ACCOUNT_CANCEL);
+      showToast(t(TOAST_MESSAGE.DELETE_ACCOUNT_CANCEL));
     }
     navigation.setParams({toastState: null});
   }, [route.params?.toastState]);

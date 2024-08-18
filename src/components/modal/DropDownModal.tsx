@@ -7,6 +7,7 @@ import {
 } from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Platform} from 'react-native';
 import Modal from 'react-native-modal';
+import {useTranslation} from 'react-i18next';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {type ITheme} from '@/types';
@@ -32,6 +33,7 @@ const DropDownModal = ({
 }: DropDownModalProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {t} = useTranslation();
 
   const [isModalVisible, setIsVisible] = useState(isVisible);
   useEffect(() => {
@@ -89,7 +91,7 @@ const DropDownModal = ({
                         : theme.TEXT800,
                   },
                 ]}>
-                {option.label}
+                {t(option.label)}
               </Text>
             </TouchableOpacity>
           ))}

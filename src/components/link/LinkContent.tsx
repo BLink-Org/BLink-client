@@ -7,6 +7,7 @@ import {
   View,
 } from 'react-native';
 import {useQueryClient} from '@tanstack/react-query';
+import {useTranslation} from 'react-i18next';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {isValidUrl} from '@/utils/url-utils';
@@ -29,6 +30,7 @@ interface FolderSideBarProps {
 const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {t} = useTranslation();
   const {data: useFolderData} = useFolders();
 
   const [textInput, setTextInput] = useState<string | undefined>(defaultURL);
@@ -56,7 +58,8 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
     },
     onError: (error: any) => {
       if (error.response.data.code === 2600) {
-        setErrorMessage('이미 저장된 링크입니다');
+        setErrorMessage(t('이미 저장된 링크입니다.'));
+
         setIsReadyToSave(false);
       }
     },
@@ -72,7 +75,8 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
 
   useEffect(() => {
     if (textInput && !isValidUrl(textInput)) {
-      setErrorMessage('입력한 링크를 찾을 수 없습니다');
+      setErrorMessage(t('입력한 링크를 찾을 수 없습니다.'));
+
       setIsReadyToSave(false);
     } else {
       setErrorMessage('');
@@ -87,7 +91,7 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
   return (
     <>
       <BottomSheet
-        modalTitle="폴더 생성"
+        modalTitle={t('폴더 생성')}
         isBottomSheetVisible={isFolderBottomSheetVisible}
         toggleBottomSheet={toggleFolderBottomSheet}>
         <FolderContent
@@ -100,12 +104,12 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
       <SafeAreaView
         style={[styles.contentContainer, {marginBottom: buttonHeight}]}>
         <TextInputGroup
-          inputTitle="링크"
-          placeholder="링크를 입력해주세요."
+          inputTitle={t('링크')}
+          placeholder={t('링크를 입력해주세요.')}
           {...{textInput, setTextInput, errorMessage}}
         />
         <View style={styles.folderTitle}>
-          <Text style={styles.folderTitleText}>폴더</Text>
+          <Text style={styles.folderTitleText}>{t('폴더')}</Text>
           <TouchableOpacity
             style={styles.addContainer}
             onPress={toggleFolderBottomSheet}>
@@ -120,7 +124,7 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
         </View>
       </SafeAreaView>
       <CustomBottomButton
-        title="저장"
+        title={t('저장')}
         onPress={() => {
           textInput &&
             createLink({
