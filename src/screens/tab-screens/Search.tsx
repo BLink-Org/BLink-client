@@ -11,6 +11,7 @@ import {
   Image,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import {useTranslation} from 'react-i18next';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import {useThemeStore} from '@/store/useThemeStore';
 import SmallCard from '@/components/home/SmallCard';
@@ -33,6 +34,7 @@ import CustomStatusBar from '@/components/common/CustomStatusBar';
 const SearchPage = () => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {t} = useTranslation();
 
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [finalSearchQuery, setFinalSearchQuery] = useState<string>('');
@@ -143,7 +145,7 @@ const SearchPage = () => {
               resizeMode="contain"
             />
             <Text style={styles.noExistText}>
-              조건에 맞는 검색 결과가 없어요.
+              {t('조건에 맞는 검색 결과가 없어요.')}
             </Text>
           </View>
         </View>
@@ -220,7 +222,7 @@ const createStyles = (theme: ITheme) =>
     },
     contentContainer: {
       paddingHorizontal: 18,
-      paddingBottom: 80,
+      paddingBottom: 30,
     },
     separator: {
       height: 1,

@@ -1,6 +1,7 @@
 import {useMemo} from 'react';
 import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import {useTranslation} from 'react-i18next';
 import BackHeader from '@/components/common/BackHeader';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import {useThemeStore} from '@/store/useThemeStore';
@@ -13,6 +14,8 @@ import {useUserInfo} from '@/api/hooks/useUser';
 const AccountManage = () => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {t} = useTranslation();
+
   const {data: userInfoData} = useUserInfo();
   const navigation = useNavigation<RootStackNavigationProp>();
 
@@ -24,14 +27,16 @@ const AccountManage = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ThemeBackground />
-      <BackHeader title="계정 관리" themeColor={theme.TEXT900} />
+      <BackHeader title={t('계정 관리')} themeColor={theme.TEXT900} />
+
       <View style={styles.contentContainer}>
         <View style={styles.bodyContainer}>
-          <Text style={styles.loginText}>로그인 한 계정</Text>
+          <Text style={styles.loginText}>{t('로그인 한 계정')}</Text>
+
           <Text style={styles.emailText}>{userInfoData?.email}</Text>
         </View>
         <NavigationInfo
-          title="계정 삭제 신청"
+          title={t('계정 삭제 신청')}
           themeColor={theme.TEXT800}
           onPress={handleAccountDelete}
         />

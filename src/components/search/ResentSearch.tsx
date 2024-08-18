@@ -7,6 +7,7 @@ import {
   type ListRenderItem,
   Image,
 } from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import DeleteCard from '@/components/search/DeleteCard';
@@ -20,6 +21,7 @@ interface RecentSearchProps {
 const RecentSearch = ({recentSearches, onDelete}: RecentSearchProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {t} = useTranslation();
 
   const renderItem: ListRenderItem<ILinkDtos> = useCallback(
     ({item, index}) => (
@@ -47,7 +49,7 @@ const RecentSearch = ({recentSearches, onDelete}: RecentSearchProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.headerText}>
-        <Text style={styles.headerTitle}>최근 확인한 링크</Text>
+        <Text style={styles.headerTitle}>{t('최근 확인한 링크')}</Text>
       </View>
       <FlatList
         data={recentSearches}

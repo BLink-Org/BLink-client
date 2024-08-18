@@ -1,6 +1,7 @@
 import {useMemo} from 'react';
 import {Pressable, StyleSheet, Text, View} from 'react-native';
 import Modal from 'react-native-modal';
+import {useTranslation} from 'react-i18next';
 import {useModalStore} from '@/store/useModalStore';
 import {useThemeStore} from '@/store/useThemeStore';
 import {FONTS} from '@/constants';
@@ -26,6 +27,7 @@ const AlertModal = ({
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const {modals, closeModal} = useModalStore();
+  const {t} = useTranslation();
 
   return (
     <Modal
@@ -38,17 +40,17 @@ const AlertModal = ({
       style={styles.modalContainer}>
       <View style={styles.modalContent}>
         <View style={styles.textContainer}>
-          <Text style={styles.headerText}>{headerText}</Text>
-          <Text style={styles.bodyText}>{bodyText}</Text>
+          <Text style={styles.headerText}>{t(headerText)}</Text>
+          <Text style={styles.bodyText}>{t(bodyText)}</Text>
         </View>
         <View style={styles.buttonContainer}>
           <Pressable
             onPress={() => closeModal(modalId)}
             style={styles.leftButton}>
-            <Text style={styles.buttonText}>{leftText}</Text>
+            <Text style={styles.buttonText}>{t(leftText)}</Text>
           </Pressable>
           <Pressable onPress={rightOnPress} style={styles.rightButton}>
-            <Text style={styles.buttonText}>{rightText}</Text>
+            <Text style={styles.buttonText}>{t(rightText)}</Text>
           </Pressable>
         </View>
       </View>
@@ -65,7 +67,7 @@ const createStyles = (theme: ITheme) =>
       alignItems: 'center',
     },
     modalContent: {
-      width: 300,
+      width: 320,
       borderRadius: 12,
       overflow: 'hidden',
     },
@@ -80,6 +82,7 @@ const createStyles = (theme: ITheme) =>
     headerText: {
       color: theme.TEXT900,
       ...FONTS.BODY1_SEMIBOLD,
+      textAlign: 'center',
     },
     bodyText: {
       color: theme.TEXT600,

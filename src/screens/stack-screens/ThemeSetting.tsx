@@ -1,6 +1,7 @@
 import React, {useEffect, useState, useMemo} from 'react';
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useTranslation} from 'react-i18next';
 import {useThemeStore} from '@/store/useThemeStore';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import BackHeader from '@/components/common/BackHeader';
@@ -13,6 +14,7 @@ import {THEME_INFOS} from '@/constants/theme';
 const ThemeSetting = () => {
   const {theme, setTheme, asyncSetTheme, getSavedTheme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {t} = useTranslation();
 
   const [selectedThemeId, setSelectedThemeId] = useState<number>(1);
 
@@ -45,8 +47,9 @@ const ThemeSetting = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ThemeBackground />
-      <BackHeader title="테마" themeColor={theme.TEXT900} />
+      <BackHeader title={t('테마')} themeColor={theme.TEXT900} />
       <View style={styles.contentContainer}>
+        {/* 한국어 영어 둘다 영어처리 */}
         <Text style={styles.templateText}>3 templates</Text>
       </View>
       <FlatList

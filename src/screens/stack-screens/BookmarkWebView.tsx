@@ -3,6 +3,7 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {WebView, type WebViewNavigation} from 'react-native-webview';
+import {useTranslation} from 'react-i18next';
 import {FONTS} from '@/constants';
 import {extractHostname, shareUrl} from '@/utils/url-utils';
 import {type ITheme} from '@/types';
@@ -13,7 +14,7 @@ import {
   useToggleBookmarkLinkPin,
   useViewLink,
 } from '@/api/hooks/useLink';
-import NavigationButton from '@/components/webview/NavigationButton';
+import NavigationButton from '@/components/common/NavigationButton';
 import {
   ArrowBackIcon,
   RefreshIcon,
@@ -31,6 +32,8 @@ const BookmarkWebView = () => {
   const navigation = useNavigation();
   const webViewRef = useRef<WebView>(null);
   const {theme} = useThemeStore();
+  const {t} = useTranslation();
+
   const styles = useMemo(() => createStyles(theme), [theme]);
 
   const route = useRoute();
@@ -185,7 +188,7 @@ const BookmarkWebView = () => {
         <NavigationButton
           onPress={goBack}
           disabled={currentIndex === 0}
-          label="이전 링크"
+          label={t('이전 링크')}
         />
         <NavigationButton
           onPress={handleGoForward}
@@ -193,7 +196,7 @@ const BookmarkWebView = () => {
             (!hasNextPage && currentIndex === linkList.length - 1) ||
             isFetchingNextPage
           }
-          label={isFetchingNextPage ? '로딩 중...' : '다음 링크'}
+          label={isFetchingNextPage ? t('로딩 중...') : t('다음 링크')}
         />
       </View>
 
@@ -228,12 +231,14 @@ const BookmarkWebView = () => {
       <NoticeModal
         isVisible={isNoticeModalVisible}
         onClose={() => setIsNoticeModalVisible(false)}
-        title="이미 저장된 링크예요"
-        description="다른 페이지로 이동했을 때 클릭해서 새로운 링크를 빠르게 저장해보세요"
+        title={t('이미 저장된 링크예요')}
+        description={t(
+          '다른 페이지로 이동했을 때 클릭해서 새로운 링크를 빠르게 저장해보세요',
+        )}
       />
       {/* 링크 저장모달 */}
       <BottomSheet
-        modalTitle="링크 저장"
+        modalTitle={t('링크 저장')}
         {...{isBottomSheetVisible, toggleBottomSheet}}>
         <LinkContent
           defaultURL={webViewUrl ?? ''}

@@ -1,6 +1,7 @@
 import {useMemo, useRef, useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useQueryClient} from '@tanstack/react-query';
+import {useTranslation} from 'react-i18next';
 import {DownIcon, EditIcon, UpIcon} from '@/assets/icons/modal';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
@@ -37,6 +38,7 @@ const FolderButton = ({
 }: FolderButtonProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {t} = useTranslation();
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const closeDropdown = () => setIsDropdownOpen(false);
@@ -52,7 +54,7 @@ const FolderButton = ({
   const {mutate: deleteFolder} = useDeleteFolder({
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: ['folders']});
-      showToast(TOAST_MESSAGE.DELETE_SUCCESS);
+      showToast(t(TOAST_MESSAGE.DELETE_SUCCESS));
     },
   });
 
@@ -71,7 +73,7 @@ const FolderButton = ({
   const folderOptions = useMemo(
     () => [
       {
-        label: '폴더명 수정',
+        label: t('폴더명 수정'),
         icon: <PencilIcon />,
         onSelect: () => {
           closeDropdown();
@@ -79,7 +81,7 @@ const FolderButton = ({
         },
       },
       {
-        label: '위로 이동',
+        label: t('위로 이동'),
         icon: <UpIcon />,
         onSelect: () => {
           closeDropdown();
@@ -87,7 +89,7 @@ const FolderButton = ({
         },
       },
       {
-        label: '아래로 이동',
+        label: t('아래로 이동'),
         icon: <DownIcon />,
         onSelect: () => {
           closeDropdown();
@@ -95,7 +97,7 @@ const FolderButton = ({
         },
       },
       {
-        label: '삭제',
+        label: t('삭제'),
         icon: <DeleteIcon />,
         onSelect: () => {
           showModal(modalId);
@@ -139,7 +141,7 @@ const FolderButton = ({
         ]}
         onPress={onPress}>
         <View style={styles.infoContainer}>
-          <Text style={styles.nameText}>{name ?? '폴더 없는 링크'}</Text>
+          <Text style={styles.nameText}>{name ?? t('폴더 없는 링크')}</Text>
           {number !== undefined ? (
             <View style={styles.detailContainer}>
               <Text style={styles.numberText}>{number}</Text>
@@ -167,10 +169,12 @@ const FolderButton = ({
       {/* alertModal 처리 */}
       <AlertModal
         modalId={modalId}
-        headerText="폴더 속 링크도 삭제됩니다."
-        bodyText="링크가 다른 폴더에도 저장되어 있었다면 그 폴더에서는 삭제되지 않아요."
-        leftText="취소"
-        rightText="삭제"
+        headerText={t('폴더 속 링크도 삭제됩니다')}
+        bodyText={t(
+          '링크가 다른 폴더에도 저장되어 있었다면 그 폴더에서는 삭제되지 않아요.',
+        )}
+        leftText={t('취소')}
+        rightText={t('삭제')}
         rightOnPress={handleConfirmSelect}
       />
     </>

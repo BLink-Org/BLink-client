@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {calculateByteLength} from '@/utils/link-utils';
 import TextInputGroup from '@/components/common/TextInputGroup';
 import CustomBottomButton from '@/components/common/CustomBottomButton';
@@ -18,6 +19,7 @@ const TitleContent = ({
   updateTitle,
   linkId,
 }: TitleContentProps) => {
+  const {t} = useTranslation();
   const [textInput, setTextInput] = useState<string | undefined>(defaultText);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isByteCountVisible, setIsByteCountVisible] = useState<boolean>(true);
@@ -46,14 +48,14 @@ const TitleContent = ({
     <>
       <View style={styles.contentContainer}>
         <TextInputGroup
-          inputTitle="제목"
-          placeholder="제목을 입력해주세요"
+          inputTitle={t('제목')}
+          placeholder={t('제목을 입력해주세요.')}
           isUpdateTitle={true}
           {...{textInput, setTextInput, errorMessage, isByteCountVisible}}
         />
       </View>
       <CustomBottomButton
-        title="저장"
+        title={t('저장')}
         onPress={handleSave}
         isDisabled={!isReadyToSave}
       />

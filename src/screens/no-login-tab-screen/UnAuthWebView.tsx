@@ -3,11 +3,12 @@ import {useNavigation} from '@react-navigation/native';
 import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {WebView, type WebViewNavigation} from 'react-native-webview';
+import {useTranslation} from 'react-i18next';
 import {FONTS} from '@/constants';
 import {extractHostname, shareUrl} from '@/utils/url-utils';
 import {type RootStackNavigationProp, type ITheme} from '@/types';
 import {useThemeStore} from '@/store/useThemeStore';
-import NavigationButton from '@/components/webview/NavigationButton';
+import NavigationButton from '@/components/common/NavigationButton';
 import {
   ArrowBackIcon,
   RefreshIcon,
@@ -17,13 +18,14 @@ import {
   ContentFrontIcon,
 } from '@/assets/icons/webview';
 import {PinnedIcon} from '@/assets/icons/bottom-tab';
-import NoticeModal from '@/components/modal/NoticeModal';
 import DummyData from '@/constants/unauth-default-data.json';
 import LoginModal from '@/components/modal/LoginModal';
 
 const UnAuthWebView = () => {
   const webViewRef = useRef<WebView>(null);
   const {theme} = useThemeStore();
+  const {t} = useTranslation();
+
   const styles = useMemo(() => createStyles(theme), [theme]);
 
   const currentUrl = DummyData[0].url;
@@ -110,11 +112,15 @@ const UnAuthWebView = () => {
         />
       )}
       <View style={styles.backForwardButton}>
-        <NavigationButton onPress={goBack} disabled={true} label="이전 링크" />
+        <NavigationButton
+          onPress={goBack}
+          disabled={true}
+          label={t('이전 링크')}
+        />
         <NavigationButton
           onPress={handleGoForward}
           disabled={true}
-          label={'다음 링크'}
+          label={t('다음 링크')}
         />
       </View>
 

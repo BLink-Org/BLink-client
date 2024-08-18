@@ -1,5 +1,6 @@
 import {useMemo} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {DeleteIcon} from '@/assets/icons/common';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
@@ -13,15 +14,16 @@ interface LargeCardProps {
 const DeleteCard = ({content, onDelete}: LargeCardProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {t} = useTranslation();
 
   return (
     <View style={styles.container}>
       <View style={styles.leftContainer}>
         <Text style={styles.folderText}>
-          {content.folderName ?? '폴더 없는 링크'}
+          {content.folderName ?? t('폴더 없는 링크')}
         </Text>
         <Text style={styles.titleText} numberOfLines={1} ellipsizeMode="tail">
-          {content.title === '' ? '제목 없음' : content.title}
+          {content.title === '' ? t('제목이 없는 링크입니다.') : content.title}
         </Text>
       </View>
       <TouchableOpacity style={styles.rightContainer} onPress={onDelete}>
