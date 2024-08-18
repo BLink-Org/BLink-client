@@ -71,6 +71,6 @@ const createStyles = (theme: ITheme) =>
     },
     searchIcon: {
       position: 'absolute',
-      right: 16,
+      right: 32,
     },
   });

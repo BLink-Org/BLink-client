@@ -7,7 +7,12 @@ import {FONTS} from '@/constants';
 import {extractHostname, shareUrl} from '@/utils/url-utils';
 import {type ITheme} from '@/types';
 import {useThemeStore} from '@/store/useThemeStore';
-import {useLinks, useToggleLinkPin} from '@/api/hooks/useLink';
+import {
+  useCheckLinkExist,
+  useLinks,
+  useToggleLinkPin,
+  useViewLink,
+} from '@/api/hooks/useLink';
 import NavigationButton from '@/components/webview/NavigationButton';
 import {
   ArrowBackIcon,
@@ -20,6 +25,7 @@ import {
 import BottomSheet from '@/components/modal/BottomSheet';
 import LinkContent from '@/components/link/LinkContent';
 import {PinnedIcon} from '@/assets/icons/bottom-tab';
+import NoticeModal from '@/components/modal/NoticeModal';
 
 const WebViewList = () => {
   const navigation = useNavigation();
@@ -43,11 +49,14 @@ const WebViewList = () => {
 
   const [currentIndex, setCurrentIndex] = useState<number>(initialIndex);
   const [currentUrl, setCurrentUrl] = useState<string | null>(null); // 현재 링크 목록
+  const previousIndexRef = useRef<number | null>(null); // 링크를 이동하였는지 확인하기 위한 ref
   const [webViewKey, setWebViewKey] = useState<number>(0); // 웹뷰 리렌더링용 키
   const [canGoBack, setCanGoBack] = useState<boolean>(false);
   const [canGoForward, setCanGoForward] = useState<boolean>(false);
   const [webViewUrl, setWebViewUrl] = useState<string | null>(null); // 웹뷰 URL
+  const [isNoticeModalVisible, setIsNoticeModalVisible] = useState(false); // 링크 저장 유효성 검사 noticeModal
 
+  // 데이터
   const {
     data: linkData,
     fetchNextPage,
@@ -55,7 +64,25 @@ const WebViewList = () => {
     isFetchingNextPage,
   } = useLinks(linkInfoArgsOptions);
 
+  // Pin on/off
   const {mutate: togglePin} = useToggleLinkPin(linkInfoArgsOptions);
+
+  // // 링크 최근 검색 업데이트
+  const {mutate: viewLink} = useViewLink();
+
+  // 링크 중복 검사
+  const {mutate: existsCheck} = useCheckLinkExist({
+    onSuccess: (result: boolean) => {
+      if (!result) {
+        setIsBottomSheetVisible(!isBottomSheetVisible);
+      } else {
+        setIsNoticeModalVisible(true);
+      }
+    },
+    onError: () => {
+      console.error('Error checking link duplication');
+    },
+  });
 
   const linkList = linkData?.pages.flatMap(page => page.linkDtos) ?? [];
   const currentLink = linkList[currentIndex];
@@ -66,6 +93,13 @@ const WebViewList = () => {
       setCurrentUrl(currentLink.url);
     }
   }, [linkList, currentIndex]);
+
+  useEffect(() => {
+    if (currentLink?.id && previousIndexRef.current !== currentIndex) {
+      viewLink(String(currentLink.id)); // 링크 조회 Patch
+      previousIndexRef.current = currentIndex;
+    }
+  }, [currentIndex, currentLink?.id, viewLink]);
 
   const handleNavigationStateChange = (navState: WebViewNavigation) => {
     // 뒤로가기, 앞으로가기 버튼 상태 업데이트
@@ -129,7 +163,9 @@ const WebViewList = () => {
   // 링크 저장
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
   const toggleBottomSheet = () => {
-    setIsBottomSheetVisible(!isBottomSheetVisible);
+    if (webViewUrl) {
+      existsCheck(webViewUrl);
+    }
   };
 
   return (
@@ -198,6 +234,14 @@ const WebViewList = () => {
           <SaveIcon fill={theme.TEXT900} />
         </TouchableOpacity>
       </View>
+
+      {/* NoticeModal(링크 중복 검사 엣지케이스 시 모달) */}
+      <NoticeModal
+        isVisible={isNoticeModalVisible}
+        onClose={() => setIsNoticeModalVisible(false)}
+        title="이미 저장된 링크예요"
+        description="다른 페이지로 이동했을 때 클릭해서 새로운 링크를 빠르게 저장해보세요"
+      />
       {/* 링크 저장모달 */}
       <BottomSheet
         modalTitle="링크 저장"
