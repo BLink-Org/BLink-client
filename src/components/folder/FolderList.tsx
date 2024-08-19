@@ -103,6 +103,7 @@ const FolderList = ({
                 id={item.id}
                 name={item.title}
                 number={isMultipleSelection ? undefined : item.linkCount}
+                recent={item.recent}
                 variants={
                   selectedFolderId?.includes(item.id) ? 'pressed' : 'default'
                 }
