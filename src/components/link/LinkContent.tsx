@@ -163,7 +163,12 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
               <Text style={styles.clipboardTitle}>
                 {t('클립보드에 복사된 링크가 있어요.')}
               </Text>
-              <TouchableOpacity onPress={() => setIsClipboardShown(false)}>
+              <TouchableOpacity
+                onPress={() => {
+                  setIsClipboardShown(false);
+                  // 이벤트 추적
+                  trackEvent('Link_Easy_Paste_Cancel');
+                }}>
                 <DeleteIcon fill={theme.TEXT600} width={20} height={20} />
               </TouchableOpacity>
             </View>
@@ -181,6 +186,8 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
                 onPress={() => {
                   setTextInput(clipboardContent);
                   setIsClipboardShown(false);
+                  // 이벤트 추적
+                  trackEvent('Link_Easy_Paste_Usage');
                 }}>
                 <Text style={styles.pasteText}>{t('붙여넣기')}</Text>
               </TouchableOpacity>
