@@ -63,6 +63,13 @@ const LargeCard = ({
   const toggleTitleBottomSheet = () => {
     setIsTitleBottomSheetVisible(!isTitleBottomSheetVisible);
   };
+  const handleTitleUpdate = () => {
+    setIsTitleBottomSheetVisible(!isTitleBottomSheetVisible);
+    trackEvent('Link_Title_Edited', {
+      Link_ID: content.id,
+    });
+    console.log('Link_Title_Edited');
+  };
 
   // 폴더 이동 바텀시트 모달 관리
   const [isFolderBottomSheetVisible, setIsFolderBottomSheetVisible] =
@@ -118,6 +125,9 @@ const LargeCard = ({
           moveLinkToTrash(String(content.id));
           showToast(t(TOAST_MESSAGE.DELETE_SUCCESS));
           closeDropdown();
+          trackEvent('Link_Deleted', {
+            Link_ID: content.id,
+          });
         },
       },
     ],
@@ -226,7 +236,7 @@ const LargeCard = ({
         toggleBottomSheet={toggleTitleBottomSheet}>
         <TitleContent
           defaultText={content.title}
-          toggleBottomSheet={toggleTitleBottomSheet}
+          toggleBottomSheet={handleTitleUpdate}
           updateTitle={updateTitle}
           linkId={content.id}
         />
