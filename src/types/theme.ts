@@ -1,8 +1,9 @@
+import {type ImageSourcePropType} from 'react-native';
 import {type SvgProps} from 'react-native-svg';
 
 export interface ITheme {
   BACKGROUND_IMAGE: React.FC<SvgProps>;
-  BIG_CARD_IMAGE: React.FC<SvgProps>;
+  BIG_CARD_IMAGE: ImageSourcePropType;
   SMALL_CARD_IMAGE: React.FC<SvgProps>;
   BACKGROUND: string;
   TEXT100: string;
