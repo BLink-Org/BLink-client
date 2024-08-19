@@ -161,6 +161,9 @@ const SmallCard = ({
     }
     if (label === '복원') {
       recoverLink(String(selectedId));
+      trackEvent('Link_Restored', {
+        Link_ID: content.id,
+      });
     }
     closeModal(modalId);
   };

@@ -5,6 +5,7 @@ import {FONTS} from '@/constants';
 import {SearchIcon} from '@/assets/icons/search';
 import {useThemeStore} from '@/store/useThemeStore';
 import {type ITheme} from '@/types';
+import {trackEvent} from '@/utils/amplitude-utils';
 
 interface SearchHeaderProps {
   searchQuery: string;
@@ -17,6 +18,11 @@ const SearchHeader = memo(
     const {theme} = useThemeStore();
     const styles = useMemo(() => createStyles(theme), [theme]);
     const {t} = useTranslation();
+
+    // 검색 시점 분석
+    const handleFocus = () => {
+      trackEvent('Search_Bar_Activated', {location: 'search'});
+    };
 
     return (
       // <View style={styles.searchContainer, {backgroundColor: theme.THEME_NUMBER === 3 ? theme.MAIN200 : theme.BACKGROUND}}>
@@ -35,6 +41,7 @@ const SearchHeader = memo(
           placeholder={t('전체에서 검색')}
           placeholderTextColor={theme.TEXT300}
           onSubmitEditing={handleSearchSubmit}
+          onFocus={handleFocus} // 포커스 이벤트
           autoFocus={true} // 자동 포커스
           returnKeyType="done" // 키보드 '완료' 버튼을 표시
         />

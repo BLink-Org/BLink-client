@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -30,7 +30,7 @@ import {
 import CustomLoading from '@/components/common/CustomLoading';
 import RecentSearch from '@/components/search/ResentSearch';
 import CustomStatusBar from '@/components/common/CustomStatusBar';
-import { trackEvent } from '@/utils/amplitude-utils';
+import {trackEvent} from '@/utils/amplitude-utils';
 
 const SearchPage = () => {
   const {theme} = useThemeStore();
@@ -88,6 +88,14 @@ const SearchPage = () => {
     });
     trackEvent('Link_ViewPage_Opened', {Link_Viewed_Location: 'search'});
   };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      trackEvent('Search_Page_Closed', {location: 'search'});
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const linkInfoArgsOptions = {
     query: finalSearchQuery,
