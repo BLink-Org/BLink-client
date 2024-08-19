@@ -74,6 +74,10 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
   };
 
   useEffect(() => {
+    setTextInput(defaultURL);
+  }, [defaultURL]);
+
+  useEffect(() => {
     if (textInput && !isValidUrl(textInput)) {
       setErrorMessage(t('입력한 링크를 찾을 수 없습니다.'));
 

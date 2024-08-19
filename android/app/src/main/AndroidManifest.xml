@@ -20,12 +20,18 @@
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
+        <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+        </intent-filter>
       </activity>
       
       <activity
             android:name="com.blinkapplication.ShareActivity"
             android:windowSoftInputMode="adjustNothing"
-            android:theme="@style/Theme.AppCompat.Dialog"
+            android:theme="@style/AppTheme"
+            android:launchMode="singleTop"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -38,5 +44,6 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
       </activity>
+    
     </application>
 </manifest>

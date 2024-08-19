@@ -1,5 +1,10 @@
-import {useEffect} from 'react';
-import {NativeModules, Platform} from 'react-native';
+import {useEffect, useState} from 'react';
+import {
+  NativeModules,
+  Platform,
+  Linking,
+  DeviceEventEmitter,
+} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import * as RNLocalize from 'react-native-localize';
@@ -15,20 +20,69 @@ import {AMPLITUDE_API_KEY} from '@env';
 import GlobalNavigationUnauthenticated from '@/components/navigation/GlobalNavigationUnauthenticated';
 
 interface AppProps {
-  sharedText: string;
+  sharedURL: string;
 }
 
 const queryClient = new QueryClient();
 
 export default function App(props: AppProps) {
   const restoreTheme = useThemeStore(state => state.restoreTheme);
-  const {ShareMenu} = NativeModules;
   const isAuthenticated = useUserStore(state => state.isAuthenticated);
   console.log(
     '🚀 ~ file: App.tsx:26 ~ App ~ isAuthenticated:',
     isAuthenticated,
   );
   const loadTokens = useUserStore(state => state.loadTokens);
+
+  const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+  // [iOS & Android] 앱 첫 실행 시 props로 sharedURL 전달
+  const [sharedURL, setSharedURL] = useState<string>(props.sharedURL || '');
+
+  // sharedURL 변경 시 바텀 시트 노출
+  useEffect(() => {
+    if (sharedURL) {
+      setIsBottomSheetVisible(true);
+    }
+  }, [sharedURL]);
+
+  // [Android] 앱 포그라운드 전환 시 sharedURL 저장
+  useEffect(() => {
+    // URL 공유 이벤트 리스닝
+    const urlListener = DeviceEventEmitter.addListener(
+      'UrlShared',
+      (url: string) => {
+        setSharedURL(url);
+      },
+    );
+
+    // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
+    return () => {
+      urlListener.remove();
+    };
+  }, []);
+
+  // [iOS] 앱 포그라운드 전환 시 sharedURL 저장
+  useEffect(() => {
+    if (props.sharedURL) {
+      setSharedURL(props.sharedURL);
+    }
+    const handleDeepLink = (event: {url: string}) => {
+      const url = event.url;
+      if (url) {
+        setSharedURL(url.split('sharedURL=')[1]);
+      }
+    };
+
+    const linkingListener = Linking.addEventListener('url', handleDeepLink);
+
+    Linking.getInitialURL().then(url => {
+      if (url) handleDeepLink({url});
+    });
+
+    return () => {
+      linkingListener.remove();
+    };
+  }, []);
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -52,17 +106,6 @@ export default function App(props: AppProps) {
 
         // 이벤트 추적
         trackEvent('App Opened');
-
-        // 공유 텍스트 데이터 처리
-        if (Platform.OS === 'ios') {
-          console.log('share extension text:', props.sharedText);
-        } else {
-          ShareMenu.getSharedText((sharedData: string) => {
-            if (sharedData) {
-              console.log('Received shared data:', sharedData);
-            }
-          });
-        }
       } catch (error) {
         console.error('Initialization error:', error);
       } finally {
@@ -83,7 +126,12 @@ export default function App(props: AppProps) {
       <SafeAreaProvider>
         <NavigationContainer key={isAuthenticated ? 'auth-true' : 'auth-false'}>
           {isAuthenticated ? (
-            <GlobalNavigation />
+            <GlobalNavigation
+              sharedURL={sharedURL}
+              setSharedURL={setSharedURL}
+              isBottomSheetVisible={isBottomSheetVisible}
+              setIsBottomSheetVisible={setIsBottomSheetVisible}
+            />
           ) : (
             <GlobalNavigationUnauthenticated />
           )}

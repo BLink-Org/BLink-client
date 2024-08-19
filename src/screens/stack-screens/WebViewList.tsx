@@ -254,7 +254,7 @@ const WebViewList = () => {
         {...{isBottomSheetVisible, toggleBottomSheet}}>
         <LinkContent
           defaultURL={webViewUrl ?? ''}
-          toggleBottomSheet={toggleBottomSheet}
+          toggleBottomSheet={() => setIsBottomSheetVisible(false)}
         />
       </BottomSheet>
     </SafeAreaView>
