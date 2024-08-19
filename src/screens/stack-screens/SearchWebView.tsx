@@ -180,7 +180,7 @@ const SearchWebView = () => {
 
   // 링크 저장 토글 클릭 이벤트
   const toggleBottomSheetEvent = () => {
-    setIsBottomSheetVisible(!isBottomSheetVisible);
+    setIsBottomSheetVisible(false);
     trackEvent('Link_Saved_form', {Link_Saved_Location: 'in-webview'});
   };
 
@@ -274,7 +274,7 @@ const SearchWebView = () => {
         {...{isBottomSheetVisible, toggleBottomSheet}}>
         <LinkContent
           defaultURL={webViewUrl ?? ''}
-          toggleBottomSheet={() => setIsBottomSheetVisible(false)}
+          toggleBottomSheet={toggleBottomSheetEvent}
         />
       </BottomSheet>
     </SafeAreaView>

@@ -37,10 +37,6 @@ const UnAuthLargeCard = ({content}: LargeCardProps) => {
   const navigation = useNavigation<RootStackNavigationProp>();
   const {t} = useTranslation();
 
-  const CardImage = useMemo(() => {
-    return theme.BIG_CARD_IMAGE;
-  }, [theme]);
-
   // 로그인 모달
   const [isNoticeModalVisible, setIsNoticeModalVisible] = useState(false);
 
@@ -137,7 +133,11 @@ const UnAuthLargeCard = ({content}: LargeCardProps) => {
               resizeMode="cover"
             />
           ) : (
-            <CardImage width={screenWidth} height={cardHeight} />
+            <Image
+              source={theme.BIG_CARD_IMAGE}
+              style={styles.image}
+              resizeMode="cover"
+            />
           )}
         </View>
         <View style={styles.folderTop} />

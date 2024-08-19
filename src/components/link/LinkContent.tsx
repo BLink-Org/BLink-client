@@ -89,17 +89,15 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
     onError: (error: any) => {
       if (error.response.data.code === 2600) {
         setErrorMessage(t('이미 저장된 링크입니다.'));
-
         setIsReadyToSave(false);
-      }
-      if (error.response.data.code === 2601) {
+      } else if (error.response.data.code === 2601) {
         setErrorMessage(t('입력한 링크를 찾을 수 없습니다.'));
-
         setIsReadyToSave(false);
-      }
-      if (error.response.data.code === 2607) {
+      } else if (error.response.data.code === 2607) {
         setErrorMessage(t('이미 휴지통에 존재 하는 링크 url입니다.'));
-
+        setIsReadyToSave(false);
+      } else {
+        setErrorMessage(t('링크 저장에 실패했습니다.'));
         setIsReadyToSave(false);
       }
     },
