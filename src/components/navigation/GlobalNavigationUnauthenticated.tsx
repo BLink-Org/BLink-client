@@ -13,7 +13,6 @@ import {
 } from '@/assets/icons/bottom-tab';
 import AddScreen from '@/screens/tab-screens/Add';
 import BookmarkScreen from '@/screens/tab-screens/Bookmark';
-import SearchScreen from '@/screens/tab-screens/Search';
 import {useThemeStore} from '@/store/useThemeStore';
 import {type Theme} from '@/constants/theme';
 import Onboarding from '@/screens/stack-screens/Onboarding';
@@ -24,7 +23,11 @@ import Support from '@/screens/stack-screens/Support';
 import Setting from '@/screens/stack-screens/Setting';
 import UnAuthHome from '@/screens/no-login-tab-screen/UnAuthHome';
 import UnAuthWebView from '@/screens/no-login-tab-screen/UnAuthWebView';
+import UnAuthSearch from '@/screens/no-login-tab-screen/UnAuthSearch';
 import LoginModal from '../modal/LoginModal';
+import BottomSheet from '../modal/BottomSheet';
+import LinkContent from '../link/LinkContent';
+import UnAuthLinkContent from '../link/UnAuthLinkContent';
 
 interface IconProps {
   focused: boolean;
@@ -107,8 +110,19 @@ const BottomTabNavigationUnauthenticated = () => {
     setIsNoticeModalVisible(true);
   };
 
+  // 링크 추가 add 모달
+  const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+  const toggleBottomSheet = () => {
+    setIsBottomSheetVisible(!isBottomSheetVisible);
+  };
+
   return (
     <>
+      <BottomSheet
+        modalTitle="링크 저장"
+        {...{isBottomSheetVisible, toggleBottomSheet}}>
+        <UnAuthLinkContent {...{toggleBottomSheet}} />
+      </BottomSheet>
       <LoginModal
         isVisible={isNoticeModalVisible}
         onClose={() => setIsNoticeModalVisible(false)}
@@ -159,28 +173,16 @@ const BottomTabNavigationUnauthenticated = () => {
           options={{
             tabBarIcon: AddBarIcon,
             tabBarButton: props => (
-              <TouchableOpacity
-                {...props}
-                onPress={() => {
-                  onPressLoginAlert();
-                }}
-              />
+              <TouchableOpacity {...props} onPress={toggleBottomSheet} />
             ),
           }}
         />
         <Tab.Screen
-          name="search"
-          component={SearchScreen}
+          name="UnAuthSearch"
+          component={UnAuthSearch}
           options={{
+            headerShown: false,
             tabBarIcon: ({focused}) => <SearchBarIcon {...{focused, theme}} />,
-            tabBarButton: props => (
-              <TouchableOpacity
-                {...props}
-                onPress={() => {
-                  onPressLoginAlert();
-                }}
-              />
-            ),
           }}
         />
         <Tab.Screen

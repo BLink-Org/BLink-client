@@ -69,7 +69,9 @@ const UnAuthHome = () => {
     ({item, index}) => (
       <View>
         {isLargeCard ? (
-          <UnAuthLargeCard content={item} />
+          <TouchableOpacity onPress={handleCardPress}>
+            <UnAuthLargeCard content={item} />
+          </TouchableOpacity>
         ) : (
           <TouchableOpacity onPress={handleCardPress}>
             <UnAuthSmallCard content={item} />
