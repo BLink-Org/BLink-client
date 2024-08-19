@@ -21,6 +21,7 @@ interface TextInputGroupProps {
   errorMessage: string;
   isByteCountVisible?: boolean;
   isUpdateTitle?: boolean;
+  handleFocus?: () => void;
 }
 
 const TextInputGroup = ({
@@ -31,6 +32,7 @@ const TextInputGroup = ({
   errorMessage,
   isByteCountVisible = false,
   isUpdateTitle = false,
+  handleFocus = () => {},
 }: TextInputGroupProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
@@ -50,6 +52,7 @@ const TextInputGroup = ({
             placeholderTextColor={theme.TEXT300}
             value={textInput}
             onChangeText={setTextInput}
+            onFocus={handleFocus}
           />
           <TouchableOpacity onPress={() => setTextInput(undefined)}>
             <RoundDeleteIcon fill={theme.TEXT300} />

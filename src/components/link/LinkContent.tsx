@@ -134,7 +134,6 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
 
   useEffect(() => {
     if (textInput && selectedFolderId) {
-      setIsClipboardShown(false);
       setErrorMessage('');
       setIsReadyToSave(
         !!textInput && !!selectedFolderId && selectedFolderId.length > 0,
@@ -197,6 +196,7 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
         <TextInputGroup
           inputTitle={t('링크')}
           placeholder={t('링크를 입력해주세요.')}
+          handleFocus={() => setIsClipboardShown(false)}
           {...{textInput, setTextInput, errorMessage}}
         />
         <View style={styles.folderTitle}>
