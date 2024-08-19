@@ -15,10 +15,10 @@ import {
 } from '@/types/navigation';
 import BookmarkWebView from '@/screens/stack-screens/BookmarkWebView';
 import Onboarding from '@/screens/stack-screens/Onboarding';
+import BottomSheet from '@/components/modal/BottomSheet';
+import LinkContent from '@/components/link/LinkContent';
 import {useUserStore} from '@/store/useUserStore';
 import BottomTabNavigation from './BottomTabNavigation';
-import BottomSheet from '../modal/BottomSheet';
-import LinkContent from '../link/LinkContent';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 

@@ -19,6 +19,7 @@ interface FolderButtonProps {
   variants: 'pressed' | 'activated' | 'default';
   name?: string;
   number?: number;
+  recent?: boolean;
   onPress: () => void;
   showToast?: (label: string) => void;
   handleSelect?: (label: string) => void;
@@ -31,6 +32,7 @@ const FolderButton = ({
   variants,
   name,
   number,
+  recent = false,
   onPress,
   showToast = () => {},
   handleSelect = () => {},
@@ -145,7 +147,9 @@ const FolderButton = ({
         ]}
         onPress={onPress}>
         <View style={styles.infoContainer}>
-          <Text style={styles.nameText}>{name ?? t('폴더 없는 링크')}</Text>
+          <Text style={styles.nameText} numberOfLines={1} ellipsizeMode="tail">
+            {name ?? t('폴더 없는 링크')}
+          </Text>
           {number !== undefined ? (
             <View style={styles.detailContainer}>
               <Text style={styles.numberText}>{number}</Text>
@@ -165,7 +169,11 @@ const FolderButton = ({
               )}
             </View>
           ) : (
-            <></>
+            recent && (
+              <View style={styles.recentContainer}>
+                <Text style={styles.recentText}>{t('최근 저장')}</Text>
+              </View>
+            )
           )}
         </View>
       </TouchableOpacity>
@@ -213,10 +221,23 @@ const createStyles = (theme: ITheme) =>
     editIcon: {
       paddingLeft: 16,
       paddingRight: 20,
+      paddingVertical: 16,
     },
     numberText: {
       color: theme.TEXT700,
       ...FONTS.BODY2_MEDIUM,
+    },
+    recentContainer: {
+      height: '100%',
+      marginRight: 20,
+      paddingVertical: 2,
+      paddingHorizontal: 8,
+      borderRadius: 4,
+      backgroundColor: theme.MAIN200,
+    },
+    recentText: {
+      color: theme.MAIN500,
+      ...FONTS.CAPTION_MEDIUM,
     },
   });
 
