@@ -1,3 +1,4 @@
+import {useEffect} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {useNavigation} from '@react-navigation/native';
 import ThemeSetting from '@/screens/stack-screens/ThemeSetting';
@@ -14,9 +15,10 @@ import {
 } from '@/types/navigation';
 import BookmarkWebView from '@/screens/stack-screens/BookmarkWebView';
 import Onboarding from '@/screens/stack-screens/Onboarding';
+import BottomSheet from '@/components/modal/BottomSheet';
+import LinkContent from '@/components/link/LinkContent';
+import {useUserStore} from '@/store/useUserStore';
 import BottomTabNavigation from './BottomTabNavigation';
-import BottomSheet from '../modal/BottomSheet';
-import LinkContent from '../link/LinkContent';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -37,6 +39,14 @@ const GlobalNavigation = ({
     setSharedURL('');
     navigation.navigate('home');
   };
+
+  const {isAuthenticated} = useUserStore();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigation.navigate('Onboarding');
+    }
+  }, [isAuthenticated]);
 
   return (
     <>

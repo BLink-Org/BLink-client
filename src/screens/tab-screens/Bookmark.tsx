@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useMemo, useEffect} from 'react';
+import React, {useState, useCallback, useMemo, useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
   FlatList,
@@ -12,7 +12,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useScrollToTop} from '@react-navigation/native';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import {useThemeStore} from '@/store/useThemeStore';
 import SmallCard from '@/components/home/SmallCard';
@@ -31,12 +31,15 @@ import AnimatedLogoHeader from '@/components/common/AnimatedLogoHeader';
 import BookmarkListHeader from '@/components/home/BookmarkListHeader';
 import CustomStatusBar from '@/components/common/CustomStatusBar';
 import ListEmpty from '@/components/home/ListEmpty';
-import { trackEvent } from '@/utils/amplitude-utils';
+import {trackEvent} from '@/utils/amplitude-utils';
 
 const Bookmark = () => {
   const {t} = useTranslation();
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+
+  const ref = useRef(null);
+  useScrollToTop(ref);
 
   // 하단 버튼 크기 계산 -> 전역변수 관리
   const {bottom} = useSafeAreaInsets();
@@ -142,6 +145,7 @@ const Bookmark = () => {
               ? Array(10).fill({})
               : linkData?.pages.flatMap(page => page.linkDtos)
           }
+          ref={ref}
           renderItem={renderItem}
           keyExtractor={(item, index) => index.toString()}
           ListHeaderComponent={

@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useScrollToTop} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import {useThemeStore} from '@/store/useThemeStore';
@@ -36,6 +36,10 @@ const SearchPage = () => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const {t} = useTranslation();
+
+  // 버튼 클릭 시 최상위로 스크롤
+  const ref = useRef(null);
+  useScrollToTop(ref);
 
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [finalSearchQuery, setFinalSearchQuery] = useState<string>('');
@@ -185,6 +189,7 @@ const SearchPage = () => {
                 ? Array(10).fill({})
                 : linkData?.pages.flatMap(page => page.linkDtos)
             }
+            ref={ref}
             renderItem={renderItem}
             keyExtractor={(item, index) => index.toString()}
             ListHeaderComponent={renderHeader}

@@ -29,7 +29,7 @@ import {
 import {trackEvent} from '@/utils/amplitude-utils';
 
 const screenWidth = Dimensions.get('screen').width - 36;
-const aspectRatio = 339 / 140; // 카드 비율
+// const aspectRatio = 339 / 140; // 카드 비율
 const cardHeight = 140;
 
 interface LargeCardProps {
@@ -46,11 +46,6 @@ const LargeCard = ({
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const {t} = useTranslation();
-
-  const CardImage = useMemo(() => {
-    return theme.BIG_CARD_IMAGE;
-  }, [theme]);
-
   // 핀 기능 핸들러 추가
   const {mutate: togglePin} = useToggleLinkPin(linkInfoArgs);
   const {mutate: moveLinkToTrash} = useMoveLinkToTrash(linkInfoArgs);
@@ -190,7 +185,12 @@ const LargeCard = ({
             />
           ) : (
             <View style={styles.imageContainer}>
-              <CardImage width={300} height={300} />
+              {/* <CardImage width={300} height={300} /> */}
+              <Image
+                source={theme.BIG_CARD_IMAGE}
+                style={styles.image}
+                resizeMode="cover"
+              />
             </View>
           )}
         </View>

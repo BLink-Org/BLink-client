@@ -29,6 +29,7 @@ import {
   useUpdateFolderTitle,
 } from '@/api/hooks/useFolder';
 import {trackEvent} from '@/utils/amplitude-utils';
+import FolderButtonPlaceHolder from '../folder/FolderButtonPlaceHolder';
 
 interface FolderSideBarProps {
   isSideBarVisible: boolean;
@@ -55,7 +56,7 @@ const FolderSideBar = ({
   });
 
   const queryClient = useQueryClient();
-  const {data: useFolderData} = useFolders();
+  const {data: useFolderData, isLoading} = useFolders();
   const {mutate: createFolder} = useCreateFolder({
     onSuccess: () => {
       setIsBottomSheetVisible(!isBottomSheetVisible);
@@ -203,19 +204,23 @@ const FolderSideBar = ({
           {useFolderData &&
           (useFolderData?.folderDtos.length > 0 ||
             useFolderData?.noFolderLinkCount > 0) ? (
-            <FolderList
-              isMultipleSelection={false}
-              handleSelect={toggleBottomSheet}
-              onFolderPress={() => {
-                toggleSideBar();
-              }}
-              {...{
-                selectedFolderId,
-                setSelectedFolderId,
-                showToast,
-                useFolderData,
-              }}
-            />
+            isLoading ? (
+              <FolderButtonPlaceHolder isMultipleSelection={false} />
+            ) : (
+              <FolderList
+                isMultipleSelection={false}
+                handleSelect={toggleBottomSheet}
+                onFolderPress={() => {
+                  toggleSideBar();
+                }}
+                {...{
+                  selectedFolderId,
+                  setSelectedFolderId,
+                  showToast,
+                  useFolderData,
+                }}
+              />
+            )
           ) : (
             <View style={styles.emptyView}>
               <Image source={theme.EMPTY_IMAGE} style={styles.emptyImage} />

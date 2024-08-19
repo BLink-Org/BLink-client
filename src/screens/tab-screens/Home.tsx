@@ -1,4 +1,4 @@
-import React, {useState, useCallback, useEffect, useMemo} from 'react';
+import React, {useState, useCallback, useEffect, useMemo, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import {
   FlatList,
@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useScrollToTop} from '@react-navigation/native';
 import {FONTS} from '@/constants';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import {useThemeStore} from '@/store/useThemeStore';
@@ -40,6 +40,10 @@ const Home = () => {
   const {t} = useTranslation();
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+
+  // 버튼 클릭 시 최상위로 스크롤
+  const ref = useRef(null);
+  useScrollToTop(ref);
 
   // 하단 버튼 크기 계산 -> 전역변수 관리
   const {bottom} = useSafeAreaInsets();
@@ -171,6 +175,7 @@ const Home = () => {
               : linkData?.pages.flatMap(page => page.linkDtos)
           }
           renderItem={renderItem}
+          ref={ref}
           keyExtractor={(item, index) => index.toString()}
           ListHeaderComponent={
             <HomeListHeader

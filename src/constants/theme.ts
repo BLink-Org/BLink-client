@@ -2,13 +2,10 @@ import {type SvgProps} from 'react-native-svg';
 import {type ImageSourcePropType} from 'react-native';
 import {
   Theme1BackgroundImage,
-  Theme1BigCardImage,
   Theme1SmallCardImage,
   Theme2BackgroundImage,
-  Theme2BigCardImage,
   Theme2SmallCardImage,
   Theme3BackgroundImage,
-  Theme3BigCardImage,
   Theme3SmallCardImage,
 } from '@/assets/icons/theme';
 
@@ -38,7 +35,7 @@ export const THEME_INFOS = [
 export interface Theme {
   THEME_NUMBER: number;
   BACKGROUND_IMAGE: React.FC<SvgProps>;
-  BIG_CARD_IMAGE: React.FC<SvgProps>;
+  BIG_CARD_IMAGE: ImageSourcePropType;
   SMALL_CARD_IMAGE: React.FC<SvgProps>;
   EMPTY_IMAGE: ImageSourcePropType;
   SEARCH_EDGE_IMAGE: ImageSourcePropType;
@@ -66,7 +63,7 @@ export const THEMES: Record<number, Theme> = {
   1: {
     THEME_NUMBER: 1,
     BACKGROUND_IMAGE: Theme1BackgroundImage,
-    BIG_CARD_IMAGE: Theme1BigCardImage,
+    BIG_CARD_IMAGE: require('@/assets/images/img-large-card-1.png'),
     SMALL_CARD_IMAGE: Theme1SmallCardImage,
     EMPTY_IMAGE: require('@/assets/images/img-empty.png'),
     SEARCH_EDGE_IMAGE: require('@/assets/images/img-searchedge.png'),
@@ -92,7 +89,7 @@ export const THEMES: Record<number, Theme> = {
   2: {
     THEME_NUMBER: 2,
     BACKGROUND_IMAGE: Theme2BackgroundImage,
-    BIG_CARD_IMAGE: Theme2BigCardImage,
+    BIG_CARD_IMAGE: require('@/assets/images/img-large-card-2.png'),
     SMALL_CARD_IMAGE: Theme2SmallCardImage,
     EMPTY_IMAGE: require('@/assets/images/img-empty-dark.png'),
     SEARCH_EDGE_IMAGE: require('@/assets/images/img-searchedge-dark.png'),
@@ -118,7 +115,7 @@ export const THEMES: Record<number, Theme> = {
   3: {
     THEME_NUMBER: 3,
     BACKGROUND_IMAGE: Theme3BackgroundImage,
-    BIG_CARD_IMAGE: Theme3BigCardImage,
+    BIG_CARD_IMAGE: require('@/assets/images/img-large-card-3.png'),
     SMALL_CARD_IMAGE: Theme3SmallCardImage,
     EMPTY_IMAGE: require('@/assets/images/img-empty.png'),
     SEARCH_EDGE_IMAGE: require('@/assets/images/img-searchedge.png'),
@@ -144,8 +141,8 @@ export const THEMES: Record<number, Theme> = {
   4: {
     THEME_NUMBER: 4,
     BACKGROUND_IMAGE: Theme3BackgroundImage,
-    BIG_CARD_IMAGE: Theme3BigCardImage,
     SMALL_CARD_IMAGE: Theme3SmallCardImage,
+    BIG_CARD_IMAGE: require('@/assets/images/img-large-card-3.png'),
     EMPTY_IMAGE: require('@/assets/images/img-empty.png'),
     SEARCH_EDGE_IMAGE: require('@/assets/images/img-searchedge.png'),
     ERROR_IMAGE: require('@/assets/images/img-error.png'),
