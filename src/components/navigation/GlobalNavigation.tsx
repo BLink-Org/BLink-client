@@ -22,11 +22,13 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const GlobalNavigation = ({
   sharedURL,
+  setSharedURL,
   isAuthenticated,
   isBottomSheetVisible,
   setIsBottomSheetVisible,
 }: {
   sharedURL: string;
+  setSharedURL: (v: string) => void;
   isAuthenticated: boolean;
   isBottomSheetVisible: boolean;
   setIsBottomSheetVisible: (v: boolean) => void;
@@ -34,6 +36,7 @@ const GlobalNavigation = ({
   const navigation = useNavigation<RootStackNavigationProp>();
   const toggleBottomSheet = () => {
     setIsBottomSheetVisible(false);
+    setSharedURL('');
     navigation.navigate('home');
   };
 

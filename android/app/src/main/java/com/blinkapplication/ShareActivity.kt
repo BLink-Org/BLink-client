@@ -9,6 +9,10 @@ import com.facebook.react.modules.core.DeviceEventManagerModule
 
 class ShareActivity : Activity() {
 
+    companion object {
+        var sharedText: String? = null
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         handleSendIntent()
@@ -17,15 +21,15 @@ class ShareActivity : Activity() {
     private fun handleSendIntent() {
         intent?.let {
             if (Intent.ACTION_SEND == it.action && "text/plain" == it.type) {
-                val sharedText = it.getStringExtra(Intent.EXTRA_TEXT)
+                sharedText = it.getStringExtra(Intent.EXTRA_TEXT)
                 sharedText?.let { text ->
                     sendToReactNative(text)
                 }
             } else if (Intent.ACTION_SEND_MULTIPLE == it.action && "text/plain" == it.type) {
                 // Handle multiple texts if needed
-                finish() // finish activity
+                launchMainActivity()
             } else {
-                finish() // finish activity if no relevant action
+                launchMainActivity()
             }
         }
     }
@@ -37,6 +41,14 @@ class ShareActivity : Activity() {
                 .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
                 .emit("UrlShared", sharedText)
         }
-        finish() // Close the activity after sending the data
+        launchMainActivity()
+    }
+
+    private fun launchMainActivity() {
+        val intent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        startActivity(intent)
+        finish()
     }
 }

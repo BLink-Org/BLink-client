@@ -3,8 +3,6 @@ import {
   NativeModules,
   Platform,
   Linking,
-  NativeEventEmitter,
-  type NativeModule,
   DeviceEventEmitter,
 } from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
@@ -37,14 +35,23 @@ export default function App(props: AppProps) {
   const loadTokens = useUserStore(state => state.loadTokens);
 
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
-  const [sharedURL, setSharedURL] = useState<string>('');
+  // [iOS & Android] 앱 첫 실행 시 props로 sharedURL 전달
+  const [sharedURL, setSharedURL] = useState<string>(props.sharedURL || '');
 
+  // sharedURL 변경 시 바텀 시트 노출
+  useEffect(() => {
+    if (sharedURL) {
+      setIsBottomSheetVisible(true);
+    }
+  }, [sharedURL]);
+
+  // [Android] 앱 포그라운드 전환 시 sharedURL 저장
   useEffect(() => {
     // URL 공유 이벤트 리스닝
     const urlListener = DeviceEventEmitter.addListener(
       'UrlShared',
       (url: string) => {
-        console.log(url);
+        setSharedURL(url);
       },
     );
 
@@ -54,18 +61,7 @@ export default function App(props: AppProps) {
     };
   }, []);
 
-  useEffect(() => {
-    if (props.sharedURL) {
-      setSharedURL(props.sharedURL);
-    }
-  }, [props.sharedURL]);
-
-  useEffect(() => {
-    if (sharedURL) {
-      setIsBottomSheetVisible(true);
-    }
-  }, [sharedURL]);
-
+  // [iOS] 앱 포그라운드 전환 시 sharedURL 저장
   useEffect(() => {
     if (props.sharedURL) {
       setSharedURL(props.sharedURL);
@@ -142,6 +138,7 @@ export default function App(props: AppProps) {
         <NavigationContainer key={isAuthenticated ? 'auth-true' : 'auth-false'}>
           <GlobalNavigation
             sharedURL={sharedURL}
+            setSharedURL={setSharedURL}
             isBottomSheetVisible={isBottomSheetVisible}
             setIsBottomSheetVisible={setIsBottomSheetVisible}
             isAuthenticated={isAuthenticated}

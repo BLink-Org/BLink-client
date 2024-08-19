@@ -7,6 +7,8 @@ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnable
 import com.facebook.react.defaults.DefaultReactActivityDelegate
 import org.devio.rn.splashscreen.SplashScreen  // 올바른 SplashScreen import
 import com.blinkapplication.R
+import com.blinkapplication.ShareActivity
+import com.facebook.react.ReactApplication
 
 class MainActivity : ReactActivity() {
 
@@ -29,6 +31,17 @@ class MainActivity : ReactActivity() {
    * Returns the instance of the [ReactActivityDelegate]. We use [DefaultReactActivityDelegate]
    * which allows you to enable New Architecture with a single boolean flags [fabricEnabled]
    */
-  override fun createReactActivityDelegate(): ReactActivityDelegate =
-          DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)
+  override fun createReactActivityDelegate(): ReactActivityDelegate {
+    return object : DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled) {
+        override fun getLaunchOptions(): Bundle? {
+            // Retrieve the shared text and pass it to React Native via initialProps
+            val sharedText = ShareActivity.sharedText
+                return sharedText?.let {
+                    Bundle().apply {
+                        putString("sharedURL", it)
+                    }
+            }
+        }
+    }
+  }
 }
