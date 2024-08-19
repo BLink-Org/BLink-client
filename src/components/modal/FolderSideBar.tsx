@@ -28,6 +28,7 @@ import {
   useFolders,
   useUpdateFolderTitle,
 } from '@/api/hooks/useFolder';
+import {trackEvent} from '@/utils/amplitude-utils';
 
 interface FolderSideBarProps {
   isSideBarVisible: boolean;
@@ -75,6 +76,7 @@ const FolderSideBar = ({
   const onSaveFolder = (textInput: string) => {
     if (isCreate) {
       createFolder({title: textInput});
+      trackEvent('Folder_Creation', {location: 'pushy-menu-sidebar'});
     } else {
       updateFolderTitle({folderId: folderToEdit.id, title: textInput});
     }
