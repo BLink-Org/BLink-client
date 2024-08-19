@@ -26,7 +26,6 @@ import UnAuthWebView from '@/screens/no-login-tab-screen/UnAuthWebView';
 import UnAuthSearch from '@/screens/no-login-tab-screen/UnAuthSearch';
 import LoginModal from '../modal/LoginModal';
 import BottomSheet from '../modal/BottomSheet';
-import LinkContent from '../link/LinkContent';
 import UnAuthLinkContent from '../link/UnAuthLinkContent';
 
 interface IconProps {

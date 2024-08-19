@@ -201,7 +201,7 @@ const Home = () => {
           ListEmptyComponent={
             <ListEmpty
               textColor={theme.TEXT500}
-              message="저장한 링크가 있으면 여기에 보여요"
+              message={t('저장한 링크가 있으면 여기에 보여요')}
             />
           }
           ListFooterComponent={() =>

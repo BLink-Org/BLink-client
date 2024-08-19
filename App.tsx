@@ -1,10 +1,5 @@
 import {useEffect, useState} from 'react';
-import {
-  NativeModules,
-  Platform,
-  Linking,
-  DeviceEventEmitter,
-} from 'react-native';
+import {Linking, DeviceEventEmitter} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import * as RNLocalize from 'react-native-localize';
