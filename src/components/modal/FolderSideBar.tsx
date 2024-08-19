@@ -261,7 +261,7 @@ const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     overlay: {
       ...StyleSheet.absoluteFillObject,
-      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+      backgroundColor: 'rgba(0, 0, 0, 0.6)',
     },
     modalContent: {
       borderTopRightRadius: 28,

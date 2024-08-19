@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useMemo} from 'react';
+import {useEffect, useState, useMemo, useRef, useCallback} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -22,7 +22,6 @@ import FolderList from '@/components/folder/FolderList';
 import {useCreateFolder, useFolders} from '@/api/hooks/useFolder';
 import {useCreateLink} from '@/api/hooks/useLink';
 import {trackEvent} from '@/utils/amplitude-utils';
-import fonts from '@/constants/fonts';
 import FolderButtonPlaceHolder from '../folder/FolderButtonPlaceHolder';
 
 interface FolderSideBarProps {
@@ -43,6 +42,18 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
   const [isFolderBottomSheetVisible, setIsFolderBottomSheetVisible] =
     useState(false);
   const {buttonHeight} = useBottomButtonSizeStore();
+
+  const useReRenderer = () => {
+    const [, setState] = useState(false);
+    return useCallback(() => {
+      setState(prev => !prev);
+    }, []);
+  };
+
+  // 중복호출을 막기 위해 Ref 사용
+  const isSavingRef = useRef(false);
+  const reRender = useReRenderer();
+
   const [clipboardContent, setClipboardContent] = useState('');
   const [isClipboardShown, setIsClipboardShown] = useState<boolean>(false);
 
@@ -94,6 +105,20 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
     },
   });
 
+  const handlePress = () => {
+    if (isSavingRef.current) {
+      return;
+    }
+    isSavingRef.current = true;
+    reRender();
+    if (textInput) {
+      createLink({
+        url: textInput,
+        folderIdList: selectedFolderId[0] === 0 ? [] : selectedFolderId,
+      });
+    }
+  };
+
   const onSaveFolder = (textInput: string) => {
     createFolder({title: textInput});
     trackEvent('Folder_Creation', {location: 'in-gnb-save-link'});
@@ -109,6 +134,7 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
 
   useEffect(() => {
     if (textInput && selectedFolderId) {
+      setIsClipboardShown(false);
       setErrorMessage('');
       setIsReadyToSave(
         !!textInput && !!selectedFolderId && selectedFolderId.length > 0,
@@ -187,13 +213,7 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
       </SafeAreaView>
       <CustomBottomButton
         title={t('저장')}
-        onPress={() => {
-          textInput &&
-            createLink({
-              url: textInput,
-              folderIdList: selectedFolderId[0] === 0 ? [] : selectedFolderId,
-            });
-        }}
+        onPress={handlePress}
         isDisabled={!isReadyToSave}
       />
     </>
@@ -221,6 +241,11 @@ const createStyles = (theme: ITheme) =>
       paddingHorizontal: 16,
       gap: 8,
       zIndex: 5,
+      shadowColor: 'rgba(0, 0, 0, 0.12)',
+      shadowOffset: {width: 0, height: 10},
+      shadowOpacity: 1,
+      shadowRadius: 20,
+      elevation: 5,
     },
     horizontalContainer: {
       display: 'flex',
@@ -230,13 +255,13 @@ const createStyles = (theme: ITheme) =>
     },
     clipboardTitle: {
       color: theme.TEXT800,
-      ...fonts.BODY1_SEMIBOLD,
+      ...FONTS.BODY1_SEMIBOLD,
       flex: 1,
       justifyContent: 'flex-start',
     },
     clipboardContent: {
       color: theme.TEXT400,
-      ...fonts.BODY2_SEMIBOLD,
+      ...FONTS.BODY2_SEMIBOLD,
     },
     pasteContainer: {
       display: 'flex',
@@ -255,7 +280,7 @@ const createStyles = (theme: ITheme) =>
     },
     pasteText: {
       color: theme.MAIN500,
-      ...fonts.BODY2_SEMIBOLD,
+      ...FONTS.BODY2_SEMIBOLD,
     },
     folderTitle: {
       display: 'flex',
