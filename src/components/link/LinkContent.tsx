@@ -20,6 +20,7 @@ import FolderContent from '@/components/folder/FolderContent';
 import FolderList from '@/components/folder/FolderList';
 import {useCreateFolder, useFolders} from '@/api/hooks/useFolder';
 import {useCreateLink} from '@/api/hooks/useLink';
+import {trackEvent} from '@/utils/amplitude-utils';
 
 interface FolderSideBarProps {
   defaultURL?: string;
@@ -76,6 +77,7 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
 
   const onSaveFolder = (textInput: string) => {
     createFolder({title: textInput});
+    trackEvent('Folder_Creation', {location: 'in-gnb-save-link'});
   };
 
   const toggleFolderBottomSheet = () => {

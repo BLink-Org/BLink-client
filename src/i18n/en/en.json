@@ -84,7 +84,7 @@
   "계정 삭제": "Delete Account",
   "삭제 신청일 yyyy-mm-dd 로부터 7일 이내 삭제 신청을 취소하면 원래의 계정 정보로 B.Link를 계속 이용하실 수 있어요.": "If you cancel your deletion request within 7 days from yyyy-mm-dd, you can continue using B.Link with your original account information.",
   "계정 삭제 철회하기": "Cancel Account Deletion",
-  "휴지통으로 이동된 링크가 아직 없어요.": "No links in the Trash yet.",
+  "휴지통으로 이동된 링크가 아직 없어요": "No links in the Trash yet.",
   "최근 삭제순": "Newest Deleted First",
   "과거 삭제순": "Oldest Deleted First",
   "복원": "Restore",
@@ -134,5 +134,7 @@
   "삭제 신청이 취소되었습니다": "Your deletion request has been canceled.",
   "수정되었습니다": "Saved",
   "생성되었습니다": "Created",
-  "제목을 입력해주세요.": "Please enter a title."
+  "제목을 입력해주세요.": "Please enter a title.",
+  "설정 창으로 이동합니다": "Moving to the Settings page",
+  "설정 > 목록에서 B.Link 선택 > 언어에서 언어를 변경해주세요": "Please change the language in: Settings > B.Link > Language"
 }
