@@ -60,7 +60,7 @@ const Setting = () => {
       {/* 언어 선택 모달 */}
       <AlertModal
         modalId={modalId}
-        headerText={t('설정 창으로 이동합니다')}
+        headerText={t('설정 앱으로 이동합니다')}
         bodyText={t(
           '설정 > 목록에서 B.Link 선택 > 언어에서 언어를 변경해주세요',
         )}

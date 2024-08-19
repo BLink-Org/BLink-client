@@ -1,10 +1,8 @@
 import axios, {type AxiosRequestConfig} from 'axios';
-import {useNavigation} from '@react-navigation/native';
 import {API_URL} from '@env';
 import {useUserStore} from '@/store/useUserStore';
 import {signOut} from '@/utils/auth-utils';
 import {refreshTokenDirectly} from '@/api/hooks/useAuth';
-import {type RootStackNavigationProp} from '@/types';
 
 const apiClient = axios.create({
   baseURL: API_URL,
@@ -32,7 +30,6 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   response => response,
   async error => {
-    const navigation = useNavigation<RootStackNavigationProp>();
     const {
       config,
       response: {status},
@@ -45,7 +42,7 @@ apiClient.interceptors.response.use(
 
       if (!refreshToken) {
         console.warn('Refresh token not found, logging out...');
-        await signOut(navigation);
+        await signOut();
         return await Promise.reject(error);
       }
 
@@ -75,12 +72,12 @@ apiClient.interceptors.response.use(
         } else {
           // 리프레시 토큰도 만료된 경우
           console.warn('Refresh token expired, logging out...');
-          await signOut(navigation);
+          await signOut();
         }
       } catch (refreshError) {
         // 리프레시 토큰 갱신 실패 경우
         console.warn('Refresh token request failed, logging out...');
-        await signOut(navigation);
+        await signOut();
         return await Promise.reject(refreshError);
       }
     }
