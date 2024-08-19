@@ -1,10 +1,8 @@
 import axios, {type AxiosRequestConfig} from 'axios';
-import {useNavigation} from '@react-navigation/native';
 import {API_URL} from '@env';
 import {useUserStore} from '@/store/useUserStore';
 import {signOut} from '@/utils/auth-utils';
 import {refreshTokenDirectly} from '@/api/hooks/useAuth';
-import {type RootStackNavigationProp} from '@/types';
 
 const apiClient = axios.create({
   baseURL: API_URL,

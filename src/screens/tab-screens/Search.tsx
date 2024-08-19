@@ -31,7 +31,6 @@ import CustomLoading from '@/components/common/CustomLoading';
 import RecentSearch from '@/components/search/ResentSearch';
 import CustomStatusBar from '@/components/common/CustomStatusBar';
 import {trackEvent} from '@/utils/amplitude-utils';
-import {signOut} from '@/utils/auth-utils';
 
 const SearchPage = () => {
   const {theme} = useThemeStore();
