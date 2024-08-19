@@ -1,5 +1,6 @@
 import {useMemo} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {useThemeStore} from '@/store/useThemeStore';
 import {FONTS} from '@/constants';
 import {type ITheme} from '@/types';
@@ -17,22 +18,23 @@ const StaticInfo = ({
 }: StaticInfoProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {t} = useTranslation();
 
   return (
     <View style={styles.container}>
       <View style={styles.infoContainer}>
         <View style={styles.content}>
           <Text style={styles.linkCount}>{linkCount}</Text>
-          <Text style={styles.linkText}>링크</Text>
+          <Text style={styles.linkText}>{t('링크')}</Text>
         </View>
 
         <View style={styles.content}>
           <Text style={styles.linkCount}>{bookmarkCount}</Text>
-          <Text style={styles.linkText}>핀</Text>
+          <Text style={styles.linkText}>{t('핀')}</Text>
         </View>
         <View style={[styles.content, styles.lastContent]}>
           <Text style={styles.linkCount}>{folderCount}</Text>
-          <Text style={styles.linkText}>폴더</Text>
+          <Text style={styles.linkText}>{t('폴더')}</Text>
         </View>
       </View>
     </View>

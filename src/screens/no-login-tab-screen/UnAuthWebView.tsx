@@ -1,19 +1,13 @@
-import React, {useState, useRef, useEffect, useMemo} from 'react';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import React, {useState, useRef, useMemo} from 'react';
+import {useNavigation} from '@react-navigation/native';
 import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {WebView, type WebViewNavigation} from 'react-native-webview';
 import {useTranslation} from 'react-i18next';
 import {FONTS} from '@/constants';
 import {extractHostname, shareUrl} from '@/utils/url-utils';
-import {type ITheme} from '@/types';
+import {type RootStackNavigationProp, type ITheme} from '@/types';
 import {useThemeStore} from '@/store/useThemeStore';
-import {
-  useCheckLinkExist,
-  usePinnedLinks,
-  useToggleBookmarkLinkPin,
-  useViewLink,
-} from '@/api/hooks/useLink';
 import NavigationButton from '@/components/common/NavigationButton';
 import {
   ArrowBackIcon,
@@ -23,90 +17,43 @@ import {
   ContentBackIcon,
   ContentFrontIcon,
 } from '@/assets/icons/webview';
-import BottomSheet from '@/components/modal/BottomSheet';
-import LinkContent from '@/components/link/LinkContent';
 import {PinnedIcon} from '@/assets/icons/bottom-tab';
-import NoticeModal from '@/components/modal/NoticeModal';
+import DummyData from '@/constants/unauth-default-data.json';
+import LoginModal from '@/components/modal/LoginModal';
 
-const BookmarkWebView = () => {
-  const navigation = useNavigation();
+const UnAuthWebView = () => {
   const webViewRef = useRef<WebView>(null);
   const {theme} = useThemeStore();
   const {t} = useTranslation();
 
   const styles = useMemo(() => createStyles(theme), [theme]);
 
-  const route = useRoute();
-  const {size, sortBy, initialIndex} = route.params as {
-    size: number;
-    sortBy: string;
-    initialIndex: number;
+  const currentUrl = DummyData[0].url;
+
+  const navigation = useNavigation<RootStackNavigationProp>();
+  // 로그인 모달
+  const [isNoticeModalVisible, setIsNoticeModalVisible] = useState(false);
+
+  // 모달 닫은 후 로그인으로 이동
+  const handleModalClose = () => {
+    navigation.navigate('Onboarding');
+    setIsNoticeModalVisible(false);
+  };
+  // 로그인 모달 열기
+  const onPressLoginAlert = () => {
+    setIsNoticeModalVisible(true);
   };
 
-  const linkInfoArgsOptions = {
-    size,
-    sortBy,
-  };
-
-  const [currentIndex, setCurrentIndex] = useState<number>(initialIndex);
-  const [currentUrl, setCurrentUrl] = useState<string | null>(null);
-  const previousIndexRef = useRef<number | null>(null);
-  const [webViewKey, setWebViewKey] = useState<number>(0);
   const [canGoBack, setCanGoBack] = useState<boolean>(false);
   const [canGoForward, setCanGoForward] = useState<boolean>(false);
-  const [webViewUrl, setWebViewUrl] = useState<string | null>(null);
-  const [isNoticeModalVisible, setIsNoticeModalVisible] = useState(false); // 링크 저장 유효성 검사 noticeModal
-
-  const {
-    data: linkData,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = usePinnedLinks(linkInfoArgsOptions);
-
-  const {mutate: togglePin} = useToggleBookmarkLinkPin({size, sortBy});
-  const {mutate: viewLink} = useViewLink();
-
-  // 링크 중복 검사
-  const {mutate: existsCheck} = useCheckLinkExist({
-    onSuccess: (result: boolean) => {
-      if (!result) {
-        setIsBottomSheetVisible(!isBottomSheetVisible);
-      } else {
-        setIsNoticeModalVisible(true);
-      }
-    },
-    onError: () => {
-      console.error('Error checking link duplication');
-    },
-  });
-
-  const linkList = linkData?.pages.flatMap(page => page.linkDtos) ?? [];
-  const currentLink = linkList[currentIndex];
-
-  useEffect(() => {
-    if (linkList.length > 0 && currentLink?.url) {
-      setCurrentUrl(currentLink.url);
-    }
-  }, [linkList, currentIndex]);
-
-  useEffect(() => {
-    if (currentLink?.id && previousIndexRef.current !== currentIndex) {
-      viewLink(String(currentLink.id));
-      previousIndexRef.current = currentIndex;
-    }
-  }, [currentIndex, currentLink?.id, viewLink]);
 
   const handleNavigationStateChange = (navState: WebViewNavigation) => {
+    // 뒤로가기, 앞으로가기 버튼 상태 업데이트
     setCanGoBack(navState.canGoBack);
     setCanGoForward(navState.canGoForward);
-    setWebViewUrl(navState.url);
   };
 
-  const handlePinToggle = () => {
-    togglePin(String(currentLink.id));
-  };
-
+  // 하나의 웹 뷰 내에서 뒤로가기, 앞으로가기, 새로고침
   const directBack = () => {
     webViewRef.current?.goBack();
   };
@@ -115,27 +62,10 @@ const BookmarkWebView = () => {
     webViewRef.current?.goForward();
   };
 
-  const goBack = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-      setWebViewKey(prevKey => prevKey + 1);
-    }
-  };
+  // 전체 링크에서 이전 링크, 다음 링크로 이동
+  const goBack = () => {};
 
-  const goForward = async () => {
-    if (currentIndex < linkList.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-      setWebViewKey(prevKey => prevKey + 1);
-    } else if (hasNextPage) {
-      const nextPageData = await fetchNextPage();
-      if (nextPageData.data?.pages) {
-        const newLinks = nextPageData.data.pages.flatMap(page => page.linkDtos);
-        setCurrentIndex(currentIndex + 1);
-        setCurrentUrl(newLinks[0]?.url ?? '');
-        setWebViewKey(prevKey => prevKey + 1);
-      }
-    }
-  };
+  const goForward = async () => {};
 
   const handleGoForward = () => {
     goForward().catch(error => {
@@ -151,11 +81,10 @@ const BookmarkWebView = () => {
     navigation.goBack();
   };
 
-  const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
-  const toggleBottomSheet = () => {
-    if (webViewUrl) {
-      existsCheck(webViewUrl);
-    }
+  // 핀 토글
+  const [isPinned, setIsPinned] = useState(false);
+  const handlePinToggle = () => {
+    setIsPinned(prevState => !prevState);
   };
 
   return (
@@ -177,26 +106,21 @@ const BookmarkWebView = () => {
       {currentUrl && (
         <WebView
           ref={webViewRef}
-          key={webViewKey}
           source={{uri: currentUrl}}
           style={styles.webViewContainer}
           onNavigationStateChange={handleNavigationStateChange}
         />
       )}
-
       <View style={styles.backForwardButton}>
         <NavigationButton
           onPress={goBack}
-          disabled={currentIndex === 0}
+          disabled={true}
           label={t('이전 링크')}
         />
         <NavigationButton
           onPress={handleGoForward}
-          disabled={
-            (!hasNextPage && currentIndex === linkList.length - 1) ||
-            isFetchingNextPage
-          }
-          label={isFetchingNextPage ? t('로딩 중...') : t('다음 링크')}
+          disabled={true}
+          label={t('다음 링크')}
         />
       </View>
 
@@ -211,45 +135,32 @@ const BookmarkWebView = () => {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => shareUrl(currentUrl ?? '')}>
-          <ShareIcon fill={theme.TEXT900} />
+          <View style={styles.shareIcon} />
+          <ShareIcon width={26} height={26} fill={theme.TEXT900} />
         </TouchableOpacity>
         <TouchableOpacity onPress={handlePinToggle}>
           <PinnedIcon
             width={30}
             height={30}
             strokeWidth={1.6}
-            fill={currentLink.pinned ? theme.TEXT900 : 'transparent'}
+            fill={isPinned ? theme.TEXT900 : 'transparent'}
             stroke={theme.TEXT900}
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={toggleBottomSheet}>
+        <TouchableOpacity onPress={onPressLoginAlert}>
           <SaveIcon fill={theme.TEXT900} />
         </TouchableOpacity>
       </View>
-
-      {/* NoticeModal(링크 중복 검사 엣지케이스 시 모달) */}
-      <NoticeModal
+      <LoginModal
         isVisible={isNoticeModalVisible}
         onClose={() => setIsNoticeModalVisible(false)}
-        title={t('이미 저장된 링크예요')}
-        description={t(
-          '다른 페이지로 이동했을 때 클릭해서 새로운 링크를 빠르게 저장해보세요',
-        )}
+        onClick={handleModalClose}
       />
-      {/* 링크 저장모달 */}
-      <BottomSheet
-        modalTitle={t('링크 저장')}
-        {...{isBottomSheetVisible, toggleBottomSheet}}>
-        <LinkContent
-          defaultURL={webViewUrl ?? ''}
-          toggleBottomSheet={() => setIsBottomSheetVisible(false)}
-        />
-      </BottomSheet>
     </SafeAreaView>
   );
 };
 
-export default BookmarkWebView;
+export default UnAuthWebView;
 
 const createStyles = (theme: ITheme) =>
   StyleSheet.create({
@@ -267,6 +178,9 @@ const createStyles = (theme: ITheme) =>
     },
     webViewContainer: {
       flex: 1,
+    },
+    shareIcon: {
+      paddingVertical: 2,
     },
     navigationContainer: {
       flexDirection: 'row',

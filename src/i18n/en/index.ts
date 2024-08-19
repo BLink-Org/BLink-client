@@ -1,17 +1,6 @@
-import add from './add.json';
-import bookmark from './bookmark.json';
-import common from './common.json';
-import home from './home.json';
-import mypage from './mypage.json';
-import search from './search.json';
-
-const ko = {
-  ...add,
-  ...bookmark,
-  ...common,
-  ...home,
-  ...mypage,
-  ...search,
+import EN from './en.json';
+const en = {
+  ...EN,
 };
 
-export default ko;
+export default en;

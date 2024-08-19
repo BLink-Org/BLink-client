@@ -12,6 +12,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {
   type MyPageRouteProp,
   type RootStackNavigationProp,
@@ -38,6 +39,7 @@ import {TOAST_MESSAGE} from '@/constants/toast';
 const MyPage = () => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {t} = useTranslation();
 
   const {data: userInfoData, isLoading, isError, refetch} = useUserInfo();
 
@@ -56,9 +58,9 @@ const MyPage = () => {
   useEffect(() => {
     if (!route.params?.toastState) return;
     if (route.params?.toastState === 'delete') {
-      showToast(TOAST_MESSAGE.DELETE_ACCOUNT);
+      showToast(t(TOAST_MESSAGE.DELETE_ACCOUNT));
     } else if (route.params?.toastState === 'cancel') {
-      showToast(TOAST_MESSAGE.DELETE_ACCOUNT_CANCEL);
+      showToast(t(TOAST_MESSAGE.DELETE_ACCOUNT_CANCEL));
     }
     navigation.setParams({toastState: null});
   }, [route.params?.toastState]);
@@ -66,7 +68,7 @@ const MyPage = () => {
   // 애플 이메일 제공 x 유저 -> 이메일 정보 분기 처리
   const email = userInfoData?.email;
   const displayEmail = email?.endsWith('@privaterelay.appleid.com')
-    ? '애플 가상 이메일입니다'
+    ? t('로그인 By Apple')
     : email;
 
   // 로그아웃 post
@@ -87,7 +89,7 @@ const MyPage = () => {
       logout(refreshToken);
       trackEvent('Logout');
     }
-    signOut();
+    signOut(navigation);
   };
 
   if (isLoading) return <CustomLoading />;
@@ -101,12 +103,12 @@ const MyPage = () => {
       <ScrollView>
         <View style={styles.contentContainer}>
           <View style={styles.headerText}>
-            <Text style={styles.titleText}>계정</Text>
+            <Text style={styles.titleText}>{t('계정')}</Text>
           </View>
           <View style={styles.userInfo}>
             <Text style={styles.emailText}>{displayEmail}</Text>
             <TouchableOpacity onPress={handleAccountManage}>
-              <Text style={styles.accountManageText}>계정 관리</Text>
+              <Text style={styles.accountManageText}>{t('계정 관리')}</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.staticInfoContainer}>
@@ -123,7 +125,7 @@ const MyPage = () => {
           <View style={styles.divider} />
           <View style={styles.navigationContainer}>
             <NavigationInfo
-              title="테마 설정"
+              title="테마"
               themeColor={theme.TEXT800}
               onPress={handleThemeSetting}
             />
@@ -152,10 +154,10 @@ const MyPage = () => {
       </ScrollView>
       <AlertModal
         modalId="logoutConfirm"
-        headerText="로그아웃"
-        bodyText="로그아웃 하시겠습니까?"
-        leftText="취소"
-        rightText="확인"
+        headerText={t('로그아웃')}
+        bodyText={t('로그아웃 하시겠습니까?')}
+        leftText={t('취소')}
+        rightText={t('확인')}
         rightOnPress={handleConfirmLogout}
       />
     </SafeAreaView>

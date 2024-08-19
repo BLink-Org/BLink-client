@@ -12,6 +12,7 @@ import {
   Platform,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useTranslation} from 'react-i18next';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {DeleteIcon} from '@/assets/icons/common';
@@ -32,6 +33,7 @@ const BottomSheet = ({
 }: BottomSheetProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {t} = useTranslation(); // 추가
 
   const insets = useSafeAreaInsets();
   const statusBarHeight =
@@ -80,7 +82,7 @@ const BottomSheet = ({
         ]}>
         <View style={styles.header}>
           <View />
-          <Text style={styles.modalTitle}>{modalTitle}</Text>
+          <Text style={styles.modalTitle}>{t(modalTitle)}</Text>
           <TouchableOpacity onPress={toggleBottomSheet}>
             <DeleteIcon fill={theme.TEXT600} />
           </TouchableOpacity>

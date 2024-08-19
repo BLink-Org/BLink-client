@@ -1,5 +1,6 @@
 import React, {useMemo} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
+import {useTranslation} from 'react-i18next';
 import DropdownFilter from '@/components/home/DropDownFilter';
 import {useThemeStore} from '@/store/useThemeStore';
 import {type ITheme} from '@/types';
@@ -20,10 +21,12 @@ const BookmarkListHeader = ({
 }: ListHeaderComponentProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {t} = useTranslation();
+
   return (
     <>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>핀</Text>
+        <Text style={styles.title}>{t('핀')}</Text>
       </View>
       <View style={styles.filterContainer}>
         <Text style={styles.linkCount}>{linkCount} Links</Text>

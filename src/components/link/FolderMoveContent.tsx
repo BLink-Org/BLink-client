@@ -7,6 +7,7 @@ import {
   View,
 } from 'react-native';
 import {useQueryClient} from '@tanstack/react-query';
+import {useTranslation} from 'react-i18next';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {AddIcon} from '@/assets/icons/common';
@@ -30,6 +31,8 @@ const FolderMoveContent = ({
 }: FolderMoveContentProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {t} = useTranslation();
+
   const {data: useFolderData} = useFolders();
   // 특정 링크의 폴더 정보 가져오기
   const {data: selectedFoldersData} = useLinkFolder(linkId);
@@ -86,7 +89,7 @@ const FolderMoveContent = ({
   return (
     <>
       <BottomSheet
-        modalTitle="폴더 생성"
+        modalTitle={t('폴더 생성')}
         isBottomSheetVisible={isFolderBottomSheetVisible}
         toggleBottomSheet={toggleFolderBottomSheet}>
         <FolderContent
@@ -99,7 +102,8 @@ const FolderMoveContent = ({
       <SafeAreaView
         style={[styles.contentContainer, {marginBottom: buttonHeight}]}>
         <View style={styles.folderTitle}>
-          <Text style={styles.folderTitleText}>폴더</Text>
+          <Text style={styles.folderTitleText}>{t('폴더')}</Text>
+
           <TouchableOpacity
             style={styles.addContainer}
             onPress={toggleFolderBottomSheet}>
@@ -114,7 +118,7 @@ const FolderMoveContent = ({
         </View>
       </SafeAreaView>
       <CustomBottomButton
-        title="저장"
+        title={t('저장')}
         onPress={() => {
           toggleBottomSheet();
           onSaveMoveFolder();

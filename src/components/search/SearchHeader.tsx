@@ -1,5 +1,6 @@
 import {memo, useMemo} from 'react';
 import {View, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {FONTS} from '@/constants';
 import {SearchIcon} from '@/assets/icons/search';
 import {useThemeStore} from '@/store/useThemeStore';
@@ -15,6 +16,7 @@ const SearchHeader = memo(
   ({searchQuery, handleSearch, handleSearchSubmit}: SearchHeaderProps) => {
     const {theme} = useThemeStore();
     const styles = useMemo(() => createStyles(theme), [theme]);
+    const {t} = useTranslation();
 
     return (
       // <View style={styles.searchContainer, {backgroundColor: theme.THEME_NUMBER === 3 ? theme.MAIN200 : theme.BACKGROUND}}>
@@ -30,7 +32,7 @@ const SearchHeader = memo(
           style={styles.searchInput}
           onChangeText={handleSearch}
           value={searchQuery}
-          placeholder="전체에서 검색"
+          placeholder={t('전체에서 검색')}
           placeholderTextColor={theme.TEXT300}
           onSubmitEditing={handleSearchSubmit}
           autoFocus={true} // 자동 포커스

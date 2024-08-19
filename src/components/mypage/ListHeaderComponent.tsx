@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
+import {useTranslation} from 'react-i18next';
 import DropdownFilter from '@/components/home/DropDownFilter';
 import {type ITheme} from '@/types';
 import {FONTS} from '@/constants';
@@ -20,18 +21,21 @@ const ListHeader = ({
   theme,
 }: TrashHeaderProps) => {
   const styles = createStyles(theme);
+  const {t} = useTranslation();
 
   return (
     <View style={styles.titleContainer}>
       <View style={styles.headerText}>
-        <Text style={styles.title}>휴지통</Text>
+        <Text style={styles.title}>{t('휴지통')}</Text>
       </View>
       <Text style={styles.subTitle}>
-        휴지통으로 이동된 후 7일 뒤에는 완전히 삭제됩니다.
+        {t('휴지통으로 이동된 후 7일 뒤에는 완전히 삭제됩니다.')}
       </Text>
       <View style={styles.paddingContent} />
       <View style={styles.filterContainer}>
-        <Text style={styles.linkCount}>{linkCount} Links</Text>
+        <Text style={styles.linkCount}>
+          {linkCount} {t('Links')}
+        </Text>
         <DropdownFilter
           options={sortingOptions}
           selectedOption={selectedSortingOption}

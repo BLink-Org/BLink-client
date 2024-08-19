@@ -17,6 +17,7 @@ import i18n from '@/i18n/i18n';
 import {useUserStore} from '@/store/useUserStore';
 import {trackEvent} from '@/utils/amplitude-utils';
 import {AMPLITUDE_API_KEY} from '@env';
+import GlobalNavigationUnauthenticated from '@/components/navigation/GlobalNavigationUnauthenticated';
 
 interface AppProps {
   sharedURL: string;
@@ -26,7 +27,6 @@ const queryClient = new QueryClient();
 
 export default function App(props: AppProps) {
   const restoreTheme = useThemeStore(state => state.restoreTheme);
-  const {ShareMenu} = NativeModules;
   const isAuthenticated = useUserStore(state => state.isAuthenticated);
   console.log(
     '🚀 ~ file: App.tsx:26 ~ App ~ isAuthenticated:',
@@ -125,13 +125,16 @@ export default function App(props: AppProps) {
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
         <NavigationContainer key={isAuthenticated ? 'auth-true' : 'auth-false'}>
-          <GlobalNavigation
-            sharedURL={sharedURL}
-            setSharedURL={setSharedURL}
-            isBottomSheetVisible={isBottomSheetVisible}
-            setIsBottomSheetVisible={setIsBottomSheetVisible}
-            isAuthenticated={isAuthenticated}
-          />
+          {isAuthenticated ? (
+            <GlobalNavigation
+              sharedURL={sharedURL}
+              setSharedURL={setSharedURL}
+              isBottomSheetVisible={isBottomSheetVisible}
+              setIsBottomSheetVisible={setIsBottomSheetVisible}
+            />
+          ) : (
+            <GlobalNavigationUnauthenticated />
+          )}
         </NavigationContainer>
       </SafeAreaProvider>
     </QueryClientProvider>

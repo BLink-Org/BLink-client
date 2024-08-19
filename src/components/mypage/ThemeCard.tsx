@@ -1,10 +1,12 @@
 import React, {useMemo} from 'react';
 import {Text, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {useModalStore} from '@/store/useModalStore';
 import AlertModal from '@/components/modal/AlertModal';
 import {type ITheme} from '@/types';
+import {Theme3SmallCardImage} from '@/assets/icons/theme';
 
 interface ThemeCardProps {
   id: number;
@@ -25,6 +27,7 @@ const ThemeCard = ({
 }: ThemeCardProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {t} = useTranslation();
 
   const {showModal, closeModal} = useModalStore();
   const modalId = `themeConfirm-${id}`;
@@ -38,6 +41,10 @@ const ThemeCard = ({
     closeModal(modalId);
   };
 
+  if (id === 4) {
+    return <View style={styles.mainContainer}></View>;
+  }
+
   return (
     <TouchableOpacity onPress={handleSelect} style={styles.mainContainer}>
       <View
@@ -45,13 +52,22 @@ const ThemeCard = ({
           styles.card,
           selected
             ? {borderColor: theme.MAIN400}
-            : {borderColor: theme.TEXT200},
+            : {borderColor: theme.TEXT300},
         ]}>
-        <View style={[styles.headerBackground, {backgroundColor: mainColor}]} />
+        {id === 3 ? (
+          <View style={styles.headerBackground}>
+            <Theme3SmallCardImage width={180} height={180} />
+          </View>
+        ) : (
+          <View
+            style={[styles.headerBackground, {backgroundColor: mainColor}]}
+          />
+        )}
+
         <View style={styles.bodyContainer}>
           <View style={styles.textBox}>
-            <Text style={styles.nameText}>{name}</Text>
-            <Text style={styles.priceText}>{price}</Text>
+            <Text style={styles.nameText}>{t(name)}</Text>
+            <Text style={styles.priceText}>{t(price)}</Text>
           </View>
           {selected ? (
             <View style={styles.buttonContainer}>
@@ -69,10 +85,10 @@ const ThemeCard = ({
       {/* alertModal 처리 */}
       <AlertModal
         modalId={modalId}
-        headerText="선택한 테마를 적용하시겠어요?"
-        bodyText="테마는 즉시 적용돼요"
-        leftText="취소"
-        rightText="적용"
+        headerText={t('선택한 테마를 적용하시겠어요?')}
+        bodyText={t('테마는 즉시 적용돼요')}
+        leftText={t('취소')}
+        rightText={t('적용')}
         rightOnPress={handleConfirmSelect}
       />
     </TouchableOpacity>
@@ -92,9 +108,13 @@ const createStyles = (theme: ITheme) =>
       borderWidth: 1,
       overflow: 'hidden',
     },
+
     headerBackground: {
       height: 140,
       width: '100%',
+      overflow: 'hidden',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     bodyContainer: {
       padding: 12,

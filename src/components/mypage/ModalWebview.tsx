@@ -2,6 +2,7 @@ import React from 'react';
 import {Modal, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {WebView} from 'react-native-webview';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useTranslation} from 'react-i18next';
 import {CloseIcon} from '@/assets/icons/webview';
 import {useThemeStore} from '@/store/useThemeStore';
 import {FONTS} from '@/constants';
@@ -16,6 +17,7 @@ interface ModalWebViewProps {
 const ModalWebView = ({visible, onClose, url, title}: ModalWebViewProps) => {
   const {theme} = useThemeStore();
   const insets = useSafeAreaInsets();
+  const {t} = useTranslation();
 
   return (
     <Modal
@@ -35,7 +37,8 @@ const ModalWebView = ({visible, onClose, url, title}: ModalWebViewProps) => {
             style={styles.closeButtonContainer}>
             <CloseIcon fill={theme.TEXT900} />
           </TouchableOpacity>
-          <Text style={[styles.title, {color: theme.TEXT800}]}>{title}</Text>
+          <Text style={[styles.title, {color: theme.TEXT800}]}>{t(title)}</Text>
+
           <View style={styles.spacer}></View>
         </View>
         <WebView source={{uri: url}} style={styles.webView} />

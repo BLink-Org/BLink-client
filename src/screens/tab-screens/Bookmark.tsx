@@ -170,7 +170,7 @@ const Bookmark = () => {
           ListEmptyComponent={
             <ListEmpty
               textColor={theme.TEXT500}
-              message="핀에 저장한 링크가 있으면 여기에 보여요"
+              message={t('핀에 저장한 링크가 있으면 여기에 보여요')}
             />
           }
           ListFooterComponent={() =>

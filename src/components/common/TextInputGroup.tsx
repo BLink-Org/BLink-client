@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
+import {useTranslation} from 'react-i18next';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {RoundDeleteIcon} from '@/assets/icons/modal';
@@ -33,18 +34,19 @@ const TextInputGroup = ({
 }: TextInputGroupProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const {t} = useTranslation();
 
   const byteLimit = isUpdateTitle ? 300 : 30;
   const byteLength = calculateByteLength(textInput);
 
   return (
     <View>
-      <Text style={styles.inputTitle}>{inputTitle}</Text>
+      <Text style={styles.inputTitle}>{t(inputTitle)}</Text>
       <View style={styles.inputField}>
         <View style={styles.inputFieldTop}>
           <TextInput
             style={styles.input}
-            placeholder={placeholder}
+            placeholder={t(placeholder)}
             placeholderTextColor={theme.TEXT300}
             value={textInput}
             onChangeText={setTextInput}
@@ -54,7 +56,7 @@ const TextInputGroup = ({
           </TouchableOpacity>
         </View>
         <View style={styles.inputFieldBottom}>
-          <Text style={styles.errorMessage}>{errorMessage}</Text>
+          <Text style={styles.errorMessage}>{t(errorMessage)}</Text>
           {isByteCountVisible && (
             <Text
               style={[

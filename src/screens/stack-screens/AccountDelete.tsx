@@ -5,9 +5,11 @@ import {
   TouchableOpacity,
   View,
   SafeAreaView,
+  ScrollView,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useQueryClient} from '@tanstack/react-query';
+import {useTranslation} from 'react-i18next';
 import BackHeader from '@/components/common/BackHeader';
 import ThemeBackground from '@/components/common/ThemeBackground';
 import {useThemeStore} from '@/store/useThemeStore';
@@ -25,6 +27,7 @@ import {
 } from '@/api/hooks/useUser';
 
 const AccountDelete = () => {
+  const {t} = useTranslation();
   const {data: userInfoData, refetch: refetchUserInfo} = useUserInfo();
   const queryClient = useQueryClient();
   const navigation = useNavigation<RootStackNavigationProp>();
@@ -78,21 +81,26 @@ const AccountDelete = () => {
       <>
         <SafeAreaView style={styles.container}>
           <ThemeBackground />
-          <BackHeader title="계정 삭제 신청" themeColor={theme.TEXT900} />
+          <BackHeader title={t('계정 삭제 신청')} themeColor={theme.TEXT900} />
           <View style={styles.contentContainer}>
             <View style={styles.alertContainer}>
               <WarningIcon fill={theme.MAIN400} />
-              <Text style={styles.alertText}>삭제 신청된 계정입니다.</Text>
+              <Text style={styles.alertText}>
+                {t('삭제 신청된 계정입니다.')}
+              </Text>
             </View>
-            <Text style={styles.infoText}>
-              삭제 신청일 {userInfoData.deleteRequestDate} 기준 7일 이내{'\n'}
-              삭제 신청을 취소하면 원래의 계정 정보로{'\n'}B.Link를 계속
-              이용하실 수 있어요.
-            </Text>
+
+            <View style={styles.deleteInfoContainer}>
+              <Text style={styles.infoText}>
+                {t('삭제_신청_일', {
+                  deleteRequestDate: userInfoData.deleteRequestDate,
+                })}
+              </Text>
+            </View>
           </View>
         </SafeAreaView>
         <CustomBottomButton
-          title="계정 삭제 철회하기"
+          title={t('계정 삭제 철회하기')}
           onPress={handleCancelDeleteAccount}
           isDisabled={false}
         />
@@ -105,50 +113,63 @@ const AccountDelete = () => {
       <SafeAreaView style={styles.container}>
         <ThemeBackground />
         <BackHeader title="계정 삭제 신청" themeColor={theme.TEXT900} />
-        <View style={styles.contentContainer}>
-          <Text style={styles.sectionTitle}>저장 현황</Text>
-          <StaticInfo
-            linkCount={userInfoData?.linkCount}
-            bookmarkCount={userInfoData?.pinCount}
-            folderCount={userInfoData?.folderCount}
-          />
-        </View>
-        <View style={styles.contentContainer}>
-          <Text style={styles.sectionTitle}>계정 삭제 유의사항</Text>
-          <View>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <View style={styles.contentContainer}>
+            <Text style={styles.sectionTitle}>{t('저장 현황')}</Text>
+            <StaticInfo
+              linkCount={userInfoData?.linkCount}
+              bookmarkCount={userInfoData?.pinCount}
+              folderCount={userInfoData?.folderCount}
+            />
+          </View>
+          <View style={styles.contentContainer}>
+            <Text style={styles.sectionTitle}>{t('계정 삭제 유의사항')}</Text>
             <Text style={styles.infoText}>
-              - 계정 삭제 신청 7일 뒤 계정이 완전히 삭제됩니다. {'\n'}- 계정이
-              삭제될 때에는 해당 계정으로 B.Link에 저장한 모든 링크와 폴더가
-              삭제됩니다. {'\n'}- 계정이 삭제된 후에는 같은 계정으로
-              재가입하더라도 삭제된 정보는 복구할 수 없습니다. {'\n'}- 계정
-              삭제를 철회하고 싶다면 계정 삭제를 신청한 지 7일이 경과하기 전
-              요청해주세요. {'\n'}- 계정 삭제 철회는 [My]{`>`}[계정 관리]{`>`}
-              [계정 삭제 신청]에서 할 수 있습니다.
+              <Text style={styles.infoText}>
+                {t('- 계정 삭제 신청 7일 뒤 계정이 완전히 삭제됩니다.\n')}
+              </Text>
+              <Text style={styles.infoText}>
+                {t(
+                  '- 계정이 삭제될 때에는 해당 계정으로 B.Link에 저장한 모든 링크와 폴더가 삭제됩니다.\n',
+                )}
+              </Text>
+              <Text style={styles.infoText}>
+                {t(
+                  '- 계정이 삭제된 후에는 같은 계정으로 재가입하더라도 삭제된 정보는 복구할 수 없습니다.\n',
+                )}
+              </Text>
+              <Text style={styles.infoText}>
+                {t(
+                  '- 계정 삭제를 철회하고 싶다면 계정 삭제를 신청한 지 7일이 경과하기 전 요청해주세요.\n',
+                )}
+              </Text>
+              <Text style={styles.infoText}>
+                {t(
+                  '- 계정 삭제 철회는 [My] > [계정 관리] > [계정 삭제 신청]에서 할 수 있습니다.',
+                )}
+              </Text>
             </Text>
           </View>
-        </View>
-
-        <View style={styles.checkContainer}>
-          <TouchableOpacity onPress={handleCheck}>
-            <CheckBoxIcon fill={isChecked ? theme.MAIN500 : theme.TEXT500} />
-          </TouchableOpacity>
-          <Text style={styles.checkText}>
-            계정 삭제 유의사항을 숙지했습니다.
-          </Text>
-        </View>
-
-        {/* alertModal 처리 */}
-        <AlertModal
-          modalId="deleteConfirm"
-          headerText="계정 삭제 신청"
-          bodyText="계정을 삭제하시겠습니까?"
-          leftText="취소"
-          rightText="삭제"
-          rightOnPress={handleConfirmDelete}
-        />
+          <View style={styles.checkContainer}>
+            <TouchableOpacity onPress={handleCheck}>
+              <CheckBoxIcon fill={isChecked ? theme.MAIN500 : theme.TEXT500} />
+            </TouchableOpacity>
+            <Text style={styles.checkText}>
+              {t('계정 삭제 유의사항을 숙지했습니다.')}
+            </Text>
+          </View>
+        </ScrollView>
       </SafeAreaView>
+      <AlertModal
+        modalId="deleteConfirm"
+        headerText={t('계정 삭제 신청')}
+        bodyText={t('계정을 삭제하시겠습니까?')}
+        leftText={t('취소')}
+        rightText={t('삭제')}
+        rightOnPress={handleConfirmDelete}
+      />
       <CustomBottomButton
-        title="계정 삭제 신청"
+        title={t('계정 삭제 신청')}
         onPress={handleDeleteAccount}
         isDisabled={!isChecked}
       />
@@ -163,10 +184,17 @@ const createStyles = (theme: ITheme) =>
     container: {
       flex: 1,
     },
+    scrollContainer: {
+      flexGrow: 1,
+      paddingBottom: 80,
+    },
     contentContainer: {
       paddingVertical: 20,
       paddingHorizontal: 18,
       gap: 12,
+    },
+    deleteInfoContainer: {
+      marginRight: 25,
     },
     alertContainer: {
       flexDirection: 'row',
