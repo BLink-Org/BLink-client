@@ -16,12 +16,12 @@ const FolderButtonPlaceHolder = ({
       highlightColor={theme.TEXT100}>
       <>
         <View style={styles.container}></View>
-        {!isMultipleSelection && <View style={styles.stroke}></View>}
+        {isMultipleSelection && <View style={styles.stroke}></View>}
         <View style={styles.container}></View>
         <View style={styles.container}></View>
         <View style={styles.container}></View>
         <View style={styles.container}></View>
-        {isMultipleSelection && (
+        {!isMultipleSelection && (
           <View style={[styles.stroke, {borderColor: theme.TEXT200}]}></View>
         )}
         <View style={styles.container}></View>
@@ -35,11 +35,12 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 58,
     borderRadius: 8,
+    marginBottom: 8,
   },
   stroke: {
     borderWidth: 1,
-    marginVertical: 8,
     width: '100%',
+    marginBottom: 8,
   },
 });
 

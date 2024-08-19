@@ -23,6 +23,7 @@ import {useCreateFolder, useFolders} from '@/api/hooks/useFolder';
 import {useCreateLink} from '@/api/hooks/useLink';
 import {trackEvent} from '@/utils/amplitude-utils';
 import fonts from '@/constants/fonts';
+import FolderButtonPlaceHolder from '../folder/FolderButtonPlaceHolder';
 
 interface FolderSideBarProps {
   defaultURL?: string;
@@ -33,7 +34,7 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const {t} = useTranslation();
-  const {data: useFolderData} = useFolders();
+  const {data: useFolderData, isLoading} = useFolders();
 
   const [textInput, setTextInput] = useState<string | undefined>(defaultURL);
   const [errorMessage, setErrorMessage] = useState<string>('');
@@ -174,10 +175,14 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
           </TouchableOpacity>
         </View>
         <View style={styles.folderView}>
-          <FolderList
-            isMultipleSelection={true}
-            {...{selectedFolderId, setSelectedFolderId, useFolderData}}
-          />
+          {isLoading ? (
+            <FolderButtonPlaceHolder isMultipleSelection />
+          ) : (
+            <FolderList
+              isMultipleSelection={true}
+              {...{selectedFolderId, setSelectedFolderId, useFolderData}}
+            />
+          )}
         </View>
       </SafeAreaView>
       <CustomBottomButton

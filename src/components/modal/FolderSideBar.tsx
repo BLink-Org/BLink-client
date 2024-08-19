@@ -89,10 +89,6 @@ const FolderSideBar = ({
 
   const [visible, setVisible] = useState(isSideBarVisible);
 
-  const animation = useRef(
-    new Animated.Value(-Dimensions.get('window').width),
-  ).current;
-
   const toggleBottomSheet = (folderData: IFolderDtos | null) => {
     setFolderToEdit(folderData);
     setIsBottomSheetVisible(!isBottomSheetVisible);
@@ -187,7 +183,7 @@ const FolderSideBar = ({
         </View>
         <View style={styles.detailContainer}>
           <Text style={styles.linkCount}>
-            {(useFolderData?.folderDtos.length ?? 0) + ' Folders'}
+            {(useFolderData?.linkTotalCount ?? 0) + ' Links'}
           </Text>
           <TouchableOpacity
             style={styles.totalButton}
@@ -201,26 +197,24 @@ const FolderSideBar = ({
         </View>
 
         <View style={styles.folderView}>
-          {useFolderData &&
-          (useFolderData?.folderDtos.length > 0 ||
-            useFolderData?.noFolderLinkCount > 0) ? (
-            isLoading ? (
-              <FolderButtonPlaceHolder isMultipleSelection={false} />
-            ) : (
-              <FolderList
-                isMultipleSelection={false}
-                handleSelect={toggleBottomSheet}
-                onFolderPress={() => {
-                  toggleSideBar();
-                }}
-                {...{
-                  selectedFolderId,
-                  setSelectedFolderId,
-                  showToast,
-                  useFolderData,
-                }}
-              />
-            )
+          {isLoading ? (
+            <FolderButtonPlaceHolder isMultipleSelection={false} />
+          ) : useFolderData &&
+            (useFolderData?.folderDtos.length > 0 ||
+              useFolderData?.noFolderLinkCount > 0) ? (
+            <FolderList
+              isMultipleSelection={false}
+              handleSelect={toggleBottomSheet}
+              onFolderPress={() => {
+                toggleSideBar();
+              }}
+              {...{
+                selectedFolderId,
+                setSelectedFolderId,
+                showToast,
+                useFolderData,
+              }}
+            />
           ) : (
             <View style={styles.emptyView}>
               <Image source={theme.EMPTY_IMAGE} style={styles.emptyImage} />
@@ -267,7 +261,7 @@ const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     overlay: {
       ...StyleSheet.absoluteFillObject,
-      backgroundColor: 'rgba(0, 0, 0, 0.6)',
+      backgroundColor: 'rgba(0, 0, 0, 0.7)',
     },
     modalContent: {
       borderTopRightRadius: 28,

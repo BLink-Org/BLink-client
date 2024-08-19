@@ -10,7 +10,6 @@ import {
 // 폴더 목록 조회 get
 const getFolders = async (): Promise<GetFoldersSchema> => {
   const {data} = await apiClient.get(API_ENDPOINTS.FOLDER.FETCH);
-  await new Promise(resolve => setTimeout(resolve, 300));
   return data.result;
 };
 

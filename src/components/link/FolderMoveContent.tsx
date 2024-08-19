@@ -19,6 +19,7 @@ import FolderContent from '@/components/folder/FolderContent';
 import FolderList from '@/components/folder/FolderList';
 import {useCreateFolder, useFolders} from '@/api/hooks/useFolder';
 import {useLinkFolder, useMoveLink} from '@/api/hooks/useLink';
+import FolderButtonPlaceHolder from '../folder/FolderButtonPlaceHolder';
 
 interface FolderMoveContentProps {
   toggleBottomSheet: () => void;
@@ -33,7 +34,7 @@ const FolderMoveContent = ({
   const styles = useMemo(() => createStyles(theme), [theme]);
   const {t} = useTranslation();
 
-  const {data: useFolderData} = useFolders();
+  const {data: useFolderData, isLoading} = useFolders();
   // 특정 링크의 폴더 정보 가져오기
   const {data: selectedFoldersData} = useLinkFolder(linkId);
 
@@ -111,10 +112,14 @@ const FolderMoveContent = ({
           </TouchableOpacity>
         </View>
         <View style={[styles.folderView]}>
-          <FolderList
-            isMultipleSelection={true}
-            {...{selectedFolderId, setSelectedFolderId, useFolderData}}
-          />
+          {isLoading ? (
+            <FolderButtonPlaceHolder isMultipleSelection />
+          ) : (
+            <FolderList
+              isMultipleSelection={true}
+              {...{selectedFolderId, setSelectedFolderId, useFolderData}}
+            />
+          )}
         </View>
       </SafeAreaView>
       <CustomBottomButton
