@@ -26,6 +26,7 @@ import {
   useToggleLinkPin,
   useUpdateLinkTitle,
 } from '@/api/hooks/useLink';
+import {trackEvent} from '@/utils/amplitude-utils';
 
 const screenWidth = Dimensions.get('screen').width - 36;
 const aspectRatio = 339 / 140; // 카드 비율
@@ -61,6 +62,13 @@ const LargeCard = ({
     useState(false);
   const toggleTitleBottomSheet = () => {
     setIsTitleBottomSheetVisible(!isTitleBottomSheetVisible);
+  };
+  const handleTitleUpdate = () => {
+    setIsTitleBottomSheetVisible(!isTitleBottomSheetVisible);
+    trackEvent('Link_Title_Edited', {
+      Link_ID: content.id,
+    });
+    console.log('Link_Title_Edited');
   };
 
   // 폴더 이동 바텀시트 모달 관리
@@ -107,6 +115,7 @@ const LargeCard = ({
         onSelect: () => {
           const currentUrl = content.url ?? '';
           shareUrl(currentUrl);
+          trackEvent('Click_Share', {Link_Saved_Location: 'at-card'});
         },
       },
       {
@@ -116,6 +125,9 @@ const LargeCard = ({
           moveLinkToTrash(String(content.id));
           showToast(t(TOAST_MESSAGE.DELETE_SUCCESS));
           closeDropdown();
+          trackEvent('Link_Deleted', {
+            Link_ID: content.id,
+          });
         },
       },
     ],
@@ -125,6 +137,13 @@ const LargeCard = ({
   // 핀 on/off 핸들러
   const handlePinToggle = () => {
     togglePin(String(content.id));
+    if (!content.pinned) {
+      trackEvent('Pin_Saved', {Link_Saved_Location: 'at-card'});
+      console.log('Pin_Saved212112');
+    } else {
+      trackEvent('Pin_Unpinned', {Link_Saved_Location: 'at-card'});
+      console.log('Pin_Unpinned');
+    }
   };
 
   // 이미지 로딩 처리
@@ -217,7 +236,7 @@ const LargeCard = ({
         toggleBottomSheet={toggleTitleBottomSheet}>
         <TitleContent
           defaultText={content.title}
-          toggleBottomSheet={toggleTitleBottomSheet}
+          toggleBottomSheet={handleTitleUpdate}
           updateTitle={updateTitle}
           linkId={content.id}
         />

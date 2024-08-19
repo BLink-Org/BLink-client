@@ -27,6 +27,7 @@ import BottomSheet from '@/components/modal/BottomSheet';
 import LinkContent from '@/components/link/LinkContent';
 import {PinnedIcon} from '@/assets/icons/bottom-tab';
 import NoticeModal from '@/components/modal/NoticeModal';
+import {trackEvent} from '@/utils/amplitude-utils';
 
 const WebViewList = () => {
   const navigation = useNavigation();
@@ -114,6 +115,13 @@ const WebViewList = () => {
   // 핀 on/off
   const handlePinToggle = () => {
     togglePin(String(currentLink.id));
+    if (!currentLink.pinned) {
+      trackEvent('Pin_Saved', {Link_Saved_Location: 'in-webview'});
+      console.log('Pin_Saved212112');
+    } else {
+      trackEvent('Pin_Unpinned', {Link_Saved_Location: 'in-webview'});
+      console.log('Pin_Unpinned');
+    }
   };
 
   // 하나의 웹 뷰 내에서 뒤로가기, 앞으로가기, 새로고침
@@ -160,6 +168,7 @@ const WebViewList = () => {
 
   const goBackPage = () => {
     navigation.goBack();
+    trackEvent('Link_ViewPage_Closed', {Link_Viewed_Location: 'home'});
   };
 
   // 링크 저장
@@ -168,6 +177,18 @@ const WebViewList = () => {
     if (webViewUrl) {
       existsCheck(webViewUrl);
     }
+  };
+
+  // 링크 저장 토글 클릭 이벤트
+  const toggleBottomSheetEvent = () => {
+    setIsBottomSheetVisible(!isBottomSheetVisible);
+    trackEvent('Link_Saved_form', {Link_Saved_Location: 'in-webview'});
+  };
+
+  // 공유하기 버튼 클릭 이벤트
+  const handlePressShare = () => {
+    trackEvent('Click_Share', {Link_Saved_Location: 'in-webview'});
+    shareUrl(currentUrl ?? '');
   };
 
   return (
@@ -222,7 +243,7 @@ const WebViewList = () => {
           />
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => shareUrl(currentUrl ?? '')}>
+        <TouchableOpacity onPress={handlePressShare}>
           <View style={styles.shareIcon} />
           <ShareIcon width={26} height={26} fill={theme.TEXT900} />
         </TouchableOpacity>
@@ -254,7 +275,7 @@ const WebViewList = () => {
         {...{isBottomSheetVisible, toggleBottomSheet}}>
         <LinkContent
           defaultURL={webViewUrl ?? ''}
-          toggleBottomSheet={() => setIsBottomSheetVisible(false)}
+          toggleBottomSheet={toggleBottomSheetEvent}
         />
       </BottomSheet>
     </SafeAreaView>

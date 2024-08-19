@@ -15,24 +15,26 @@ import {useThemeStore} from '@/store/useThemeStore';
 import NavigationInfo from '@/components/mypage/NavigationInfo';
 import {FONTS} from '@/constants';
 import {type ITheme} from '@/types';
+import {useModalStore} from '@/store/useModalStore';
+import AlertModal from '@/components/modal/AlertModal';
+import {trackEvent} from '@/utils/amplitude-utils';
 
 const Setting = () => {
   const {theme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const {t} = useTranslation();
+  const {showModal, closeModal} = useModalStore();
+  const modalId = 'languageSettingModal';
 
-  // 알람 설정 -> 추후 추가 예정
-  // const [isToggled, setIsToggled] = useState<boolean>(false);
-
-  // // 알람 설정 클릭 시
-  // const handleAlarm = () => {
-  //   setIsToggled(!isToggled);
-  // };
-
-  // 언어 설정 클릭 시 (논의 필요)
   const handleLanguage = () => {
+    showModal(modalId);
+  };
+
+  const handleNavigateToSettings = () => {
+    trackEvent('Move_To_Settings_Language');
+    closeModal(modalId); // 모달 닫기
     if (Platform.OS === 'ios') {
-      Linking.openSettings();
+      Linking.openSettings(); // iOS 설정창 열기
     } else {
       if (NativeModules.OpenExternalURLModule) {
         NativeModules.OpenExternalURLModule.linkAndroidSettings();
@@ -53,12 +55,19 @@ const Setting = () => {
           themeColor={theme.TEXT800}
           onPress={handleLanguage}
         />
-
-        {/* <View style={styles.bodyContainer}>
-          <Text style={styles.bodyText}>알림</Text>
-          <CustomToggle isToggled={isToggled} onToggleChange={handleAlarm} />
-        </View> */}
       </View>
+
+      {/* 언어 선택 모달 */}
+      <AlertModal
+        modalId={modalId}
+        headerText={t('설정 창으로 이동합니다')}
+        bodyText={t(
+          '설정 > 목록에서 B.Link 선택 > 언어에서 언어를 변경해주세요',
+        )}
+        leftText={t('취소')}
+        rightText={t('확인')}
+        rightOnPress={handleNavigateToSettings}
+      />
     </SafeAreaView>
   );
 };

@@ -20,6 +20,7 @@ import {
 import {PinnedIcon} from '@/assets/icons/bottom-tab';
 import DummyData from '@/constants/unauth-default-data.json';
 import LoginModal from '@/components/modal/LoginModal';
+import {trackEvent} from '@/utils/amplitude-utils';
 
 const UnAuthWebView = () => {
   const webViewRef = useRef<WebView>(null);
@@ -79,6 +80,7 @@ const UnAuthWebView = () => {
 
   const goBackPage = () => {
     navigation.goBack();
+    trackEvent('Link_ViewPage_Closed', {Link_Viewed_Location: 'around'});
   };
 
   // 핀 토글

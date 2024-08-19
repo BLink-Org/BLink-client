@@ -31,6 +31,7 @@ import AnimatedLogoHeader from '@/components/common/AnimatedLogoHeader';
 import BookmarkListHeader from '@/components/home/BookmarkListHeader';
 import CustomStatusBar from '@/components/common/CustomStatusBar';
 import ListEmpty from '@/components/home/ListEmpty';
+import { trackEvent } from '@/utils/amplitude-utils';
 
 const Bookmark = () => {
   const {t} = useTranslation();
@@ -74,6 +75,7 @@ const Bookmark = () => {
       initialIndex: index,
       size: 10,
     });
+    trackEvent('Link_ViewPage_Opened', {Link_Viewed_Location: 'pin'});
   };
 
   // 새로고침 상태 관리

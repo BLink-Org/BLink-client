@@ -21,6 +21,7 @@ import HomeListHeader from '@/components/home/HomeListHeader';
 import UnAuthLargeCard from '@/components/home/UnAuthLargeCard';
 import UnAuthSmallCard from '@/components/home/UnAuthSmallCard';
 import UnAuthFolderSideBar from '@/components/modal/UnAuthFolderSideBar';
+import {trackEvent} from '@/utils/amplitude-utils';
 
 const UnAuthHome = () => {
   const {t} = useTranslation();
@@ -63,6 +64,7 @@ const UnAuthHome = () => {
   const navigation = useNavigation<WebViewListNavigationProp>();
   const handleCardPress = () => {
     navigation.navigate('UnAuthWebView');
+    trackEvent('Link_ViewPage_Opened', {Link_Viewed_Location: 'around'});
   };
 
   const renderItem: ListRenderItem<ILinkDtos> = useCallback(

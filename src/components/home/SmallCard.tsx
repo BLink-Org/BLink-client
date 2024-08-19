@@ -37,6 +37,7 @@ import {
   useUpdateSearchLinkTitle,
 } from '@/api/hooks/useLink';
 import {extractHostname, shareUrl} from '@/utils/url-utils';
+import {trackEvent} from '@/utils/amplitude-utils';
 
 interface SmallCardProps {
   content: ILinkDtos;
@@ -97,6 +98,13 @@ const SmallCard = ({
   const toggleTitleBottomSheet = () => {
     setIsTitleBottomSheetVisible(!isTitleBottomSheetVisible);
   };
+  const handleTitleUpdate = () => {
+    setIsTitleBottomSheetVisible(!isTitleBottomSheetVisible);
+    trackEvent('Link_Title_Edited', {
+      Link_ID: content.id,
+    });
+    console.log('Link_Title_Edited');
+  };
 
   // 폴더 이동 바텀시트 모달 관리
   const [isFolderBottomSheetVisible, setIsFolderBottomSheetVisible] =
@@ -127,6 +135,13 @@ const SmallCard = ({
   // 핀 on/off
   const handlePinToggle = () => {
     togglePin(String(content.id));
+    if (!content.pinned) {
+      trackEvent('Pin_Saved', {Link_Saved_Location: 'at-card'});
+      console.log('Pin_Saved212112');
+    } else {
+      trackEvent('Pin_Unpinned', {Link_Saved_Location: 'at-card'});
+      console.log('Pin_Unpinned');
+    }
   };
 
   const getModalId = (baseId: string) => `${baseId}-${selectedId}`;
@@ -140,9 +155,15 @@ const SmallCard = ({
     const modalId = getModalId(`trashOption-${label}`);
     if (label === '영구삭제') {
       deleteLink(String(selectedId));
+      trackEvent('Link_Permanent_Deleted', {
+        Link_ID: content.id,
+      });
     }
     if (label === '복원') {
       recoverLink(String(selectedId));
+      trackEvent('Link_Restored', {
+        Link_ID: content.id,
+      });
     }
     closeModal(modalId);
   };
@@ -171,6 +192,7 @@ const SmallCard = ({
         onSelect: () => {
           const currentUrl = content.url ?? '';
           shareUrl(currentUrl);
+          trackEvent('Click_Share', {Link_Saved_Location: 'at-card'});
         },
       },
 
@@ -181,6 +203,9 @@ const SmallCard = ({
           moveLinkToTrash(String(content.id));
           showToast(t(TOAST_MESSAGE.DELETE_SUCCESS));
           closeDropdown();
+          trackEvent('Link_Deleted', {
+            Link_ID: content.id,
+          });
         },
       },
     ],
@@ -349,7 +374,7 @@ const SmallCard = ({
         toggleBottomSheet={toggleTitleBottomSheet}>
         <TitleContent
           defaultText={content.title}
-          toggleBottomSheet={toggleTitleBottomSheet}
+          toggleBottomSheet={handleTitleUpdate}
           updateTitle={updateTitle}
           linkId={content.id}
         />

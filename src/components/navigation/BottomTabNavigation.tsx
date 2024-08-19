@@ -19,6 +19,7 @@ import BottomSheet from '@/components/modal/BottomSheet';
 import LinkContent from '@/components/link/LinkContent';
 import {useThemeStore} from '@/store/useThemeStore';
 import {type Theme} from '@/constants/theme';
+import {trackEvent} from '@/utils/amplitude-utils';
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -91,13 +92,19 @@ const BottomTabNavigation = () => {
   const toggleBottomSheet = () => {
     setIsBottomSheetVisible(!isBottomSheetVisible);
   };
+  const toggleBottomSheetEvent = () => {
+    setIsBottomSheetVisible(!isBottomSheetVisible);
+    trackEvent('Link_Saved_form', {
+      Link_Saved_Location: 'in-global-navigation-bar',
+    });
+  };
 
   return (
     <>
       <BottomSheet
         modalTitle="링크 저장"
         {...{isBottomSheetVisible, toggleBottomSheet}}>
-        <LinkContent {...{toggleBottomSheet}} />
+        <LinkContent toggleBottomSheet={toggleBottomSheetEvent} />
       </BottomSheet>
       <Tab.Navigator
         screenOptions={{

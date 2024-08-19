@@ -12,6 +12,7 @@ import {useModalStore} from '@/store/useModalStore';
 import AlertModal from '@/components/modal/AlertModal';
 import {TOAST_MESSAGE} from '@/constants/toast';
 import {useDeleteFolder} from '@/api/hooks/useFolder';
+import {trackEvent} from '@/utils/amplitude-utils';
 
 interface FolderButtonProps {
   id: number;
@@ -55,6 +56,9 @@ const FolderButton = ({
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: ['folders']});
       showToast(t(TOAST_MESSAGE.DELETE_SUCCESS));
+      trackEvent('Folder_Deleted', {
+        Folder_ID: id,
+      });
     },
   });
 

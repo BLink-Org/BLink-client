@@ -25,7 +25,7 @@ const GoogleLogin = () => {
       const {accessToken, refreshToken} = data;
       await setTokens(accessToken, refreshToken);
       amplitude.init(AMPLITUDE_API_KEY, userEmail);
-      trackEvent('Login Success', {method: 'Google'});
+      trackEvent('SignUp_Complete', {method: 'Google'});
     },
   });
 
@@ -42,6 +42,7 @@ const GoogleLogin = () => {
       if (isErrorWithCode(error)) {
         if (error.code === statusCodes.SIGN_IN_CANCELLED) {
           console.log('User cancelled the login flow');
+          trackEvent('SignUp_Quit', {method: 'Google'});
         } else if (error.code === statusCodes.IN_PROGRESS) {
           console.log('Operation (e.g. sign in) is in progress already');
         } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
