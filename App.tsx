@@ -1,5 +1,12 @@
 import {useEffect, useState} from 'react';
-import {NativeModules, Platform, Linking} from 'react-native';
+import {
+  NativeModules,
+  Platform,
+  Linking,
+  NativeEventEmitter,
+  type NativeModule,
+  DeviceEventEmitter,
+} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import * as RNLocalize from 'react-native-localize';
@@ -31,6 +38,21 @@ export default function App(props: AppProps) {
 
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
   const [sharedURL, setSharedURL] = useState<string>('');
+
+  useEffect(() => {
+    // URL 공유 이벤트 리스닝
+    const urlListener = DeviceEventEmitter.addListener(
+      'UrlShared',
+      (url: string) => {
+        console.log(url);
+      },
+    );
+
+    // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
+    return () => {
+      urlListener.remove();
+    };
+  }, []);
 
   useEffect(() => {
     if (props.sharedURL) {
