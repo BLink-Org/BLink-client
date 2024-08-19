@@ -10,7 +10,6 @@ import {useQueryClient} from '@tanstack/react-query';
 import {useTranslation} from 'react-i18next';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
-import {isValidUrl} from '@/utils/url-utils';
 import {AddIcon} from '@/assets/icons/common';
 import {useBottomButtonSizeStore} from '@/store/useBottomButtonSizeStore';
 import {type ITheme} from '@/types';
@@ -62,6 +61,16 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
 
         setIsReadyToSave(false);
       }
+      if (error.response.data.code === 2601) {
+        setErrorMessage(t('입력한 링크를 찾을 수 없습니다.'));
+
+        setIsReadyToSave(false);
+      }
+      if (error.response.data.code === 2607) {
+        setErrorMessage(t('이미 휴지통에 존재 하는 링크 url입니다.'));
+
+        setIsReadyToSave(false);
+      }
     },
   });
 
@@ -78,19 +87,13 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
   }, [defaultURL]);
 
   useEffect(() => {
-    if (textInput && !isValidUrl(textInput)) {
-      setErrorMessage(t('입력한 링크를 찾을 수 없습니다.'));
-
-      setIsReadyToSave(false);
-    } else {
+    if (textInput && selectedFolderId) {
       setErrorMessage('');
       setIsReadyToSave(
         !!textInput && !!selectedFolderId && selectedFolderId.length > 0,
       );
     }
   }, [textInput, selectedFolderId]);
-
-  // TODO: 안드로이드 키보드 해결 필요
 
   return (
     <>

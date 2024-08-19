@@ -8,8 +8,8 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
   Text,
-  StatusBar,
   Platform,
+  Easing,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
@@ -36,27 +36,29 @@ const BottomSheet = ({
   const {t} = useTranslation(); // 추가
 
   const insets = useSafeAreaInsets();
-  const statusBarHeight =
-    Platform.OS === 'ios' ? insets.top : StatusBar.currentHeight ?? 0;
+  const bottomSheetHeight = useMemo(() => {
+    const statusBarHeight = Platform.OS === 'ios' ? insets.top : 0;
+    return Dimensions.get('window').height - statusBarHeight;
+  }, [Platform.OS]);
 
   const [visible, setVisible] = useState(isBottomSheetVisible);
-  const animation = useRef(
-    new Animated.Value(Dimensions.get('window').height - statusBarHeight),
-  ).current;
+  const animation = useRef(new Animated.Value(bottomSheetHeight)).current;
 
   useEffect(() => {
     if (isBottomSheetVisible) {
       setVisible(true);
       Animated.timing(animation, {
         toValue: 0,
-        duration: 300,
+        duration: 250,
         useNativeDriver: true,
+        easing: Easing.out(Easing.quad),
       }).start();
     } else {
       Animated.timing(animation, {
-        toValue: Dimensions.get('window').height - statusBarHeight,
-        duration: 300,
+        toValue: bottomSheetHeight,
+        duration: 250,
         useNativeDriver: true,
+        easing: Easing.in(Easing.quad),
       }).start(() => setVisible(false));
     }
   }, [isBottomSheetVisible]);
@@ -77,11 +79,11 @@ const BottomSheet = ({
           styles.modalContainer,
           {
             transform: [{translateY: animation}],
-            height: Dimensions.get('window').height - statusBarHeight,
+            height: bottomSheetHeight,
           },
         ]}>
         <View style={styles.header}>
-          <View />
+          <View style={styles.emptyBox} />
           <Text style={styles.modalTitle}>{t(modalTitle)}</Text>
           <TouchableOpacity onPress={toggleBottomSheet}>
             <DeleteIcon fill={theme.TEXT600} />
@@ -119,6 +121,9 @@ const createStyles = (theme: ITheme) =>
       alignItems: 'center',
       paddingVertical: 20,
       paddingHorizontal: 18,
+    },
+    emptyBox: {
+      width: 24,
     },
     modalTitle: {
       color: theme.TEXT900,
