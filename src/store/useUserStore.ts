@@ -28,8 +28,7 @@ export const useUserStore = create<UserState>(set => ({
 
   // 토큰 삭제 및 로그아웃
   clearTokens: async () => {
-    await EncryptedStorage.removeItem('accessToken');
-    await EncryptedStorage.removeItem('refreshToken');
+    await EncryptedStorage.clear();
     set({
       accessToken: null,
       refreshToken: null,

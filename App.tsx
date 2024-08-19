@@ -27,6 +27,7 @@ export default function App(props: AppProps) {
     '🚀 ~ file: App.tsx:26 ~ App ~ isAuthenticated:',
     isAuthenticated,
   );
+
   const loadTokens = useUserStore(state => state.loadTokens);
 
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
