@@ -12,6 +12,7 @@ import GoogleLogin from '@/components/auth/GoogleLogin';
 import AppleLogin from '@/components/auth/AppleLogin';
 import {FONTS} from '@/constants';
 import {type RootStackNavigationProp} from '@/types';
+import {trackEvent} from '@/utils/amplitude-utils';
 
 const Onboarding = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
@@ -19,6 +20,7 @@ const Onboarding = () => {
 
   // 둘러보기 클릭 시
   const handleAround = () => {
+    trackEvent('Explore_Mode_Usage');
     navigation.navigate('Tab', {
       screen: 'TempHome',
     });

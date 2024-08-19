@@ -17,6 +17,7 @@ import {FONTS} from '@/constants';
 import {type ITheme} from '@/types';
 import {useModalStore} from '@/store/useModalStore';
 import AlertModal from '@/components/modal/AlertModal';
+import {trackEvent} from '@/utils/amplitude-utils';
 
 const Setting = () => {
   const {theme} = useThemeStore();
@@ -30,6 +31,7 @@ const Setting = () => {
   };
 
   const handleNavigateToSettings = () => {
+    trackEvent('Move_To_Settings_Language');
     closeModal(modalId); // 모달 닫기
     if (Platform.OS === 'ios') {
       Linking.openSettings(); // iOS 설정창 열기

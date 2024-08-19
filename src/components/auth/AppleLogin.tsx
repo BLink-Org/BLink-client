@@ -28,7 +28,7 @@ const AppleLogin = () => {
       const {accessToken, refreshToken} = data;
       await setTokens(accessToken, refreshToken);
       amplitude.init(AMPLITUDE_API_KEY, userEmail);
-      trackEvent('Login Success', {method: 'Apple'});
+      trackEvent('SignUp_Complete', {method: 'Apple'});
     },
   });
 
@@ -60,6 +60,7 @@ const AppleLogin = () => {
       }
     } catch (error: any) {
       if (error.code === appleAuth.Error.CANCELED) {
+        trackEvent('SignUp_Quit', {method: 'Apple'});
         console.log('Apple Login -> User canceled Apple Sign in');
       } else {
         console.error('Apple Login -> Error:', error);
