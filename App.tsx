@@ -106,17 +106,6 @@ export default function App(props: AppProps) {
 
         // 이벤트 추적
         trackEvent('App Opened');
-
-        // 공유 텍스트 데이터 처리
-        if (Platform.OS === 'ios') {
-          // console.log('share extension text:', props.sharedURL);
-        } else {
-          ShareMenu.getSharedText((sharedData: string) => {
-            if (sharedData) {
-              console.log('Received shared data:', sharedData);
-            }
-          });
-        }
       } catch (error) {
         console.error('Initialization error:', error);
       } finally {
