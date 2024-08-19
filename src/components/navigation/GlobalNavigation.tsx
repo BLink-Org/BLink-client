@@ -21,10 +21,12 @@ import LinkContent from '../link/LinkContent';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const GlobalNavigation = ({
+  sharedURL,
   isAuthenticated,
   isBottomSheetVisible,
   setIsBottomSheetVisible,
 }: {
+  sharedURL: string;
   isAuthenticated: boolean;
   isBottomSheetVisible: boolean;
   setIsBottomSheetVisible: (v: boolean) => void;
@@ -40,7 +42,7 @@ const GlobalNavigation = ({
       <BottomSheet
         modalTitle="링크 저장"
         {...{isBottomSheetVisible, toggleBottomSheet}}>
-        <LinkContent {...{toggleBottomSheet}} />
+        <LinkContent defaultURL={sharedURL} {...{toggleBottomSheet}} />
       </BottomSheet>
       <Stack.Navigator screenOptions={{headerShown: false}}>
         {!isAuthenticated ? (

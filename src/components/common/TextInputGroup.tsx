@@ -48,7 +48,6 @@ const TextInputGroup = ({
             placeholderTextColor={theme.TEXT300}
             value={textInput}
             onChangeText={setTextInput}
-            
           />
           <TouchableOpacity onPress={() => setTextInput(undefined)}>
             <RoundDeleteIcon fill={theme.TEXT300} />

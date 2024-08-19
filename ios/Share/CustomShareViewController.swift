@@ -42,16 +42,24 @@ class CustomShareViewController: UIViewController {
             for provider in inputItem.attachments! {
                 let itemProvider = provider as! NSItemProvider
                 group.enter()
-                itemProvider.loadItem(forTypeIdentifier: kUTTypeData as String, options: nil) { data, error in
+                
+                itemProvider.loadItem(forTypeIdentifier: "public.url", options: nil) { [weak self] data, error in
+                    guard let self = self else { return }
+
                     if let url = data as? URL {
-                        let path = "\(self.docPath)/\(url.lastPathComponent)"
-                        print(">>> 공유된 경로: \(url.path)")
-                        try? FileManager.default.copyItem(at: url, to: URL(fileURLWithPath: path))
+                        // URL이 파일이 아닐 수 있으므로, 파일 복사 시도는 생략
+                        print(">>> 공유된 URL: \(url.absoluteString)")
+
+                        // URL을 UserDefaults에 저장
+                        let userDefaults = UserDefaults(suiteName: "group.org.reactjs.native.bookmarklink.BLinkApp")
+                        userDefaults?.set(url.absoluteString, forKey: "sharedURL")
+                        userDefaults?.synchronize()
                     } else if let error = error {
                         NSLog("Error loading item: \(error.localizedDescription)")
                     } else {
                         NSLog("Error: Data is not a URL")
                     }
+
                     group.leave()
                 }
             }
@@ -60,8 +68,11 @@ class CustomShareViewController: UIViewController {
         group.notify(queue: DispatchQueue.main) {
             NSLog("작업 완료")
             
-            let files = try! FileManager.default.contentsOfDirectory(atPath: self.docPath)
-            NSLog("디렉터리 내용: \(files)")
+            let userDefaults = UserDefaults(suiteName: "group.org.reactjs.native.bookmarklink.BLinkApp")
+            let sharedURL = userDefaults?.string(forKey: "sharedURL") ?? ""
+            
+            // URL encode sharedURL
+            let encodedSharedURL = sharedURL.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
             
             // 파일명을 직렬화하고 openURL 호출
             do {
@@ -72,7 +83,8 @@ class CustomShareViewController: UIViewController {
                     options: []
                 )
                 let jsonString = (NSString(data: jsonData, encoding: String.Encoding.utf8.rawValue)! as String).addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-                let result = self.openURL(URL(string: "myapp://com.myapp.share?\(jsonString!)")!)
+                let result = self.openURL(URL(string: "myapp://com.myapp.share?\(jsonString)&sharedURL=\(encodedSharedURL)")!)
+                
             } catch {
                 NSLog("오류: \(error.localizedDescription)")
             }

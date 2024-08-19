@@ -14,21 +14,8 @@ import {trackEvent} from '@/utils/amplitude-utils';
 import {AMPLITUDE_API_KEY} from '@env';
 
 interface AppProps {
-  sharedText: string;
+  sharedURL: string;
 }
-
-const getQueryParams = (url: string): Record<string, string> => {
-  const params: Record<string, string> = {};
-  const queryString = url.split('?')[1]; // '?' 이후의 쿼리 문자열을 가져옵니다.
-  if (queryString) {
-    const pairs = queryString.split('&'); // '&'로 쿼리 문자열을 나눕니다.
-    pairs.forEach(pair => {
-      const [key, value] = pair.split('='); // '='로 각 쌍을 나눕니다.
-      params[decodeURIComponent(key)] = decodeURIComponent(value || '');
-    });
-  }
-  return params;
-};
 
 const queryClient = new QueryClient();
 
@@ -43,28 +30,39 @@ export default function App(props: AppProps) {
   const loadTokens = useUserStore(state => state.loadTokens);
 
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+  const [sharedURL, setSharedURL] = useState<string>('');
+
   useEffect(() => {
-    const handleDeepLink = (event: {url: any}) => {
-      const url = event.url as string;
+    if (props.sharedURL) {
+      setSharedURL(props.sharedURL);
+    }
+  }, [props.sharedURL]);
+
+  useEffect(() => {
+    if (sharedURL) {
+      setIsBottomSheetVisible(true);
+    }
+  }, [sharedURL]);
+
+  useEffect(() => {
+    if (props.sharedURL) {
+      setSharedURL(props.sharedURL);
+    }
+    const handleDeepLink = (event: {url: string}) => {
+      const url = event.url;
       if (url) {
-        console.log('URL', decodeURI(url), props);
-        // const queryParams = getQueryParams(url); // 쿼리 파라미터 파싱
-        // const sharedURL = queryParams.sharedURL; // 'sharedURL' 값 가져오기
-        // console.log(queryParams, sharedURL);
-        // if (sharedURL) {
-        setIsBottomSheetVisible(true);
-        // }
+        setSharedURL(url.split('sharedURL=')[1]);
       }
     };
 
-    const subscription = Linking.addEventListener('url', handleDeepLink);
+    const linkingListener = Linking.addEventListener('url', handleDeepLink);
 
     Linking.getInitialURL().then(url => {
       if (url) handleDeepLink({url});
     });
 
     return () => {
-      subscription.remove();
+      linkingListener.remove();
     };
   }, []);
 
@@ -93,7 +91,7 @@ export default function App(props: AppProps) {
 
         // 공유 텍스트 데이터 처리
         if (Platform.OS === 'ios') {
-          console.log('share extension text:', props.sharedText);
+          // console.log('share extension text:', props.sharedURL);
         } else {
           ShareMenu.getSharedText((sharedData: string) => {
             if (sharedData) {
@@ -121,6 +119,7 @@ export default function App(props: AppProps) {
       <SafeAreaProvider>
         <NavigationContainer key={isAuthenticated ? 'auth-true' : 'auth-false'}>
           <GlobalNavigation
+            sharedURL={sharedURL}
             isBottomSheetVisible={isBottomSheetVisible}
             setIsBottomSheetVisible={setIsBottomSheetVisible}
             isAuthenticated={isAuthenticated}

@@ -36,19 +36,14 @@
     // If you want the animation layout to be forced to remove when hide is called, use this code
     [RNSplashScreen setAnimationFinished:true];
   }
-   
-  NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"group.org.reactjs.native.example.BLinkApp.Share"];
-  NSString *sharedText = [userDefaults objectForKey:@"sharedText"];
-  
-  if (sharedText) {
-    [userDefaults removeObjectForKey:@"sharedText"];
-    [userDefaults synchronize];
-  }
+
+  NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"group.org.reactjs.native.bookmarklink.BLinkApp"];
+  NSString *sharedURL = [userDefaults objectForKey:@"sharedURL"];
 
   // Launch React Native app
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:[self initializeBridge]
                                                    moduleName:self.moduleName
-                                            initialProperties:@{@"sharedText": sharedText ?: @""}];
+                                            initialProperties:@{@"sharedURL": sharedURL ?: @""}];
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
   rootViewController.view = rootView;
@@ -57,6 +52,28 @@
   
   return success;
 }
+
+- (void)applicationWillEnterForeground:(UIApplication *)application
+{
+  // Handle URL when coming back to foreground
+  [self handleSharedURL];
+}
+
+- (void)handleSharedURL
+{
+  NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:@"group.org.reactjs.native.bookmarklink.BLinkApp"];
+  NSString *sharedURL = [userDefaults stringForKey:@"sharedURL"];
+  
+  if (sharedURL) {
+    // Send URL to React Native
+    [self.bridge.eventDispatcher sendAppEventWithName:@"sharedURL" body:@{@"sharedURL": sharedURL}];
+    
+    // Remove URL after sending
+    [userDefaults removeObjectForKey:@"sharedURL"];
+    [userDefaults synchronize];
+  }
+}
+
 
 // URL Scheme 처리
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
