@@ -3,6 +3,7 @@ import {useTranslation} from 'react-i18next';
 import {ContentBackIcon, ContentFrontIcon} from '@/assets/icons/webview';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
+import {trackEvent} from '@/utils/amplitude-utils';
 
 interface NavigationButtonProps {
   onPress: () => void;
@@ -23,8 +24,17 @@ const NavigationButton = ({
   const IconComponent =
     label === t('이전 링크') ? ContentBackIcon : ContentFrontIcon;
 
+  const handlePress = () => {
+    if (label === t('이전 링크')) {
+      trackEvent('CLink_Link_Navigation', {direction: 'previous'});
+    } else {
+      trackEvent('CLink_Link_Navigation', {direction: 'next'});
+    }
+    onPress();
+  };
+
   return (
-    <TouchableOpacity onPress={onPress} disabled={disabled}>
+    <TouchableOpacity onPress={handlePress} disabled={disabled}>
       <View style={styles.backForwardContainer}>
         {label === t('이전 링크') ? (
           <>

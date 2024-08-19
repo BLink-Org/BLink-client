@@ -37,6 +37,7 @@ import {
   useUpdateSearchLinkTitle,
 } from '@/api/hooks/useLink';
 import {extractHostname, shareUrl} from '@/utils/url-utils';
+import {trackEvent} from '@/utils/amplitude-utils';
 
 interface SmallCardProps {
   content: ILinkDtos;
@@ -127,6 +128,13 @@ const SmallCard = ({
   // 핀 on/off
   const handlePinToggle = () => {
     togglePin(String(content.id));
+    if (!content.pinned) {
+      trackEvent('Pin_Saved', {Link_Saved_Location: 'at-card'});
+      console.log('Pin_Saved212112');
+    } else {
+      trackEvent('Pin_Unpinned', {Link_Saved_Location: 'at-card'});
+      console.log('Pin_Unpinned');
+    }
   };
 
   const getModalId = (baseId: string) => `${baseId}-${selectedId}`;
@@ -171,6 +179,7 @@ const SmallCard = ({
         onSelect: () => {
           const currentUrl = content.url ?? '';
           shareUrl(currentUrl);
+          trackEvent('Click_Share', {Link_Saved_Location: 'at-card'});
         },
       },
 
