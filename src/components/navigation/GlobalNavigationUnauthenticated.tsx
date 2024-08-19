@@ -16,17 +16,17 @@ import BookmarkScreen from '@/screens/tab-screens/Bookmark';
 import {useThemeStore} from '@/store/useThemeStore';
 import {type Theme} from '@/constants/theme';
 import Onboarding from '@/screens/stack-screens/Onboarding';
-import UnAuthMypage from '@/screens/no-login-tab-screen/UnAuthMypage';
+import UnAuthMypage from '@/screens/unauth-screen/UnAuthMypage';
 import {type RootStackNavigationProp} from '@/types';
 import ThemeSetting from '@/screens/stack-screens/ThemeSetting';
 import Support from '@/screens/stack-screens/Support';
 import Setting from '@/screens/stack-screens/Setting';
-import UnAuthHome from '@/screens/no-login-tab-screen/UnAuthHome';
-import UnAuthWebView from '@/screens/no-login-tab-screen/UnAuthWebView';
-import UnAuthSearch from '@/screens/no-login-tab-screen/UnAuthSearch';
-import LoginModal from '../modal/LoginModal';
-import BottomSheet from '../modal/BottomSheet';
-import UnAuthLinkContent from '../link/UnAuthLinkContent';
+import UnAuthHome from '@/screens/unauth-screen/UnAuthHome';
+import UnAuthWebView from '@/screens/unauth-screen/UnAuthWebView';
+import UnAuthSearch from '@/screens/unauth-screen/UnAuthSearch';
+import UnAuthLinkContent from '@/components/link/UnAuthLinkContent';
+import BottomSheet from '@/components/modal/BottomSheet';
+import LoginModal from '@/components/modal/LoginModal';
 
 interface IconProps {
   focused: boolean;

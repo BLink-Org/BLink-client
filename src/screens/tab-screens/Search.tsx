@@ -30,6 +30,7 @@ import {
 import CustomLoading from '@/components/common/CustomLoading';
 import RecentSearch from '@/components/search/ResentSearch';
 import CustomStatusBar from '@/components/common/CustomStatusBar';
+import { trackEvent } from '@/utils/amplitude-utils';
 
 const SearchPage = () => {
   const {theme} = useThemeStore();
@@ -85,6 +86,7 @@ const SearchPage = () => {
       size: 10,
       initialIndex: index,
     });
+    trackEvent('Link_ViewPage_Opened', {Link_Viewed_Location: 'search'});
   };
 
   const linkInfoArgsOptions = {

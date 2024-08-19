@@ -34,6 +34,7 @@ import HomeListHeader from '@/components/home/HomeListHeader';
 import {getSortByValue, getSortingOptions} from '@/utils/sorting-utils';
 import CustomStatusBar from '@/components/common/CustomStatusBar';
 import ListEmpty from '@/components/home/ListEmpty';
+import {trackEvent} from '@/utils/amplitude-utils';
 
 const Home = () => {
   const {t} = useTranslation();
@@ -90,6 +91,7 @@ const Home = () => {
       initialIndex: index,
       size: 10,
     });
+    trackEvent('Link_ViewPage_Opened', {Link_Viewed_Location: 'home'});
   };
 
   // 카드 사이즈 조절

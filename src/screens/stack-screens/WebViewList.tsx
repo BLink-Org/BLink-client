@@ -27,6 +27,7 @@ import BottomSheet from '@/components/modal/BottomSheet';
 import LinkContent from '@/components/link/LinkContent';
 import {PinnedIcon} from '@/assets/icons/bottom-tab';
 import NoticeModal from '@/components/modal/NoticeModal';
+import {trackEvent} from '@/utils/amplitude-utils';
 
 const WebViewList = () => {
   const navigation = useNavigation();
@@ -160,6 +161,7 @@ const WebViewList = () => {
 
   const goBackPage = () => {
     navigation.goBack();
+    trackEvent('Link_ViewPage_Closed', {Link_Viewed_Location: 'home'});
   };
 
   // 링크 저장
@@ -168,6 +170,12 @@ const WebViewList = () => {
     if (webViewUrl) {
       existsCheck(webViewUrl);
     }
+  };
+
+  // 링크 저장 토글 클릭 이벤트
+  const toggleBottomSheetEvent = () => {
+    setIsBottomSheetVisible(!isBottomSheetVisible);
+    trackEvent('Link_Saved_form', {Link_Saved_Location: 'in-webview'});
   };
 
   return (
@@ -254,7 +262,7 @@ const WebViewList = () => {
         {...{isBottomSheetVisible, toggleBottomSheet}}>
         <LinkContent
           defaultURL={webViewUrl ?? ''}
-          toggleBottomSheet={() => setIsBottomSheetVisible(false)}
+          toggleBottomSheet={toggleBottomSheetEvent}
         />
       </BottomSheet>
     </SafeAreaView>
