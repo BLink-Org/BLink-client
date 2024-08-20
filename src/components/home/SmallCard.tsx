@@ -293,7 +293,9 @@ const SmallCard = ({
               ellipsizeMode="tail"
               onTextLayout={handleTitleLayout}>
               {content?.title === ''
-                ? t('제목이 없는 링크입니다.')
+                ? t('제목이 없는 링크입니다.', {
+                    domain: extractHostname(content.url ?? ''),
+                  })
                 : content.title}
             </Text>
             <View style={styles.descriptionTop} />

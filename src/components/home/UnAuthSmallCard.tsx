@@ -157,14 +157,20 @@ const UnAuthSmallCard = ({content}: SmallCardProps) => {
               numberOfLines={2}
               ellipsizeMode="tail"
               onTextLayout={handleTitleLayout}>
-              {content?.title === '' ? t('제목이 없는 링크입니다.') : content.title}
+              {content?.title === ''
+                ? t('제목이 없는 링크입니다.', {
+                    domain: 'notion.site',
+                  })
+                : content.title}
             </Text>
             <View style={styles.descriptionTop} />
             <Text
               style={styles.descriptionText}
               numberOfLines={contentLines}
               ellipsizeMode="tail">
-              {content?.contents === '' ? t('내용이 없는 링크입니다.') : content.contents}
+              {content?.contents === ''
+                ? t('내용이 없는 링크입니다.')
+                : content.contents}
             </Text>
           </View>
           <View style={styles.cardImageContainer}>

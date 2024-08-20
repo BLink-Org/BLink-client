@@ -5,6 +5,7 @@ import {DeleteIcon} from '@/assets/icons/common';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {type ILinkDtos, type ITheme} from '@/types';
+import {extractHostname} from '@/utils/url-utils';
 
 interface LargeCardProps {
   content: ILinkDtos;
@@ -23,7 +24,11 @@ const DeleteCard = ({content, onDelete}: LargeCardProps) => {
           {content.folderName ?? t('폴더 없는 링크')}
         </Text>
         <Text style={styles.titleText} numberOfLines={1} ellipsizeMode="tail">
-          {content.title === '' ? t('제목이 없는 링크입니다.') : content.title}
+          {content.title === ''
+            ? t('제목이 없는 링크입니다.', {
+                domain: extractHostname(content.url ?? ''),
+              })
+            : content.title}
         </Text>
       </View>
       <TouchableOpacity style={styles.rightContainer} onPress={onDelete}>
