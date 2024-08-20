@@ -103,7 +103,6 @@ const SmallCard = ({
     trackEvent('Link_Title_Edited', {
       Link_ID: content.id,
     });
-    console.log('Link_Title_Edited');
   };
 
   // 폴더 이동 바텀시트 모달 관리
@@ -137,10 +136,8 @@ const SmallCard = ({
     togglePin(String(content.id));
     if (!content.pinned) {
       trackEvent('Pin_Saved', {Link_Saved_Location: 'at-card'});
-      console.log('Pin_Saved212112');
     } else {
       trackEvent('Pin_Unpinned', {Link_Saved_Location: 'at-card'});
-      console.log('Pin_Unpinned');
     }
   };
 

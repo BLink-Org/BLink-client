@@ -23,10 +23,6 @@ const queryClient = new QueryClient();
 export default function App(props: AppProps) {
   const restoreTheme = useThemeStore(state => state.restoreTheme);
   const isAuthenticated = useUserStore(state => state.isAuthenticated);
-  console.log(
-    '🚀 ~ file: App.tsx:26 ~ App ~ isAuthenticated:',
-    isAuthenticated,
-  );
 
   const loadTokens = useUserStore(state => state.loadTokens);
 

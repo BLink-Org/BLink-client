@@ -15,7 +15,6 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(
   async config => {
     const {accessToken} = useUserStore.getState();
-    console.log('🚀 ~ file: client.ts:19 ~ accessToken:', accessToken);
     if (accessToken && config.headers) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
@@ -49,7 +48,6 @@ apiClient.interceptors.response.use(
       try {
         // 리프레시 토큰 요청
         const tokenResponse = await refreshTokenDirectly(refreshToken);
-        console.log('tokenResponse:', tokenResponse);
 
         // 새로운 토큰이 있을 경우
         if (tokenResponse) {
@@ -66,8 +64,6 @@ apiClient.interceptors.response.use(
             originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
           }
 
-          // 원래의 요청을 재시도
-          console.log('Retrying original request with new token...');
           return await apiClient(originalRequest);
         } else {
           // 리프레시 토큰도 만료된 경우

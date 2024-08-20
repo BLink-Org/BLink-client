@@ -1,8 +1,0 @@
-[
-  {"id": 1, "variants": "default", "name": "아티클", "number": 17},
-  {"id": 2, "variants": "default", "name": "Netflix", "number": 17},
-  {"id": 3, "variants": "default", "name": "기술 정보", "number": 17},
-  {"id": 4, "variants": "default", "name": "CMC", "number": 17},
-  {"id": 5, "variants": "default", "name": "과학이야기", "number": 17},
-  {"id": 6, "variants": "default", "number": 17}
-]

@@ -18,9 +18,6 @@ const loginWithGoogle = async (
 export const useGoogleLogin = (options = {}) => {
   return useMutation({
     mutationFn: loginWithGoogle,
-    onError: error => {
-      console.log('Google Login error:', error);
-    },
     ...options,
   });
 };
@@ -34,9 +31,6 @@ const loginWithApple = async (payload: AppleLoginArgs) => {
 export const useAppleLogin = (options = {}) => {
   return useMutation({
     mutationFn: loginWithApple,
-    onError: error => {
-      console.log('Apple Login error:', error);
-    },
     ...options,
   });
 };
@@ -71,11 +65,5 @@ const logout = async (refreshToken: string) => {
 export const useLogout = () => {
   return useMutation({
     mutationFn: logout,
-    onSuccess: data => {
-      console.log('Logout success:', data);
-    },
-    onError: error => {
-      console.log('Logout error:', error);
-    },
   });
 };

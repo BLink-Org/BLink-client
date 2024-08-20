@@ -41,12 +41,11 @@ const GoogleLogin = () => {
     } catch (error) {
       if (isErrorWithCode(error)) {
         if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-          console.log('User cancelled the login flow');
           trackEvent('SignUp_Quit', {method: 'Google'});
         } else if (error.code === statusCodes.IN_PROGRESS) {
-          console.log('Operation (e.g. sign in) is in progress already');
+          console.warn('Operation (e.g. sign in) is in progress already');
         } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-          console.log('Play services not available or outdated');
+          console.warn('Play services not available or outdated');
         } else {
           console.error('Error:', error);
         }

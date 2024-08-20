@@ -61,7 +61,6 @@ const AppleLogin = () => {
     } catch (error: any) {
       if (error.code === appleAuth.Error.CANCELED) {
         trackEvent('SignUp_Quit', {method: 'Apple'});
-        console.log('Apple Login -> User canceled Apple Sign in');
       } else {
         console.error('Apple Login -> Error:', error);
       }
