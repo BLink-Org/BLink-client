@@ -1,5 +1,5 @@
 import React, {useState, useRef, useMemo} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, Platform} from 'react-native';
 import Modal from 'react-native-modal';
 import {ArrowDownIcon} from '@/assets/icons/home';
 import {FONTS} from '@/constants';
@@ -101,13 +101,21 @@ const createStyles = (theme: ITheme) =>
     dropdown: {
       backgroundColor: theme.BACKGROUND,
       borderRadius: 5,
-      shadowColor: '#000',
-      shadowOffset: {
-        width: 0,
-        height: 10,
-      },
-      shadowOpacity: 0.1,
-      shadowRadius: 6,
+      ...Platform.select({
+        ios: {
+          shadowColor: '#000',
+          shadowOffset: {
+            width: 0,
+            height: 10,
+          },
+          shadowOpacity: 0.1,
+          shadowRadius: 6,
+        },
+        android: {
+          borderWidth: 2,
+          borderColor: theme.TEXT100,
+        },
+      }),
     },
     item: {
       paddingVertical: 12,

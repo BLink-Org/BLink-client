@@ -63,7 +63,6 @@ const LargeCard = ({
     trackEvent('Link_Title_Edited', {
       Link_ID: content.id,
     });
-    console.log('Link_Title_Edited');
   };
 
   // 폴더 이동 바텀시트 모달 관리
@@ -134,10 +133,8 @@ const LargeCard = ({
     togglePin(String(content.id));
     if (!content.pinned) {
       trackEvent('Pin_Saved', {Link_Saved_Location: 'at-card'});
-      console.log('Pin_Saved212112');
     } else {
       trackEvent('Pin_Unpinned', {Link_Saved_Location: 'at-card'});
-      console.log('Pin_Unpinned');
     }
   };
 
@@ -201,7 +198,11 @@ const LargeCard = ({
 
         <View style={styles.titleTop} />
         <Text style={styles.titleText} numberOfLines={1} ellipsizeMode="tail">
-          {content.title === '' ? t('제목이 없는 링크입니다.') : content.title}
+          {content.title === ''
+            ? t('제목이 없는 링크입니다.', {
+                domain: extractHostname(content.url ?? ''),
+              })
+            : content.title}
         </Text>
 
         <View style={styles.footerTop} />

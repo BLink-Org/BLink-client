@@ -43,23 +43,3 @@ export const shareUrl = (currentUrl: string) => {
     console.error('Error: shareOptions is undefined');
   }
 };
-
-// export const shareUrlHome = async (currentUrl: string) => {
-//   return await Share.share({
-//     // message: `Check out this website: ${currentUrl}`,
-//     url: currentUrl,
-//   })
-//     .then(result => {
-//       if (
-//         result.action === Share.sharedAction ||
-//         result.action === Share.dismissedAction
-//       ) {
-//         console.log('Share action finished:', result.action);
-//         return result;
-//       }
-//     })
-//     .catch(error => {
-//       console.error('Error sharing:', error.message);
-//       throw error; // 에러를 다시 던져서 onSelect에서 처리할 수 있도록 함
-//     });
-// };

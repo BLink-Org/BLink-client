@@ -9,6 +9,6 @@ export const signOut = async (): Promise<void> => {
     await clearTokens();
     trackEvent('Application_End');
   } catch (error: any) {
-    console.log('Error signing out', error);
+    console.warn('Error signing out', error);
   }
 };

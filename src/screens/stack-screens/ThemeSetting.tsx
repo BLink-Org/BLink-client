@@ -50,7 +50,7 @@ const ThemeSetting = () => {
       <BackHeader title={t('테마')} themeColor={theme.TEXT900} />
       <View style={styles.contentContainer}>
         {/* 한국어 영어 둘다 영어처리 */}
-        <Text style={styles.templateText}>3 templates</Text>
+        <Text style={styles.templateText}>3 Themes</Text>
       </View>
       <FlatList
         data={THEME_INFOS}

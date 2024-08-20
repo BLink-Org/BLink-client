@@ -33,9 +33,7 @@ const ListHeader = ({
       </Text>
       <View style={styles.paddingContent} />
       <View style={styles.filterContainer}>
-        <Text style={styles.linkCount}>
-          {linkCount} {t('Links')}
-        </Text>
+        <Text style={styles.linkCount}>{linkCount + ' Links'}</Text>
         <DropdownFilter
           options={sortingOptions}
           selectedOption={selectedSortingOption}

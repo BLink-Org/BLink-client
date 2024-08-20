@@ -108,10 +108,8 @@ const BookmarkWebView = () => {
     togglePin(String(currentLink.id));
     if (!currentLink.pinned) {
       trackEvent('Pin_Saved', {Link_Saved_Location: 'in-webview'});
-      console.log('Pin_Saved212112');
     } else {
       trackEvent('Pin_Unpinned', {Link_Saved_Location: 'in-webview'});
-      console.log('Pin_Unpinned');
     }
   };
 

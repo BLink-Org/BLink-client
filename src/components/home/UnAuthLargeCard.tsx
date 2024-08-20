@@ -146,7 +146,11 @@ const UnAuthLargeCard = ({content}: LargeCardProps) => {
         </Text>
         <View style={styles.titleTop} />
         <Text style={styles.titleText} numberOfLines={1} ellipsizeMode="tail">
-          {content.title === '' ? t('제목이 없는 링크입니다.') : content.title}
+          {content.title === ''
+            ? t('제목이 없는 링크입니다.', {
+                domain: 'notion.site',
+              })
+            : content.title}
         </Text>
 
         <View style={styles.footerTop} />
