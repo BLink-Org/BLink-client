@@ -41,7 +41,9 @@ const AlertModal = ({
       <View style={styles.modalContent}>
         <View style={styles.textContainer}>
           <Text style={styles.headerText}>{t(headerText)}</Text>
-          <Text style={styles.bodyText}>{t(bodyText)}</Text>
+          {bodyText.length > 0 && (
+            <Text style={styles.bodyText}>{t(bodyText)}</Text>
+          )}
         </View>
         <View style={styles.buttonContainer}>
           <Pressable

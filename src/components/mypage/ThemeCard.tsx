@@ -86,7 +86,7 @@ const ThemeCard = ({
       <AlertModal
         modalId={modalId}
         headerText={t('선택한 테마를 적용하시겠어요?')}
-        bodyText={t('테마는 즉시 적용돼요')}
+        bodyText={''}
         leftText={t('취소')}
         rightText={t('적용')}
         rightOnPress={handleConfirmSelect}
