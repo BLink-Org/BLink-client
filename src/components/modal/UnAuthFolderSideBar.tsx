@@ -39,24 +39,40 @@ const UnAuthFolderSideBar = ({
 
   const [visible, setVisible] = useState(isSideBarVisible);
 
-  const animation = useRef(
+  const overlayOpacity = useRef(new Animated.Value(0)).current; // 오버레이의 초기 불투명도
+  const sideBarAnimation = useRef(
     new Animated.Value(-Dimensions.get('window').width),
   ).current;
 
   useEffect(() => {
     if (isSideBarVisible) {
       setVisible(true);
-      Animated.timing(animation, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
+      // 사이드바와 오버레이 동시에 애니메이션
+      Animated.parallel([
+        Animated.timing(sideBarAnimation, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(overlayOpacity, {
+          toValue: 1, // 오버레이를 완전히 불투명하게
+          duration: 250,
+          useNativeDriver: true,
+        }),
+      ]).start();
     } else {
-      Animated.timing(animation, {
-        toValue: -Dimensions.get('window').width,
-        duration: 300,
-        useNativeDriver: true,
-      }).start(() => {
+      Animated.parallel([
+        Animated.timing(sideBarAnimation, {
+          toValue: -Dimensions.get('window').width,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(overlayOpacity, {
+          toValue: 0, // 오버레이를 완전히 투명하게
+          duration: 250,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
         setVisible(false);
       });
     }
@@ -72,13 +88,13 @@ const UnAuthFolderSideBar = ({
       presentationStyle="overFullScreen"
       style={styles.modalContent}>
       <TouchableWithoutFeedback onPress={toggleSideBar}>
-        <View style={styles.overlay} />
+        <Animated.View style={[styles.overlay, {opacity: overlayOpacity}]} />
       </TouchableWithoutFeedback>
       <Animated.View
         style={[
           styles.modalContent,
           {
-            transform: [{translateX: animation}],
+            transform: [{translateX: sideBarAnimation}],
             paddingTop: insets.top,
           },
           {
@@ -93,7 +109,7 @@ const UnAuthFolderSideBar = ({
           <Text style={styles.title}>{t('폴더')}</Text>
         </View>
         <View style={styles.detailContainer}>
-          <Text style={styles.linkCount}>{1 + ' Links'}</Text>
+          <Text style={styles.linkCount}>{1 + ' Folders'}</Text>
           <TouchableOpacity
             style={styles.totalButton}
             onPress={() => {
@@ -122,6 +138,7 @@ const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     overlay: {
       ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'rgba(0, 0, 0, 0.6)',
     },
     modalContent: {
       borderTopRightRadius: 28,

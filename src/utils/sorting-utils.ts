@@ -2,9 +2,9 @@ import {type IFunction} from '@/types';
 
 export const getSortByValue = (t: IFunction, selectedOption: string) => {
   switch (selectedOption) {
-    case t('최근 저장순'):
+    case t('최근순'):
       return 'createdAt_desc';
-    case t('과거 저장순'):
+    case t('과거순'):
       return 'createdAt_asc';
     case t('제목순 (A-ㅎ)'):
       return 'title_asc';
@@ -16,8 +16,8 @@ export const getSortByValue = (t: IFunction, selectedOption: string) => {
 };
 
 export const getSortingOptions = (t: IFunction) => [
-  t('최근 저장순'),
-  t('과거 저장순'),
+  t('최근순'),
+  t('과거순'),
   t('제목순 (A-ㅎ)'),
   t('제목순 (ㅎ-A)'),
 ];

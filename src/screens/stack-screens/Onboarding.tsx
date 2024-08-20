@@ -57,7 +57,7 @@ const Onboarding = () => {
           {locale === 'KO' ? (
             <Text style={styles.aroundText}>둘러보기</Text>
           ) : (
-            <Text style={styles.aroundText}>Around</Text>
+            <Text style={styles.aroundText}>Explore</Text>
           )}
         </TouchableOpacity>
       </View>
