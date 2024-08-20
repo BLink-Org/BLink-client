@@ -4,6 +4,7 @@ import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {WebView, type WebViewNavigation} from 'react-native-webview';
 import {useTranslation} from 'react-i18next';
+import * as RNLocalize from 'react-native-localize';
 import {FONTS} from '@/constants';
 import {extractHostname, shareUrl} from '@/utils/url-utils';
 import {type RootStackNavigationProp, type ITheme} from '@/types';
@@ -28,8 +29,9 @@ const UnAuthWebView = () => {
   const {t} = useTranslation();
 
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const locale = RNLocalize.getLocales()[0].languageCode === 'ko' ? 'KO' : 'EN';
 
-  const currentUrl = DummyData[0].url;
+  const currentUrl = locale === 'KO' ? DummyData[0].url : DummyData[1].url;
 
   const navigation = useNavigation<RootStackNavigationProp>();
   // 로그인 모달
