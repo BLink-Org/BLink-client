@@ -303,9 +303,7 @@ const SmallCard = ({
               style={styles.descriptionText}
               numberOfLines={contentLines}
               ellipsizeMode="tail">
-              {content?.contents === ''
-                ? t('내용이 없는 링크입니다.')
-                : content.contents}
+              {content?.contents === '' ? '' : content.contents}
             </Text>
           </View>
           <View style={styles.cardImageContainer}>

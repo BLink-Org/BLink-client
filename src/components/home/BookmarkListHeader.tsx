@@ -29,7 +29,7 @@ const BookmarkListHeader = ({
         <Text style={styles.title}>{t('핀')}</Text>
       </View>
       <View style={styles.filterContainer}>
-        <Text style={styles.linkCount}>{linkCount} Links</Text>
+        <Text style={styles.linkCount}>{linkCount} Pins</Text>
         <View style={styles.filterContainer}>
           <DropdownFilter
             options={sortingOptions}
