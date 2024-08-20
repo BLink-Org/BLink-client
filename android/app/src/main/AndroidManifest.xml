@@ -1,17 +1,19 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"  package="com.blinkapplication">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"  xmlns:tools="http://schemas.android.com/tools" package="com.blinkapplication">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
       android:name="com.blinkapplication.MainApplication"
-      android:label="@string/app_name"
+      android:label="B.Link"
+      tools:replace="android:label"
       android:icon="@mipmap/ic_launcher"
       android:roundIcon="@mipmap/ic_launcher_round"
       android:allowBackup="false"
       android:theme="@style/AppTheme">
       <activity
         android:name="com.blinkapplication.MainActivity"
-        android:label="@string/app_name"
+        android:label="B.Link"
+        tools:replace="android:label"
         android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
         android:launchMode="singleTask"
         android:windowSoftInputMode="adjustNothing"
