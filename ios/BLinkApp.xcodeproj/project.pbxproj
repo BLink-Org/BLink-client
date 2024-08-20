@@ -617,6 +617,8 @@
 				DEVELOPMENT_TEAM = VLZFPK86ZY;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = BLinkApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = B.Link;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -649,6 +651,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VLZFPK86ZY;
 				INFOPLIST_FILE = BLinkApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = B.Link;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
