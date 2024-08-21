@@ -86,7 +86,7 @@ const AccountDelete = () => {
             <View style={styles.alertContainer}>
               <WarningIcon fill={theme.MAIN400} />
               <Text style={styles.alertText}>
-                {t('삭제 신청된 계정입니다.')}
+                {t('정보가 곧 삭제됩니다.')}
               </Text>
             </View>
 
@@ -112,7 +112,7 @@ const AccountDelete = () => {
     <>
       <SafeAreaView style={styles.container}>
         <ThemeBackground />
-        <BackHeader title="계정 삭제 신청" themeColor={theme.TEXT900} />
+        <BackHeader title={t('계정 삭제')} themeColor={theme.TEXT900} />
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={styles.contentContainer}>
             <Text style={styles.sectionTitle}>{t('저장 현황')}</Text>
@@ -126,11 +126,13 @@ const AccountDelete = () => {
             <Text style={styles.sectionTitle}>{t('계정 삭제 유의사항')}</Text>
             <Text style={styles.infoText}>
               <Text style={styles.infoText}>
-                {t('- 계정 삭제 신청 7일 뒤 계정이 완전히 삭제됩니다.\n')}
+                {t(
+                  '- [계정 삭제]를 클릭할 경우, 해당 계정으로 B.Link에 저장한 모든 링크와 폴더가 삭제됩니다.\n',
+                )}
               </Text>
               <Text style={styles.infoText}>
                 {t(
-                  '- 계정이 삭제될 때에는 해당 계정으로 B.Link에 저장한 모든 링크와 폴더가 삭제됩니다.\n',
+                  '- 사용자가 다른 조치를 취하지 않더라도 계정 정보를 포함한 사용 기록 등 모든 정보는 시스템에 의해 자동적으로 안전하게 삭제됩니다.\n',
                 )}
               </Text>
               <Text style={styles.infoText}>
@@ -140,7 +142,7 @@ const AccountDelete = () => {
               </Text>
               <Text style={styles.infoText}>
                 {t(
-                  '- 계정 삭제를 철회하고 싶다면 계정 삭제를 신청한 지 7일이 경과하기 전 요청해주세요.\n',
+                  '- 정보 삭제는 사용자가 계정을 삭제한 후 7일 뒤 이루어지므로 계정 삭제를 철회하고 싶다면 계정 삭제를 신청한 지 7일이 경과하기 전 요청해주세요.\n',
                 )}
               </Text>
               <Text style={styles.infoText}>
@@ -169,7 +171,7 @@ const AccountDelete = () => {
         rightOnPress={handleConfirmDelete}
       />
       <CustomBottomButton
-        title={t('계정 삭제 신청')}
+        title={t('계정 삭제')}
         onPress={handleDeleteAccount}
         isDisabled={!isChecked}
       />

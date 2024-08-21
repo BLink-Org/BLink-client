@@ -15,10 +15,10 @@ const DeletedTrueContainer = () => {
     <View style={styles.container}>
       <View style={styles.infoContainer}>
         <WarningIcon fill={theme.MAIN400} />
-        <Text style={styles.headerText}>{t('삭제 신청된 계정입니다.')}</Text>
+        <Text style={styles.headerText}>{t('정보가 곧 삭제됩니다.')}</Text>
       </View>
       <Text style={styles.bodyText}>
-        {t('계속 이용하시려면 계정 관리 > 삭제 신청을 취소해주세요')}
+        {t('복구하고 싶다면 계정 관리에서 삭제 신청을 취소해주세요.')}
       </Text>
     </View>
   );

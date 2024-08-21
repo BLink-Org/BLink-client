@@ -59,7 +59,7 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
 
   useEffect(() => {
     const fetchClipboardContent = async () => {
-      const content = await Clipboard.getString();
+      const content: string = await Clipboard.getString();
       const urlPattern = /^(www\.|https?:\/\/)/;
       const regexResult = urlPattern.test(content);
       if (regexResult && content !== clipboardContent) {
