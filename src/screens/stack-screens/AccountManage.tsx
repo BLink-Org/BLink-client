@@ -36,7 +36,7 @@ const AccountManage = () => {
           <Text style={styles.emailText}>{userInfoData?.email}</Text>
         </View>
         <NavigationInfo
-          title={t('계정 삭제 신청')}
+          title={t('계정 삭제')}
           themeColor={theme.TEXT800}
           onPress={handleAccountDelete}
         />

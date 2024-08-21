@@ -81,13 +81,11 @@ const AccountDelete = () => {
       <>
         <SafeAreaView style={styles.container}>
           <ThemeBackground />
-          <BackHeader title={t('계정 삭제 신청')} themeColor={theme.TEXT900} />
+          <BackHeader title={t('계정 삭제')} themeColor={theme.TEXT900} />
           <View style={styles.contentContainer}>
             <View style={styles.alertContainer}>
               <WarningIcon fill={theme.MAIN400} />
-              <Text style={styles.alertText}>
-                {t('정보가 곧 삭제됩니다.')}
-              </Text>
+              <Text style={styles.alertText}>{t('정보가 곧 삭제됩니다.')}</Text>
             </View>
 
             <View style={styles.deleteInfoContainer}>
@@ -147,7 +145,7 @@ const AccountDelete = () => {
               </Text>
               <Text style={styles.infoText}>
                 {t(
-                  '- 계정 삭제 철회는 [My] > [계정 관리] > [계정 삭제 신청]에서 할 수 있습니다.',
+                  '- 계정 삭제 철회는 [My] > [계정 관리] > [계정 삭제]에서 할 수 있습니다.',
                 )}
               </Text>
             </Text>
@@ -164,7 +162,7 @@ const AccountDelete = () => {
       </SafeAreaView>
       <AlertModal
         modalId="deleteConfirm"
-        headerText={t('계정 삭제 신청')}
+        headerText={t('계정 삭제')}
         bodyText={t('계정을 삭제하시겠습니까?')}
         leftText={t('취소')}
         rightText={t('삭제')}
