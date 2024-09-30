@@ -28,12 +28,12 @@ apiClient.interceptors.request.use(
 // 응답 인터셉터
 apiClient.interceptors.response.use(
   response => response,
+
   async error => {
     const {
       config,
       response: {status},
     } = error;
-
     // 401 Unauthorized 오류 처리
     if (status === 401) {
       const originalRequest = config as AxiosRequestConfig;
@@ -53,7 +53,6 @@ apiClient.interceptors.response.use(
         if (tokenResponse) {
           const newAccessToken = tokenResponse.accessToken;
           const newRefreshToken = tokenResponse.refreshToken;
-
           // 새로 발급받은 토큰 저장
           await useUserStore
             .getState()

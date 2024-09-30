@@ -8,6 +8,7 @@ interface UserState {
   setTokens: (accessToken: string, refreshToken: string) => Promise<void>;
   clearTokens: () => Promise<void>;
   loadTokens: () => Promise<void>;
+  clearRefreshToken: () => Promise<void>;
 }
 
 export const useUserStore = create<UserState>(set => ({
@@ -33,6 +34,16 @@ export const useUserStore = create<UserState>(set => ({
       accessToken: null,
       refreshToken: null,
       isAuthenticated: false,
+    });
+  },
+
+  
+  clearRefreshToken: async () => {
+    await EncryptedStorage.removeItem('accessToken');
+    await EncryptedStorage.removeItem('refreshToken');
+    set({
+      accessToken: 'dfffdf',
+      refreshToken: 'dfffdfff',
     });
   },
 

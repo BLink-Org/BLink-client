@@ -24,6 +24,11 @@ export default function App(props: AppProps) {
   const restoreTheme = useThemeStore(state => state.restoreTheme);
   const isAuthenticated = useUserStore(state => state.isAuthenticated);
 
+  // accesstoken, refreshtoken 로드
+  const accessToken = useUserStore(state => state.accessToken);
+  const refreshToken = useUserStore(state => state.refreshToken);
+
+
   const loadTokens = useUserStore(state => state.loadTokens);
 
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
@@ -76,42 +81,46 @@ export default function App(props: AppProps) {
     };
   }, []);
 
-  useEffect(() => {
-    const initializeApp = async () => {
-      try {
-        // 테마 복원
-        restoreTheme();
+  const initializeApp = async () => {
+    try {
+      // 테마 복원
+      restoreTheme();
 
-        // 언어 설정 -> 시스템 언어로 변경
-        const locale = RNLocalize.getLocales()[0].languageCode;
-        if (locale === 'ko') {
-          i18n.changeLanguage(locale);
-        } else {
-          i18n.changeLanguage('en'); // 기본 언어 -> 영어
-        }
-
-        // 토큰 로드
-        await loadTokens();
-
-        // amplitude 초기화
-        amplitude.init(AMPLITUDE_API_KEY);
-
-        // 이벤트 추적
-        trackEvent('App Opened');
-      } catch (error) {
-        console.error('Initialization error:', error);
-      } finally {
-        // 모든 초기화 작업 완료 후 스플래시 화면 숨기기
-        LottieSplashScreen.hide();
+      // 언어 설정 -> 시스템 언어로 변경
+      const locale = RNLocalize.getLocales()[0].languageCode;
+      if (locale === 'ko') {
+        i18n.changeLanguage(locale);
+      } else {
+        i18n.changeLanguage('en'); // 기본 언어 -> 영어
       }
-    };
 
+      // 토큰 로드
+      await loadTokens();
+
+      // amplitude 초기화
+      amplitude.init(AMPLITUDE_API_KEY);
+
+      // 이벤트 추적
+      trackEvent('App Opened');
+    } catch (error) {
+      console.error('Initialization error:', error);
+    } finally {
+      // 모든 초기화 작업 완료 후 스플래시 화면 숨기기
+      LottieSplashScreen.hide();
+    }
+  };
+
+  useEffect(() => {
     initializeApp(); // 초기화 함수 호출
   }, []);
 
   if (isAuthenticated === null) {
     return null;
   }
+  console.log('---------------------------------')
+  console.log('accessToken', accessToken);
+  console.log('refreshToken', refreshToken);
+  console.log('isAuthenticated', isAuthenticated);
 
   return (
     <QueryClientProvider client={queryClient}>

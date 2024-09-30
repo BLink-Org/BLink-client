@@ -49,7 +49,7 @@ const MyPage = () => {
     }, [refetch]),
   );
 
-  const {refreshToken} = useUserStore.getState();
+  const {refreshToken, clearRefreshToken} = useUserStore();
 
   const route = useRoute<MyPageRouteProp>();
   const navigation = useNavigation<RootStackNavigationProp>();
@@ -90,6 +90,11 @@ const MyPage = () => {
       trackEvent('Logout');
     }
     signOut();
+  };
+
+  // 리프레시 토큰 제거 버튼 핸들러
+  const handleClearTokens = async () => {
+    await clearRefreshToken();
   };
 
   if (isLoading) return <CustomLoading />;
@@ -149,6 +154,17 @@ const MyPage = () => {
               themeColor={theme.TEXT800}
               onPress={logoutModalOpen}
             />
+
+            {/* 리프레시 토큰 제거 버튼 */}
+            <TouchableOpacity
+              onPress={() => {
+                handleClearTokens(); // 비동기 함수는 명시적으로 호출만 하고, 반환 값을 처리하지 않음
+              }}
+              style={styles.clearTokensButton}>
+              <Text style={styles.clearTokensText}>
+                {t('리프레시 토큰 제거')}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
@@ -204,5 +220,16 @@ const createStyles = (theme: ITheme) =>
     },
     navigationContainer: {
       paddingVertical: 12,
+    },
+    clearTokensButton: {
+      marginTop: 16,
+      paddingVertical: 10,
+      alignItems: 'center',
+      backgroundColor: theme.MAIN500,
+      borderRadius: 5,
+    },
+    clearTokensText: {
+      color: '#fff',
+      ...FONTS.BODY2_MEDIUM,
     },
   });
