@@ -1,11 +1,11 @@
 import axios, {type AxiosRequestConfig} from 'axios';
-import {API_URL} from '@env';
+import {API_DEV_URL} from '@env';
 import {useUserStore} from '@/store/useUserStore';
 import {signOut} from '@/utils/auth-utils';
 import {refreshTokenDirectly} from '@/api/hooks/useAuth';
 
 const apiClient = axios.create({
-  baseURL: API_URL,
+  baseURL: API_DEV_URL,
   headers: {
     'Content-Type': 'application/json',
   },
