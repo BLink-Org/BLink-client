@@ -395,8 +395,9 @@ const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     container: {
       height: 180,
-      paddingVertical: 16,
+      paddingVertical: 20,
       gap: 8,
+      
     },
     dotPosition: {
       flexDirection: 'row',

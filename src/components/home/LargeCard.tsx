@@ -261,7 +261,7 @@ const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     container: {
       width: screenWidth,
-      paddingVertical: 16,
+      paddingVertical: 20,
     },
     cardImageContainer: {
       width: screenWidth,
