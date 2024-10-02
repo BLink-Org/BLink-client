@@ -237,7 +237,7 @@ const createStyles = (theme: ITheme) =>
     },
     recentText: {
       color: theme.MAIN500,
-      ...FONTS.CAPTION_MEDIUM,
+      ...FONTS.BODY3_MEDIUM,
     },
   });
 
