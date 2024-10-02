@@ -6,7 +6,7 @@ export const API_ENDPOINTS = {
     LOGIN_GOOGLE: '/api/auth/login/google', // 구글 로그인
     LOGIN_APPLE: '/api/auth/login/apple', // 애플 로그인
     LOGOUT: '/api/auth/logout', // 로그아웃
-    REISSUE: '/api/auth/reissue', // 토큰 재발급
+    REISSUE: 'api/auth/reissue', // 토큰 재발급
   },
   USER: {
     INFO: '/api/users',

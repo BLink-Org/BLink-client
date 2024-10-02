@@ -1,4 +1,5 @@
 import {useMutation} from '@tanstack/react-query';
+import axios from 'axios';
 import apiClient from '@/api/client';
 import {API_ENDPOINTS} from '@/api/endpoints';
 import {
@@ -6,6 +7,7 @@ import {
   type AppleLoginArgs,
   type TokensSchema,
 } from '@/types';
+import {API_DEV_URL} from '@env';
 
 // 구글 로그인
 const loginWithGoogle = async (
@@ -40,17 +42,20 @@ export const refreshTokenDirectly = async (
   refreshToken: string,
 ): Promise<TokensSchema> => {
   try {
-    const {data} = await apiClient.post(API_ENDPOINTS.AUTH.REISSUE, {
-      refreshToken,
-    });
+    const {data} = await axios.post(
+      `${API_DEV_URL}${API_ENDPOINTS.AUTH.REISSUE}`,
+      {
+        refreshToken,
+      },
+    );
     if (data.result) {
       return data.result;
     } else {
-      throw new Error('No result in response');
+      return await Promise.reject(new Error('No result in response'));
     }
   } catch (error) {
-    console.error('Failed to refresh token:', error);
-    throw error;
+    console.warn('Failed to refresh token:', error);
+    return await Promise.reject(error);
   }
 };
 
