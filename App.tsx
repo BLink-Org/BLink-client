@@ -24,11 +24,6 @@ export default function App(props: AppProps) {
   const restoreTheme = useThemeStore(state => state.restoreTheme);
   const isAuthenticated = useUserStore(state => state.isAuthenticated);
 
-  // accesstoken, refreshtoken 로드
-  const accessToken = useUserStore(state => state.accessToken);
-  const refreshToken = useUserStore(state => state.refreshToken);
-
-
   const loadTokens = useUserStore(state => state.loadTokens);
 
   const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
@@ -117,10 +112,6 @@ export default function App(props: AppProps) {
   if (isAuthenticated === null) {
     return null;
   }
-  console.log('---------------------------------')
-  console.log('accessToken', accessToken);
-  console.log('refreshToken', refreshToken);
-  console.log('isAuthenticated', isAuthenticated);
 
   return (
     <QueryClientProvider client={queryClient}>

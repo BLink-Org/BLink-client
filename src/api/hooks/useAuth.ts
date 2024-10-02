@@ -48,8 +48,6 @@ export const refreshTokenDirectly = async (
         refreshToken,
       },
     );
-
-    // API 응답에 토큰이 있는지 확인
     if (data.result) {
       return data.result;
     } else {
