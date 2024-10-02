@@ -40,7 +40,7 @@ const createStyles = (theme: ITheme) =>
       gap: 4,
     },
     bodyText: {
-      ...FONTS.CAPTION_REGULAR,
+      ...FONTS.BODY3_MEDIUM,
       color: theme.TEXT500,
     },
     headerText: {

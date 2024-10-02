@@ -309,7 +309,7 @@ const createStyles = (theme: ITheme) =>
     },
     folderText: {
       color: theme.TEXT600,
-      ...FONTS.BODY2_REGULAR,
+      ...FONTS.BODY3_MEDIUM,
     },
     titleText: {
       color: theme.TEXT900,

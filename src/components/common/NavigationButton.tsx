@@ -39,13 +39,13 @@ const NavigationButton = ({
         {label === t('이전 링크') ? (
           <>
             <IconComponent width={14} height={14} fill={iconColor} />
-            <Text style={[FONTS.CAPTION_REGULAR, {color: textColor}]}>
+            <Text style={[FONTS.BODY3_MEDIUM, {color: textColor}]}>
               {t(label)}
             </Text>
           </>
         ) : (
           <>
-            <Text style={[FONTS.CAPTION_REGULAR, {color: textColor}]}>
+            <Text style={[FONTS.BODY3_MEDIUM, {color: textColor}]}>
               {t(label)}
             </Text>
             <IconComponent width={14} height={14} fill={iconColor} />

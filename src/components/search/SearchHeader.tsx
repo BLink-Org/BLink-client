@@ -25,7 +25,6 @@ const SearchHeader = memo(
     };
 
     return (
-      // <View style={styles.searchContainer, {backgroundColor: theme.THEME_NUMBER === 3 ? theme.MAIN200 : theme.BACKGROUND}}>
       <View
         style={[
           styles.searchContainer,
@@ -67,7 +66,7 @@ const createStyles = (theme: ITheme) =>
       paddingHorizontal: 18,
       flexDirection: 'row',
       alignItems: 'center',
-      overflow: 'hidden',
+      justifyContent: 'center',
     },
     searchInput: {
       flex: 1,
@@ -75,9 +74,10 @@ const createStyles = (theme: ITheme) =>
       borderRadius: 8,
       paddingLeft: 16,
       paddingRight: 46,
+      paddingVertical: 5,
       color: theme.TEXT800,
       backgroundColor: theme.TEXT200,
-      ...FONTS.BODY2_MEDIUM,
+      ...FONTS.BODY1_MEDIUM,
     },
     searchIcon: {
       position: 'absolute',

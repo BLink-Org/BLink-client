@@ -91,7 +91,7 @@ const createStyles = (theme: ITheme) =>
       paddingVertical: 16,
       width: '100%',
       color: theme.TEXT800,
-      ...FONTS.BODY1_MEDIUM,
+      ...FONTS.BODY3_MEDIUM,
     },
     inputFieldTop: {
       width: '100%',
