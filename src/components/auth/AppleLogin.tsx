@@ -62,13 +62,13 @@ const AppleLogin = () => {
       if (error.code === appleAuth.Error.CANCELED) {
         trackEvent('SignUp_Quit', {method: 'Apple'});
       } else {
-        console.error('Apple Login -> Error:', error);
+        console.warn('Apple Login -> Error:', error);
       }
     }
   };
 
   const handleLoginPress = () => {
-    handleSignInApple().catch(error => console.error(error));
+    handleSignInApple().catch(error => console.warn(error));
   };
 
   // iOS에서만 Apple 로그인 버튼을 렌더링

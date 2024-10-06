@@ -7,7 +7,7 @@ import {
   type AppleLoginArgs,
   type TokensSchema,
 } from '@/types';
-import {API_DEV_URL} from '@env';
+import {API_URL} from '@env';
 
 // 구글 로그인
 const loginWithGoogle = async (
@@ -42,12 +42,9 @@ export const refreshTokenDirectly = async (
   refreshToken: string,
 ): Promise<TokensSchema> => {
   try {
-    const {data} = await axios.post(
-      `${API_DEV_URL}${API_ENDPOINTS.AUTH.REISSUE}`,
-      {
-        refreshToken,
-      },
-    );
+    const {data} = await axios.post(`${API_URL}${API_ENDPOINTS.AUTH.REISSUE}`, {
+      refreshToken,
+    });
     if (data.result) {
       return data.result;
     } else {

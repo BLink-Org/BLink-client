@@ -47,16 +47,16 @@ const GoogleLogin = () => {
         } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
           console.warn('Play services not available or outdated');
         } else {
-          console.error('Error:', error);
+          console.warn('Error:', error);
         }
       } else {
-        console.error('without error code:', error);
+        console.warn('without error code:', error);
       }
     }
   };
 
   const handleLoginPress = () => {
-    handleLogin().catch(error => console.error(error));
+    handleLogin().catch(error => console.warn(error));
   };
 
   useEffect(() => {
