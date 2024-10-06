@@ -195,7 +195,7 @@ const SearchWebView = () => {
           <ArrowBackIcon fill={theme.TEXT900} />
         </TouchableOpacity>
         <View style={styles.urlTextHolder}>
-          <Text style={[FONTS.BODY2_REGULAR, {color: theme.TEXT700}]}>
+          <Text style={[FONTS.BODY3_MEDIUM, {color: theme.TEXT700}]}>
             {extractHostname(currentUrl ?? '')}
           </Text>
         </View>

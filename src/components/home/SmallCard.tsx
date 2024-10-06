@@ -395,8 +395,9 @@ const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     container: {
       height: 180,
-      paddingVertical: 16,
+      paddingVertical: 20,
       gap: 8,
+      
     },
     dotPosition: {
       flexDirection: 'row',
@@ -446,7 +447,7 @@ const createStyles = (theme: ITheme) =>
     },
     folderText: {
       color: theme.TEXT600,
-      ...FONTS.BODY2_REGULAR,
+      ...FONTS.BODY3_MEDIUM,
     },
     titleText: {
       color: theme.TEXT900,

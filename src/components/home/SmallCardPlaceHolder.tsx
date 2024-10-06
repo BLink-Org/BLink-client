@@ -15,7 +15,7 @@ const SmallCardPlaceHolder = () => {
         highlightColor={theme.TEXT100}>
         <View style={styles.container}>
           <View style={styles.header}>
-            <View style={{width: 42, height: 24}} />
+            <View style={{width: 42, height: 20}} />
             <View style={styles.threeDots}>
               <View style={{width: 3.33, height: 3.33, borderRadius: 2}} />
               <View style={{width: 3.33, height: 3.33, borderRadius: 2}} />
@@ -47,12 +47,12 @@ export default SmallCardPlaceHolder;
 const styles = StyleSheet.create({
   topContainer: {
     height: 180,
+    paddingVertical: 20,
   },
   container: {
     gap: 8,
   },
   header: {
-    paddingTop: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },

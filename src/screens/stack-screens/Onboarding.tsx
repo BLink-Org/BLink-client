@@ -107,6 +107,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textDecorationLine: 'underline',
     paddingVertical: 10,
-    ...FONTS.CAPTION_MEDIUM,
+    ...FONTS.BODY3_MEDIUM,
   },
 });

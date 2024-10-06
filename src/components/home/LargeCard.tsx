@@ -261,7 +261,7 @@ const createStyles = (theme: ITheme) =>
   StyleSheet.create({
     container: {
       width: screenWidth,
-      paddingVertical: 16,
+      paddingVertical: 20,
     },
     cardImageContainer: {
       width: screenWidth,
@@ -309,7 +309,7 @@ const createStyles = (theme: ITheme) =>
     },
     folderText: {
       color: theme.TEXT600,
-      ...FONTS.BODY2_REGULAR,
+      ...FONTS.BODY3_MEDIUM,
     },
     titleText: {
       color: theme.TEXT900,

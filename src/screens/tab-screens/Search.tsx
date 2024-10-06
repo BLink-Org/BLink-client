@@ -245,10 +245,11 @@ const createStyles = (theme: ITheme) =>
       backgroundColor: theme.TEXT200,
     },
     headerText: {
-      marginVertical: 10,
+      marginTop: 6,
+      marginBottom: 10,
     },
     headerTextContent: {
-      ...FONTS.BODY1_MEDIUM,
+      ...FONTS.BODY2_MEDIUM,
       color: theme.TEXT900,
     },
   });

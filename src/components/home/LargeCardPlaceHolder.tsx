@@ -43,15 +43,15 @@ export default LargeCardPlaceHolder;
 
 const styles = StyleSheet.create({
   topContainer: {
-    height: 271,
+    height: 272,
   },
   container: {
-    marginTop: 16,
+    marginTop: 20,
   },
   threeDots: {
     position: 'absolute',
-    top: 28,
-    right: 12,
+    top: 34,
+    right: 12.67,
     height: 16.67,
     flexDirection: 'column',
     justifyContent: 'space-between',

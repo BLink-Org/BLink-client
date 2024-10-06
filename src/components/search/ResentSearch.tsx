@@ -83,10 +83,11 @@ const createStyles = (theme: ITheme) =>
     },
     headerText: {
       paddingHorizontal: 18,
-      marginVertical: 10,
+      marginTop: 6,
+      marginBottom: 10,
     },
     headerTitle: {
-      ...FONTS.BODY1_MEDIUM,
+      ...FONTS.BODY2_MEDIUM,
       color: theme.TEXT900,
     },
     separator: {
