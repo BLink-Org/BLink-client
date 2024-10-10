@@ -98,7 +98,7 @@ export default function App(props: AppProps) {
       // 이벤트 추적
       trackEvent('App Opened');
     } catch (error) {
-      console.error('Initialization error:', error);
+      console.warn('Initialization error:', error);
     } finally {
       // 모든 초기화 작업 완료 후 스플래시 화면 숨기기
       LottieSplashScreen.hide();

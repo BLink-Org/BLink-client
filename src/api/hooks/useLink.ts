@@ -376,7 +376,7 @@ export const useDeleteRecentLink = () => {
       });
     },
     onError: error => {
-      console.error('Error deleting link:', error);
+      console.warn('Error deleting link:', error);
     },
   });
 };

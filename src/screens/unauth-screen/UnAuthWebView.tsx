@@ -72,7 +72,7 @@ const UnAuthWebView = () => {
 
   const handleGoForward = () => {
     goForward().catch(error => {
-      console.error('Error navigating forward:', error);
+      console.warn('Error navigating forward:', error);
     });
   };
 

@@ -78,7 +78,7 @@ const BookmarkWebView = () => {
       }
     },
     onError: () => {
-      console.error('Error checking link duplication');
+      console.warn('Error checking link duplication');
     },
   });
 
@@ -145,7 +145,7 @@ const BookmarkWebView = () => {
 
   const handleGoForward = () => {
     goForward().catch(error => {
-      console.error('Error navigating forward:', error);
+      console.warn('Error navigating forward:', error);
     });
   };
 

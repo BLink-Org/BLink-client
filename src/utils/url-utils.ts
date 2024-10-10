@@ -1,15 +1,5 @@
 import {Platform, Share} from 'react-native';
 
-// TODO: 문구 수정 필요
-// export const shareUrl = (currentUrl: string) => {
-//   Share.share({
-//     if (Platform.OS === 'android') {
-//     message: `Check out this website: ${currentUrl}`,
-//     }
-//     else {
-//     url: currentUrl
-//     }
-
 // hostname 추출 util function
 export function extractHostname(url: string): string {
   try {
@@ -18,7 +8,7 @@ export function extractHostname(url: string): string {
     );
     return matches?.[1] ?? '';
   } catch (error) {
-    console.error('Error extracting hostname:', error);
+    console.warn('Error extracting hostname:', error);
     return '';
   }
 }
@@ -37,9 +27,9 @@ export const shareUrl = (currentUrl: string) => {
 
   if (shareOptions) {
     Share.share(shareOptions).catch(error => {
-      console.error('Error sharing:', error.message);
+      console.warn('Error sharing:', error.message);
     });
   } else {
-    console.error('Error: shareOptions is undefined');
+    console.warn('Error: shareOptions is undefined');
   }
 };
