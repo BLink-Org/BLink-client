@@ -31,14 +31,10 @@ const Onboarding = () => {
       <View style={styles.bodyContainer}>
         {locale === 'KO' ? (
           <Text style={styles.bodyText}>
-            다시 보고 싶은 <Text style={styles.blueText}>링크</Text>를{' '}
-            <Text style={styles.blueText}>북마크</Text>
+            중요한 링크 한번에 저장 한눈에 확인
           </Text>
         ) : (
-          <Text style={styles.bodyText}>
-            <Text style={styles.blueText}>B</Text>ookmark your
-            <Text style={styles.blueText}> Link</Text>s in a
-          </Text>
+          <Text style={styles.bodyText}>Bookmark links in a blink</Text>
         )}
         <Image
           source={require('@/assets/images/img-linksaving_wordmark-blue.png')}
@@ -78,24 +74,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   bodyText: {
-    paddingBottom: 12,
-    color: '#6B7684',
-    ...FONTS.BODY1_MEDIUM,
-  },
-  blueText: {
-    color: '#4A7DFF',
-    ...FONTS.BODY1_MEDIUM,
+    marginBottom: 20,
+    color: '#8AABFF',
+    ...FONTS.BODY2_SEMIBOLD,
+    textAlign: 'center',
+    width: '100%',
+    flexShrink: 0,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   gapImage: {
-    height: 24,
+    height: 20,
   },
   logoImage: {
     width: 200,
-    height: 67.61,
+    height: 68.09,
   },
   onboardingImage: {
-    width: 212,
-    height: 212,
+    width: 220,
+    height: 220,
   },
 
   loginContainer: {

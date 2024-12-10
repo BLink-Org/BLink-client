@@ -26,7 +26,7 @@ const ScreenHeader = ({toggleSideBar, isBookmark}: ScreenHeaderProps) => {
         />
       ) : (
         <Image
-          source={require('@/assets/images/img-linksaving_wordmark-blue.png')}
+          source={require('@/assets/images/img-linksaving_wordmark-gray.png')}
           style={styles.logoImage}
         />
       )}
@@ -46,8 +46,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   logoImage: {
-    width: 67,
-    height: 24,
+    width: 80,
+    height: 26,
   },
   logoImage2: {
     width: 80,
