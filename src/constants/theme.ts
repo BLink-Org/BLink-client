@@ -19,7 +19,7 @@ export const THEME_INFOS = [
   },
   {
     id: 3,
-    name: '블링키',
+    name: '링키',
     price: 'Free',
     color: '#6D96FF',
   },

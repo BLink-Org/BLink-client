@@ -62,7 +62,7 @@ const Setting = () => {
         modalId={modalId}
         headerText={t('설정 앱으로 이동합니다')}
         bodyText={t(
-          '설정 > 목록에서 B.Link 선택 > 언어에서 언어를 변경해주세요',
+          '설정 > 목록에서 블링키 선택 > 언어에서 언어를 변경해주세요',
         )}
         leftText={t('취소')}
         rightText={t('확인')}
