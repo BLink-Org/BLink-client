@@ -108,12 +108,12 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   logoImage: {
-    width: 168,
-    height: 23,
+    width: 162,
+    height: 27,
   },
   logoImageEn: {
-    width: 180,
-    height: 23,
+    width: 182,
+    height: 27,
   },
   logoText: {
     color: '#fff',
