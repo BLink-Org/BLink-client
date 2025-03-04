@@ -53,6 +53,11 @@ const TextInputGroup = ({
             value={textInput}
             onChangeText={setTextInput}
             onFocus={handleFocus}
+            autoComplete="off"
+            autoCorrect={false}
+            spellCheck={false}
+            textContentType="none"
+            autoCapitalize="none"
           />
           <TouchableOpacity onPress={() => setTextInput(undefined)}>
             <RoundDeleteIcon fill={theme.TEXT300} />
