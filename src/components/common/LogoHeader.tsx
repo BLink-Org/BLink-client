@@ -4,7 +4,7 @@ const LogoHeader = () => {
   return (
     <View style={styles.container}>
       <Image
-        source={require('@/assets/images/img-linksaving_wordmark-blue.png')}
+        source={require('@/assets/images/img-linksaving_wordmark-gray.png')}
         style={styles.logoImage}
       />
     </View>
@@ -22,8 +22,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   logoImage: {
-    marginLeft: 4,
-    width: 67,
-    height: 24,
+    width: 80,
+    height: 26,
   },
 });

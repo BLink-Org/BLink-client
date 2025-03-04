@@ -101,12 +101,12 @@ const styles = StyleSheet.create({
     borderColor: '#CCD4DD',
   },
   logoImage: {
-    width: 184,
-    height: 23,
+    width: 176,
+    height: 27,
   },
   logoImageEn: {
-    width: 200,
-    height: 23,
+    width: 197,
+    height: 27,
   },
   logoText: {
     color: '#000',

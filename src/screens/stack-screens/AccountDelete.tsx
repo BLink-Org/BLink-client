@@ -125,7 +125,7 @@ const AccountDelete = () => {
             <Text style={styles.infoText}>
               <Text style={styles.infoText}>
                 {t(
-                  '- [계정 삭제]를 클릭할 경우, 해당 계정으로 B.Link에 저장한 모든 링크와 폴더가 삭제됩니다.\n',
+                  '- [계정 삭제]를 클릭할 경우, 해당 계정으로 앱에 저장한 모든 링크와 폴더가 삭제됩니다.\n',
                 )}
               </Text>
               <Text style={styles.infoText}>
