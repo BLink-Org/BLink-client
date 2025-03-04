@@ -7,9 +7,16 @@ interface ScreenHeaderProps {
   isBookmark?: boolean;
 }
 
+const THEME_IMAGES = {
+  3: require('@/assets/images/img-header-theme3.png'),
+  4: require('@/assets/images/img-header-theme4.png'),
+  default: require('@/assets/images/img-linksaving_wordmark-gray.png'),
+} as const;
+
 const ScreenHeader = ({toggleSideBar, isBookmark}: ScreenHeaderProps) => {
   const {theme} = useThemeStore();
   const themeNumber = theme.THEME_NUMBER;
+
   return (
     <View style={styles.container}>
       {!isBookmark ? (
@@ -19,17 +26,17 @@ const ScreenHeader = ({toggleSideBar, isBookmark}: ScreenHeaderProps) => {
       ) : (
         <View style={styles.rightSpace} />
       )}
-      {themeNumber === 3 ? (
-        <Image
-          source={require('@/assets/images/img-header-theme3.png')}
-          style={styles.logoImage2}
-        />
-      ) : (
-        <Image
-          source={require('@/assets/images/img-linksaving_wordmark-gray.png')}
-          style={styles.logoImage}
-        />
-      )}
+      <Image
+        source={
+          THEME_IMAGES[themeNumber as keyof typeof THEME_IMAGES] ||
+          THEME_IMAGES.default
+        }
+        style={
+          themeNumber === 3 || themeNumber === 4
+            ? styles.logoImage2
+            : styles.logoImage
+        }
+      />
       <View style={styles.rightSpace} />
     </View>
   );
