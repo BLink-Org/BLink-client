@@ -28,31 +28,29 @@ interface IconProps {
   theme: Theme;
 }
 
+const isSpecialTheme = (themeNumber: number) =>
+  themeNumber === 3 || themeNumber === 4;
+
+const getIconColor = (theme: Theme, focused: boolean = false) => {
+  if (isSpecialTheme(theme.THEME_NUMBER)) {
+    return theme.BACKGROUND;
+  }
+  return theme.TEXT900;
+};
+
 const HomeBarIcon = ({focused, theme}: IconProps) => (
   <HomeIcon
     strokeWidth={1.5}
-    fill={
-      focused
-        ? theme.THEME_NUMBER === 3
-          ? theme.BACKGROUND
-          : theme.TEXT900
-        : 'transparent'
-    }
-    stroke={theme.THEME_NUMBER === 3 ? theme.BACKGROUND : theme.TEXT900}
+    fill={focused ? getIconColor(theme) : 'transparent'}
+    stroke={getIconColor(theme)}
   />
 );
 
 const PinnedBarIcon = ({focused, theme}: IconProps) => (
   <PinnedIcon
     strokeWidth={1.5}
-    fill={
-      focused
-        ? theme.THEME_NUMBER === 3
-          ? theme.BACKGROUND
-          : theme.TEXT900
-        : 'transparent'
-    }
-    stroke={theme.THEME_NUMBER === 3 ? theme.BACKGROUND : theme.TEXT900}
+    fill={focused ? getIconColor(theme) : 'transparent'}
+    stroke={getIconColor(theme)}
   />
 );
 
@@ -60,30 +58,30 @@ const AddBarIcon = ({color}: {color: string}) => <LinkIcon fill={color} />;
 
 const SearchBarIcon = ({focused, theme}: IconProps) => {
   return focused ? (
-    <SearchIcon
-      fill={theme.THEME_NUMBER === 3 ? theme.BACKGROUND : theme.TEXT900}
-      strokeWidth={1.5}
-    />
+    <SearchIcon fill={getIconColor(theme)} strokeWidth={1.5} />
   ) : (
-    <SearchUnfocusedIcon
-      fill={theme.THEME_NUMBER === 3 ? theme.BACKGROUND : theme.TEXT900}
-      strokeWidth={1.5}
-    />
+    <SearchUnfocusedIcon fill={getIconColor(theme)} strokeWidth={1.5} />
   );
 };
 
 const MyPageBarIcon = ({focused, theme}: IconProps) => {
+  const color = getIconColor(theme);
   return focused ? (
-    <MypageIcon
-      fill={theme.THEME_NUMBER === 3 ? theme.BACKGROUND : theme.TEXT900}
-      stroke={theme.THEME_NUMBER === 3 ? theme.BACKGROUND : theme.TEXT900}
-    />
+    <MypageIcon fill={color} stroke={color} />
   ) : (
-    <MypageIcon
-      stroke={theme.THEME_NUMBER === 3 ? theme.BACKGROUND : theme.TEXT900}
-      strokeWidth={1.5}
-    />
+    <MypageIcon stroke={color} strokeWidth={1.5} />
   );
+};
+
+const getTabBarBackground = (themeNumber: number) => {
+  switch (themeNumber) {
+    case 3:
+      return <Image source={require('@/assets/images/img-gnb-theme3.png')} />;
+    case 4:
+      return <Image source={require('@/assets/images/img-gnb-theme4.png')} />;
+    default:
+      return null;
+  }
 };
 
 const BottomTabNavigation = () => {
@@ -109,14 +107,9 @@ const BottomTabNavigation = () => {
       <Tab.Navigator
         screenOptions={{
           tabBarShowLabel: false,
-          tabBarActiveTintColor:
-            theme.THEME_NUMBER === 3 ? theme.BACKGROUND : theme.TEXT900,
-          tabBarInactiveTintColor:
-            theme.THEME_NUMBER === 3 ? theme.BACKGROUND : theme.TEXT900,
-          tabBarBackground: () =>
-            theme.THEME_NUMBER === 3 ? (
-              <Image source={require('@/assets/images/img-gnb-theme3.png')} />
-            ) : null,
+          tabBarActiveTintColor: getIconColor(theme),
+          tabBarInactiveTintColor: getIconColor(theme),
+          tabBarBackground: () => getTabBarBackground(theme.THEME_NUMBER),
           tabBarStyle: {
             borderTopWidth: 0,
             backgroundColor: theme.BACKGROUND,

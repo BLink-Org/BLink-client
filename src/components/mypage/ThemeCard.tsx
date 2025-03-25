@@ -41,10 +41,6 @@ const ThemeCard = ({
     closeModal(modalId);
   };
 
-  if (id === 4) {
-    return <View style={styles.mainContainer}></View>;
-  }
-
   return (
     <TouchableOpacity onPress={handleSelect} style={styles.mainContainer}>
       <View

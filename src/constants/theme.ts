@@ -7,6 +7,8 @@ import {
   Theme2SmallCardImage,
   Theme3BackgroundImage,
   Theme3SmallCardImage,
+  Theme4SmallCardImage,
+  Theme4BackgroundImage,
 } from '@/assets/icons/theme';
 
 export const THEME_INFOS = [
@@ -25,9 +27,9 @@ export const THEME_INFOS = [
   },
   {
     id: 4,
-    name: '',
-    price: '',
-    color: 'transparent',
+    name: '텀블벅',
+    price: '후원자',
+    color: '#4AB45B',
   },
 ];
 
@@ -140,9 +142,9 @@ export const THEMES: Record<number, Theme> = {
   },
   4: {
     THEME_NUMBER: 4,
-    BACKGROUND_IMAGE: Theme3BackgroundImage,
-    SMALL_CARD_IMAGE: Theme3SmallCardImage,
-    BIG_CARD_IMAGE: require('@/assets/images/img-large-card-3.png'),
+    BACKGROUND_IMAGE: Theme4BackgroundImage,
+    SMALL_CARD_IMAGE: Theme4SmallCardImage,
+    BIG_CARD_IMAGE: require('@/assets/images/img-large-card-4.png'),
     EMPTY_IMAGE: require('@/assets/images/img-empty.png'),
     SEARCH_EDGE_IMAGE: require('@/assets/images/img-searchedge.png'),
     ERROR_IMAGE: require('@/assets/images/img-error.png'),
@@ -156,11 +158,11 @@ export const THEMES: Record<number, Theme> = {
     TEXT700: '#333D4B',
     TEXT800: '#161B21',
     TEXT900: '#000000',
-    MAIN100: '#EEF3FF',
-    MAIN200: '#D8E3FF',
-    MAIN300: '#8AABFF',
-    MAIN400: '#6D96FF',
-    MAIN500: '#4A7DFF',
+    MAIN100: '#F7FFF6',
+    MAIN200: '#EEFFE9',
+    MAIN300: '#BFF1BF',
+    MAIN400: '#64D777',
+    MAIN500: '#4AB45B',
     SUB: '#FF7970',
     ERROR: '#FF554A',
   },

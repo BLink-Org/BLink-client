@@ -148,6 +148,12 @@ const FolderSideBar = ({
     }
   }, [isSideBarVisible]);
 
+  const THEME_BACKGROUNDS = {
+    3: '#E1EAFF',
+    4: '#F7FFF6', // 초록색 배경
+    default: theme.BACKGROUND,
+  } as const;
+
   return (
     <RNModal
       visible={visible}
@@ -172,7 +178,9 @@ const FolderSideBar = ({
           },
           {
             backgroundColor:
-              theme.THEME_NUMBER === 3 ? '#E1EAFF' : theme.BACKGROUND, // TODO: 임시 색상 처리, 이미지로 교체 필요
+              THEME_BACKGROUNDS[
+                theme.THEME_NUMBER as keyof typeof THEME_BACKGROUNDS
+              ] || THEME_BACKGROUNDS.default,
           },
         ]}>
         <TouchableOpacity onPress={toggleSideBar} style={styles.closeButton}>
