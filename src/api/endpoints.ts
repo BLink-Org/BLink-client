@@ -12,6 +12,7 @@ export const API_ENDPOINTS = {
     INFO: '/api/users',
     DELETE_ACCOUNT: '/api/users/delete', // 계정 삭제 신청
     CANCEL_DELETE_ACCOUNT: '/api/users/cancel', // 계정 삭제 철회
+    FUNDING_STATUS: '/api/users/funding-status', // 펀딩 상태 조회
   },
   FOLDER: {
     FETCH: '/api/folders', // 폴더 목록 조회

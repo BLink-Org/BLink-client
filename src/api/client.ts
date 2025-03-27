@@ -18,6 +18,7 @@ apiClient.interceptors.request.use(
     if (accessToken && config.headers) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
+      console.log("🚀 ~ accessToken:", accessToken)
     return config;
   },
   async error => {

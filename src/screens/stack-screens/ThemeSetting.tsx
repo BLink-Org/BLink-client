@@ -10,11 +10,15 @@ import ThemeCard from '@/components/mypage/ThemeCard';
 import {type ITheme} from '@/types';
 import {trackEvent} from '@/utils/amplitude-utils';
 import {THEME_INFOS} from '@/constants/theme';
+import {useGetFundingStatus} from '@/api/hooks/useUser';
+import CustomLoading from '@/components/common/CustomLoading';
 
 const ThemeSetting = () => {
   const {theme, setTheme, asyncSetTheme, getSavedTheme} = useThemeStore();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const {t} = useTranslation();
+
+  const {data: fundingStatus, isLoading, isError} = useGetFundingStatus();
 
   const [selectedThemeId, setSelectedThemeId] = useState<number>(1);
 
@@ -44,27 +48,43 @@ const ThemeSetting = () => {
     });
   };
 
+  if (isLoading) return <CustomLoading />;
+  if (isError) return <Text>error</Text>;
+
   return (
     <SafeAreaView style={styles.container}>
       <ThemeBackground />
       <BackHeader title={t('테마')} themeColor={theme.TEXT900} />
       <View style={styles.contentContainer}>
-        {/* 한국어 영어 둘다 영어처리 */}
-        <Text style={styles.templateText}>3 Themes</Text>
+        <Text style={styles.templateText}>
+          {`${
+            THEME_INFOS.filter(theme =>
+              theme.id === 4 ? fundingStatus?.fundingParticipated : true,
+            ).length
+          } Themes`}
+        </Text>
       </View>
       <FlatList
-        data={THEME_INFOS}
-        contentContainerStyle={styles.contentContainerStyle}
-        renderItem={({item}) => (
-          <ThemeCard
-            id={item.id}
-            name={item.name}
-            price={item.price}
-            mainColor={item.color}
-            onSelect={() => handleSetTheme(item.id)}
-            selected={item.id === selectedThemeId}
-          />
+        data={THEME_INFOS.map(theme =>
+          theme.id === 4 && !fundingStatus?.fundingParticipated
+            ? {...theme, isEmpty: true}
+            : theme,
         )}
+        contentContainerStyle={styles.contentContainerStyle}
+        renderItem={({item}) =>
+          item.isEmpty && !fundingStatus?.fundingParticipated ? (
+            <View style={styles.emptyCard} />
+          ) : (
+            <ThemeCard
+              id={item.id}
+              name={item.name}
+              price={item.price}
+              mainColor={item.color}
+              onSelect={() => handleSetTheme(item.id)}
+              selected={item.id === selectedThemeId}
+            />
+          )
+        }
         keyExtractor={item => item.id.toString()}
         numColumns={2}
         scrollEnabled={false}
@@ -91,5 +111,11 @@ const createStyles = (theme: ITheme) =>
     templateText: {
       color: theme.MAIN500,
       ...FONTS.BODY2_MEDIUM,
+    },
+    emptyCard: {
+      flex: 1,
+      height: 160,
+      margin: 6,
+      borderRadius: 8,
     },
   });

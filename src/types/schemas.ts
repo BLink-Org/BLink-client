@@ -9,6 +9,11 @@ export interface UserInfoSchema {
   folderCount: number;
 }
 
+// 펀딩 상태 조회
+export interface FundingStatusSchema {
+  fundingParticipated: boolean;
+}
+
 export interface TokensSchema {
   accessToken: string;
   refreshToken: string;

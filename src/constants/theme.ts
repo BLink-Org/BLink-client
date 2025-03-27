@@ -30,6 +30,7 @@ export const THEME_INFOS = [
     name: '텀블벅',
     price: '후원자',
     color: '#4AB45B',
+    isEmpty: true,
   },
 ];
 
