@@ -6,7 +6,7 @@ import {useThemeStore} from '@/store/useThemeStore';
 import {useModalStore} from '@/store/useModalStore';
 import AlertModal from '@/components/modal/AlertModal';
 import {type ITheme} from '@/types';
-import {Theme3SmallCardImage} from '@/assets/icons/theme';
+import {Theme3SmallCardImage, Theme4IconImage, Theme4SmallCardImage} from '@/assets/icons/theme';
 
 interface ThemeCardProps {
   id: number;
@@ -53,6 +53,10 @@ const ThemeCard = ({
         {id === 3 ? (
           <View style={styles.headerBackground}>
             <Theme3SmallCardImage width={180} height={180} />
+          </View>
+        ) : id === 4 ? (
+          <View style={styles.headerBackground}>
+            <Theme4IconImage width={180} height={180} />
           </View>
         ) : (
           <View

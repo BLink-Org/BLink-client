@@ -8,6 +8,7 @@ import Theme3BackgroundImage from './theme3-background.svg';
 import Theme3SmallCardImage from './theme3-small-card.svg';
 import Theme4SmallCardImage from './theme4-small-card.svg';
 import Theme4BackgroundImage from './theme4-background.svg';
+import Theme4IconImage from './theme4-icon-image.svg';
 
 export {
   Theme1BackgroundImage,
@@ -20,4 +21,5 @@ export {
   Theme3SmallCardImage,
   Theme4SmallCardImage,
   Theme4BackgroundImage,
+  Theme4IconImage,
 };

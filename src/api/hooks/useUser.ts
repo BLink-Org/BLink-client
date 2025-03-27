@@ -1,7 +1,7 @@
 import {useMutation, useQuery} from '@tanstack/react-query';
 import {API_ENDPOINTS} from '@/api/endpoints';
 import apiClient from '@/api/client';
-import {type UserInfoSchema} from '@/types';
+import {type FundingStatusSchema, type UserInfoSchema} from '@/types';
 
 // 유저 정보 조회
 const getUserInfo = async (): Promise<UserInfoSchema> => {
@@ -43,5 +43,18 @@ export const useCancelDeleteUserAccount = (options = {}) => {
       console.warn('Cancel Delete User Account error:', error);
     },
     ...options,
+  });
+};
+
+// 펀딩 상태 조회
+const getFundingStatus = async (): Promise<FundingStatusSchema> => {
+  const {data} = await apiClient.get(API_ENDPOINTS.USER.FUNDING_STATUS);
+  return data.result;
+};
+
+export const useGetFundingStatus = () => {
+  return useQuery({
+    queryKey: ['fundingStatus'],
+    queryFn: getFundingStatus,
   });
 };

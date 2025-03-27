@@ -27,9 +27,10 @@ export const THEME_INFOS = [
   },
   {
     id: 4,
-    name: '텀블벅',
-    price: '후원자',
+    name: '럭키링키',
+    price: 'Limited',
     color: '#4AB45B',
+    isEmpty: true,
   },
 ];
 
