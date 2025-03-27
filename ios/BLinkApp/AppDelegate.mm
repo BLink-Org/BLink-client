@@ -29,10 +29,13 @@
    
     // register LottieSplashScreen to RNSplashScreen
     [RNSplashScreen showLottieSplash:animationUIView inRootView:rootView];
-    // casting UIView type to AnimationView type
-    AnimationView *animationView = (AnimationView *) animationUIView;
+
+    // casting UIView type to LottieAnimationView type
+    LottieAnimationView *animationView = (LottieAnimationView *)animationUIView;
+
     // play
     [t playWithAnimationView:animationView];
+
     // If you want the animation layout to be forced to remove when hide is called, use this code
     [RNSplashScreen setAnimationFinished:true];
   }
