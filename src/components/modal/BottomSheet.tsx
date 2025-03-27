@@ -10,6 +10,7 @@ import {
   Text,
   Platform,
   Easing,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useTranslation} from 'react-i18next';
@@ -82,14 +83,19 @@ const BottomSheet = ({
             height: bottomSheetHeight,
           },
         ]}>
-        <View style={styles.header}>
-          <View style={styles.emptyBox} />
-          <Text style={styles.modalTitle}>{t(modalTitle)}</Text>
-          <TouchableOpacity onPress={toggleBottomSheet}>
-            <DeleteIcon fill={theme.TEXT600} />
-          </TouchableOpacity>
-        </View>
-        {children}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{flex: 1}}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 30 : 0}>
+          <View style={styles.header}>
+            <View style={styles.emptyBox} />
+            <Text style={styles.modalTitle}>{t(modalTitle)}</Text>
+            <TouchableOpacity onPress={toggleBottomSheet}>
+              <DeleteIcon fill={theme.TEXT600} />
+            </TouchableOpacity>
+          </View>
+          {children}
+        </KeyboardAvoidingView>
       </Animated.View>
     </RNModal>
   );
