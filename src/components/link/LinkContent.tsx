@@ -1,14 +1,9 @@
 import {useEffect, useState, useMemo, useRef, useCallback} from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {useQueryClient} from '@tanstack/react-query';
 import {useTranslation} from 'react-i18next';
 import Clipboard from '@react-native-clipboard/clipboard';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import {AddIcon, DeleteIcon} from '@/assets/icons/common';
@@ -152,8 +147,8 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
           {...{onSaveFolder}}
         />
       </BottomSheet>
-      <SafeAreaView
-        style={[styles.contentContainer, {marginBottom: buttonHeight}]}>
+
+      <SafeAreaView style={styles.contentContainer} edges={['top']}>
         {isClipboardShown && (
           <View style={styles.clipboardContainer}>
             <View style={styles.horizontalContainer}>
@@ -205,7 +200,7 @@ const LinkContent = ({defaultURL, toggleBottomSheet}: FolderSideBarProps) => {
             <AddIcon stroke={theme.BACKGROUND} fill={theme.MAIN400} />
           </TouchableOpacity>
         </View>
-        <View style={styles.folderView}>
+        <View style={[styles.folderView, {marginBottom: buttonHeight}]}>
           {isLoading ? (
             <FolderButtonPlaceHolder isMultipleSelection />
           ) : (
