@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {useMemo, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {
   View,
@@ -16,6 +16,7 @@ import {FONTS} from '@/constants';
 import {useThemeStore} from '@/store/useThemeStore';
 import NavigationInfo from '@/components/mypage/NavigationInfo';
 import {type ITheme} from '@/types';
+import LoginModal from '@/components/modal/LoginModal';
 
 const MyPage = () => {
   const {theme} = useThemeStore();
@@ -24,10 +25,14 @@ const MyPage = () => {
 
   const navigation = useNavigation<RootStackNavigationProp>();
 
-  const handleThemeSetting = () => navigation.navigate('ThemeSetting');
   const handleSetting = () => navigation.navigate('Setting');
   const handleSupport = () => navigation.navigate('Support');
   const handleLogin = () => navigation.navigate('Onboarding');
+  const [isNoticeModalVisible, setIsNoticeModalVisible] = useState(false);
+  const handleModalClose = () => {
+    handleLogin();
+    setIsNoticeModalVisible(false);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -53,7 +58,7 @@ const MyPage = () => {
             <NavigationInfo
               title={t('테마')}
               themeColor={theme.TEXT800}
-              onPress={handleThemeSetting}
+              onPress={() => setIsNoticeModalVisible(true)}
             />
             <NavigationInfo
               title={t('환경 설정')}
@@ -68,6 +73,11 @@ const MyPage = () => {
           </View>
         </View>
       </ScrollView>
+      <LoginModal
+        isVisible={isNoticeModalVisible}
+        onClose={() => setIsNoticeModalVisible(false)}
+        onClick={handleModalClose}
+      />
     </SafeAreaView>
   );
 };
