@@ -84,9 +84,9 @@ const BottomSheet = ({
           },
         ]}>
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           style={{flex: 1}}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 30 : 0}>
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}>
           <View style={styles.header}>
             <View style={styles.emptyBox} />
             <Text style={styles.modalTitle}>{t(modalTitle)}</Text>
